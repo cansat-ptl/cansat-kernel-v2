@@ -18,36 +18,14 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include <stdint.h>
+#include <avr/pgmspace.h>
+#include <avr/eeprom.h>
+#include <avr/wdt.h>
 #include <avr/common.h>
 #include <avr/interrupt.h>
 #include <avr/iom128.h>
 #include "kernel_config.h"
-
-#define JUMPER_PORT PORTA
-#define JUMPER_DDR DDRA
-#define JUMPER_PIN PINA
-#define JUMPER_IN PA0
-#define JUMPER_OUT PA1
-
-#define LED_BUILTIN_PORT PORTG
-#define LED_BUILTIN_DDR DDRG
-#define LED_BUILTIN PG3
-
-#define LED_WRK_PORT PORTC
-#define LED_WRK_DDR DDRC
-#define LED_WRK PC4
-
-#define LED_KRN_PORT PORTC
-#define LED_KRN_DDR DDRC
-#define LED_KRN PC5
-
-#define LED_TX_PORT PORTC
-#define LED_TX_DDR DDRC
-#define LED_TX PC6
-
-#define LED_DBG_PORT PORTC
-#define LED_DBG_DDR DDRC
-#define LED_DBG PC7
+#include "hal_pins.h"
 
 #define HIGH 1
 #define LOW 0

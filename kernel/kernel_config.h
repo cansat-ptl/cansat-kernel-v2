@@ -5,12 +5,13 @@
  *  Author: Admin
  */ 
 
-
 #ifndef KERNEL_CONFIG_H_
 #define KERNEL_CONFIG_H_
 
 #ifndef KERNELconfig
 #define KERNELconfig
+	//Custom includes
+	//#include "../drivers/interfaces/uart.h"
 
 	//Kernel modules - set to 0 to disable
 	#define KERNEL_SD_MODULE 0

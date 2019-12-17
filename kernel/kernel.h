@@ -14,27 +14,26 @@
 #include "types.h"
 #include "hal.h"
 #include "kernel_config.h"
-#include <avr/common.h>
-#include <avr/interrupt.h>
-#include <avr/pgmspace.h>
-#include <avr/eeprom.h>
-#include <avr/wdt.h>
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>
 
 #define ERR_KRN_STACK_OVERFLOW 1
-#define ERR_QUEUE_END 2
-#define ERR_WDT_RESET 3
-#define ERR_BOD_RESET 4
-#define ERR_KRN_RETURN 5
-#define ERR_DEVICE_FAIL 6
+#define ERR_NULLPTR 2
+#define ERR_MEMORY_CORRUPTION 3
+#define ERR_QUEUE_END 4
+#define ERR_WDT_RESET 5
+#define ERR_BOD_RESET 6
+#define ERR_KRN_RETURN 7
+#define ERR_DEVICE_FAIL 8
+#define ERR_GENERIC 255
 
 #define KFLAG_INIT 0
 #define KFLAG_TIMER_SET 1
 #define KFLAG_TIMER_EN 2
 #define KFLAG_TIMER_ISR 3
 #define KFLAG_SD_INIT 4
+#define KFLAG_CSW_ALLOWED 5
 #define KFLAG_LOG_SD 13
 #define KFLAG_LOG_UART 14
 #define KFLAG_DEBUG 15
@@ -43,6 +42,8 @@ void kernel_setFlag(uint8_t flag, uint8_t value);
 uint8_t kernel_checkFlag(uint8_t flag);
 uint64_t kernel_getUptime();
 uint8_t kernel_createTask(kTask t_pointer, uint16_t t_stackSize, kTaskPriority_t t_priority, kTaskType_t t_type, uint16_t t_execTime, const char t_name[8]);
+uint8_t kernel_setTaskStateByPtr(kTask t_pointer, kTaskStatus_t t_state);
+uint8_t kernel_setTaskStateByName(char * t_name, kTaskStatus_t t_state);
 
 void kernel_checkMCUCSR();
 uint8_t kernel_init();
@@ -79,11 +80,7 @@ void kernel_timerService();
 	#define L_WARN 2
 	#define L_ERROR 3
 	#define L_FATAL 4
-	void debug_sendMessage(char * buffer, uint8_t level, const char * format, va_list args);
-	void debug_sendMessageSD(char * buffer, uint8_t level, const char * format, va_list args);
-	void debug_sendMessage_p(char * buffer, uint8_t level, const char * format, va_list args);
-	void debug_sendMessageSD_p(char * buffer, uint8_t level, const char * format, va_list args);
-	void debug_puts(uint8_t level, const char * message);
+	void debug_puts(uint8_t level, const char * message); //Only for PROGMEM strings
 	void debug_putsSD(uint8_t level, const char * message);
 	void debug_logMessage(uint8_t pgm, uint8_t level, const char * format, ...);
 #endif

@@ -21,6 +21,7 @@ typedef enum {KPRIO_HIGH, KPRIO_NORM, KPRIO_LOW, KPRIO_NONE} kTaskPriority_t;
 struct kTaskStruct_t {
 	void *stackPtr;
 	kTask taskPtr;
+	void *stackBegin;
 	uint16_t stackSize;
 	kTaskPriority_t priority;
 	kTaskStatus_t status;

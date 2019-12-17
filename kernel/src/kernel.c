@@ -63,14 +63,9 @@ asm volatile ("lds  r26, kCurrentTask \n\t" \
 	"ld   r0, X+ \n\t"			\
 	"out  %[_SPH_], r0 \n\t"	\
 	"pop  r31 \n\t"				\
-	"bst  r31, %[_SREG_I_] \n\t"\
-	"bld  r31, %[_SREG_T_] \n\t"\
-	"andi r31, 0x7F \n\t"		\
 	"out  %[_SREG_], r31 \n\t"	\
 	"clr r0 \n\t" ::			\
 	[_SREG_] "i" _SFR_IO_ADDR(hal_statusReg), \
-	[_SREG_I_] "i" SREG_I,			\
-	[_SREG_T_] "i" SREG_T,			\
 	[_SPL_] "i" _SFR_IO_ADDR(SPL), \
 	[_SPH_] "i" _SFR_IO_ADDR(SPH))
 	
@@ -111,35 +106,42 @@ asm volatile ("pop  r0 \n\t"	\
 
 #define kernel_ret() asm volatile ("ret \n\t" ::)
 #define kernel_reti() asm volatile ("reti \n\t" ::)
+#define kernel_disableContextSwitch_m() hal_clearBit_m(kflags, KFLAG_CSW_ALLOWED)
+#define kernel_enableContextSwitch_m() hal_setBit_m(kflags, KFLAG_CSW_ALLOWED)
 
 
 volatile struct kTaskStruct_t *kCurrentTask;
 volatile struct kTaskStruct_t *kNextTask;
 static volatile uint16_t kflags = 0;
 static volatile uint64_t e_time = 0;
+static volatile uint8_t kInterruptDepth = 0;
+static volatile uint8_t kGlobalPid = 1;
 extern uint8_t mcucsr_mirror;
 
 static volatile struct kTaskStruct_t kTaskList[MAX_TASK_COUNT];
 static volatile uint8_t kTaskIndex = 0;
 
 static volatile uint8_t kernelStack[KERNEL_STACK_SIZE];
-static volatile uint16_t stackUsage = 0;
+static volatile uint16_t kStackUsage = 0;
 
 void kernel_idle() 
 {
 	while(1) hal_nop();
 }
 
-static void kernel_handleError(uint8_t error);
-
 void kernel_setFlag(uint8_t flag, uint8_t value)
 {
-
+	kernel_disableContextSwitch_m();
+	hal_writeBit_m(kflags, flag, value);
+	kernel_enableContextSwitch_m();
 } 
 
 uint8_t kernel_checkFlag(uint8_t flag)
 {
-
+	kernel_disableContextSwitch_m();
+	uint8_t res = hal_checkBit_m(kflags, flag);
+	kernel_enableContextSwitch_m();
+	return res;	
 }
 
 uint64_t kernel_getUptime()
@@ -147,10 +149,33 @@ uint64_t kernel_getUptime()
 	return e_time;
 }
 
-
-uint8_t kernel_setTaskState(kTask t_pointer, uint8_t state)
+uint8_t kernel_setTaskStateByPtr(kTask t_pointer, kTaskStatus_t t_state)
 {
+	if(t_pointer == NULL) return ERR_NULLPTR;
+	
+	for(int i = 0; i < kTaskIndex; i++){
+		if(kTaskList[i].taskPtr == t_pointer){
+			kTaskList[i].status = t_state;
+			return 0;
+		}
+	}
+	
+	return ERR_GENERIC;
+}
 
+uint8_t kernel_setTaskStateByName(char * t_name, kTaskStatus_t t_state)
+{
+	if(t_name == NULL) return ERR_NULLPTR;
+	uint8_t sLen = strlen(t_name);
+	
+	for(int i = 0; i < kTaskIndex; i++){
+		if(util_strCompare(t_name, (char *)kTaskList[i].name, sLen)){
+			kTaskList[i].status = t_state;
+			return 0;
+		}
+	}
+	
+	return ERR_GENERIC;
 }
 
 /*typedef struct taskStruct {
@@ -190,11 +215,14 @@ static void kernel_sortTaskList() //Bubble sort
 
 uint8_t kernel_createTask(kTask t_pointer, uint16_t t_stackSize, kTaskPriority_t t_priority, kTaskType_t t_type, uint16_t t_execTime, const char t_name[8])
 {
-	if(t_pointer == NULL) return 0;
+	if(t_pointer == NULL) return ERR_NULLPTR;
 	
-	if(stackUsage + t_stackSize >= KERNEL_STACK_SIZE)
+	if(kStackUsage + t_stackSize >= KERNEL_STACK_SIZE)
 		return ERR_KRN_STACK_OVERFLOW;
-	uint8_t * stackPointer = (uint8_t *)&kernelStack[KERNEL_STACK_SIZE-1] - stackUsage;
+	kStackUsage += t_stackSize;
+		
+	uint8_t* stackPointer = (uint8_t*)&kernelStack[KERNEL_STACK_SIZE-1] - kStackUsage;
+	if(stackPointer == NULL) return ERR_MEMORY_CORRUPTION;
 	
 	stackPointer[0] = (uint16_t)t_pointer & 0xFF;
 	stackPointer[-1] = (uint16_t)t_pointer >> 8;
@@ -208,25 +236,32 @@ uint8_t kernel_createTask(kTask t_pointer, uint16_t t_stackSize, kTaskPriority_t
 	kTaskList[kTaskIndex].stackSize = t_stackSize;
 	kTaskList[kTaskIndex].priority = t_priority;
 	kTaskList[kTaskIndex].taskPtr = t_pointer;
+	kTaskList[kTaskIndex].stackBegin = stackPointer - 35;
 	kTaskList[kTaskIndex].status = KSTATE_READY;
 	kTaskList[kTaskIndex].type = t_type;
 	kTaskList[kTaskIndex].execTime = t_execTime;
 	kTaskList[kTaskIndex].execTimeMax = t_execTime;
-	kTaskList[kTaskIndex].pid = kTaskIndex;
+	kTaskList[kTaskIndex].pid = kGlobalPid;
 	strcpy((char *)kTaskList[kTaskIndex].name, t_name);
 	
 	kernel_sortTaskList(); //Bruh
 	
+	kGlobalPid++;
 	kTaskIndex++;
-	stackUsage += t_stackSize;
+
 	return 0;
 }
 
 static void kernel_taskDispatch()
 {
-	kernel_saveContext();
-	kernel_switchContext();
-	kernel_restoreContext();
+	if(hal_checkBit_m(kflags, KFLAG_CSW_ALLOWED)){
+		kernel_saveContext();
+		kernel_switchContext();
+		kernel_restoreContext();
+		
+		if(kInterruptDepth)	kernel_reti();
+		else kernel_ret();
+	}
 }
 
 static void kernel_taskManager()
@@ -276,12 +311,25 @@ uint8_t kernel_init()
 	kernel_createTask(kernel_idle, 100, KPRIO_NONE, KTASK_DEFAULT, 15, "Idle");
 	hal_setupSystemTimer();
 	hal_startSystemTimer();
+	kernel_enableContextSwitch_m();
 	kernel_taskManager();
 	return 0;
 }
 
+inline static void kernel_ISREnter()
+{
+	kInterruptDepth++;
+}
+
+inline static void kernel_ISRExit()
+{
+	if(kInterruptDepth) kInterruptDepth--;
+}
+
 ISR(HAL_TIMER_INTERRUPT_vect)
 {
+	kernel_ISREnter();
 	//kernel_taskService();
 	kernel_execTimeControl();
+	kernel_ISRExit();
 }
