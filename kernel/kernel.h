@@ -41,15 +41,14 @@
 void kernel_setFlag(uint8_t flag, uint8_t value);
 uint8_t kernel_checkFlag(uint8_t flag);
 uint64_t kernel_getUptime();
-uint8_t kernel_createTask(kTask t_pointer, uint16_t t_stackSize, kTaskPriority_t t_priority, kTaskType_t t_type, uint16_t t_execTime, const char t_name[8]);
-uint8_t kernel_setTaskStateByPtr(kTask t_pointer, kTaskStatus_t t_state);
-uint8_t kernel_setTaskStateByName(char * t_name, kTaskStatus_t t_state);
+kTaskHandle_t kernel_createTask(kTask_t t_pointer, uint16_t t_stackSize, kTaskPriority_t t_priority, kTaskType_t t_type, uint16_t t_execTime);
+uint8_t kernel_setTaskState(kTaskHandle_t t_handle, kTaskStatus_t t_state);
 
 void kernel_checkMCUCSR();
 uint8_t kernel_init();
 
-uint8_t kernel_setTimer(kTimerISR t_pointer, uint32_t t_period);
-uint8_t kernel_removeTimer(kTimerISR t_pointer);
+uint8_t kernel_setTimer(kTimerISR_t t_pointer, uint32_t t_period);
+uint8_t kernel_removeTimer(kTimerISR_t t_pointer);
 void kernel_timerService();
 
 #ifdef KERNEL_SD_MODULE

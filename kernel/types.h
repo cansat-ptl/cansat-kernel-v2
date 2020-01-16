@@ -10,18 +10,20 @@
 
 #include <stdint.h>
 
-typedef void (*kTask)(void);
-typedef void (*kTimerISR)(void);
+typedef void (*kTask_t)(void);
+typedef void (*kTimerISR_t)(void);
+typedef void *kStackPtr_t;
 typedef uint8_t byte;
 
 typedef enum {KSTATE_UNINIT, KSTATE_SUSPENDED, KSTATE_BLOCKED, KSTATE_SEMAPHORE, KSTATE_READY, KSTATE_RUNNING} kTaskStatus_t;
 typedef enum {KTASK_DEFAULT} kTaskType_t;
 typedef enum {KPRIO_HIGH, KPRIO_NORM, KPRIO_LOW, KPRIO_NONE} kTaskPriority_t;
+typedef struct kTaskStruct_t* kTaskHandle_t;
 
 struct kTaskStruct_t {
-	void *stackPtr;
-	kTask taskPtr;
-	void *stackBegin;
+	kStackPtr_t *stackPtr;
+	kTask_t taskPtr;
+	kStackPtr_t *stackBegin;
 	uint16_t stackSize;
 	kTaskPriority_t priority;
 	kTaskStatus_t status;
@@ -29,11 +31,10 @@ struct kTaskStruct_t {
 	uint16_t execTime;
 	uint16_t execTimeMax;
 	uint8_t pid;
-	char name[8];
 };
 
 struct kTimerStruct_t {
-	kTimerISR tsrPointer;
+	kTimerISR_t tsrPointer;
 	uint32_t period;
 	uint32_t savePeriod;
 };
