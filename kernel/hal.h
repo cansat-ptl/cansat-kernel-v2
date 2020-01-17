@@ -35,29 +35,29 @@
 
 #ifdef HAL_USE_TIMER0
 	#define HAL_TIMER_INTERRUPT_vect TIMER0_COMP_vect
-	#define hal_setupSystemTimer() hal_setupTimer0(KERNEL_TIMER_PRESCALER)
-	#define hal_startSystemTimer() hal_startTimer0()
-	#define hal_stopSystemTimer() hal_stopTimer0()
+	#define hal_SETUP_SYSTEM_TIMER() hal_setupTimer0(KERNEL_TIMER_PRESCALER)
+	#define hal_START_SYSTEM_TIMER() hal_startTimer0()
+	#define hal_STOP_SYSTEM_TIMER() hal_stopTimer0()
 #endif
 #ifdef HAL_USE_TIMER1A
 	#define HAL_TIMER_INTERRUPT_vect TIMER1_COMPA_vect
-	#define hal_setupSystemTimer() hal_setupTimer1A(KERNEL_TIMER_PRESCALER)
-	#define hal_startSystemTimer() hal_startTimer1A()
-	#define hal_stopSystemTimer() hal_stopTimer1A()
+	#define hal_SETUP_SYSTEM_TIMER() hal_setupTimer1A(KERNEL_TIMER_PRESCALER)
+	#define hal_START_SYSTEM_TIMER() hal_startTimer1A()
+	#define hal_STOP_SYSTEM_TIMER() hal_stopTimer1A()
 #endif
 
-#define hal_disableInterrupts() cli()
-#define hal_enableInterrupts() sei()
+#define hal_DISABLE_INTERRUPTS() cli()
+#define hal_ENABLE_INTERRUPTS() sei()
 
-#define hal_statusReg SREG
-#define hal_nop() asm volatile ("NOP")
-#define delay_ms(x) _delay_ms(x);
+#define hal_STATUS_REG SREG
+#define hal_NOP() asm volatile ("NOP")
+#define hal_DELAY_MS(x) _delay_ms(x);
 
-#define hal_setBit_m(x,y) x |= (1 << y)
-#define hal_clearBit_m(x,y) x &= ~(1 << y)
-#define hal_checkBit_m(x,y) ((0u == (x & (1 << y))) ? 0u : 1u)
-#define hal_switchBit_m(x,y) (x ^= (1 << y))
-#define hal_writeBit_m(x,y,z) x ^= (-1 * z ^ x) & (1 << y);
+#define hal_SET_BIT(x,y) x |= (1 << y)
+#define hal_CLEAR_BIT(x,y) x &= ~(1 << y)
+#define hal_CHECK_BIT(x,y) ((0u == (x & (1 << y))) ? 0u : 1u)
+#define hal_SWITCH_BIT(x,y) (x ^= (1 << y))
+#define hal_WRITE_BIT(x,y,z) x ^= (-1 * z ^ x) & (1 << y);
 
 inline void hal_switchBit(volatile uint8_t *reg, uint8_t bit);
 inline void hal_setBit(volatile uint8_t *reg, uint8_t bit);
@@ -78,28 +78,28 @@ void hal_stopTimer0();
 void hal_startTimer0();
 void hal_setupTimer0(uint8_t prescaler);
 
-#ifndef hal_uart_init
-#define hal_uart_init(ubrr) hal_basicUart_init(ubrr)
+#ifndef hal_UART_INIT
+#define hal_UART_INIT(ubrr) hal_basicUart_init(ubrr)
 int hal_basicUart_init(unsigned int ubrr);
 #endif
 
-#ifndef hal_uart_putc
-#define hal_uart_putc(c) hal_basicUart_putc(c)
+#ifndef hal_UART_PUTC
+#define hal_UART_PUTC(c) hal_basicUart_putc(c)
 void hal_basicUart_putc(char c);
 #endif
 
-#ifndef hal_uart_puts
-#define hal_uart_puts(s) hal_basicUart_puts(s)
+#ifndef hal_UART_PUTS
+#define hal_UART_PUTS(s) hal_basicUart_puts(s)
 void hal_basicUart_puts(char * msg);
 #endif
 
-#ifndef hal_uart_enableInterruptsRX
-#define hal_uart_enableInterruptsRX() hal_basicUart_enableInterruptsRX()
+#ifndef hal_UART_ENABLE_RX_INT
+#define hal_UART_ENABLE_RX_INT() hal_basicUart_enableInterruptsRX()
 void hal_basicUart_enableInterruptsRX();
 #endif
 
-#ifndef hal_uart_disableInterruptsRX
-#define hal_uart_disableInterruptsRX(s) hal_basicUart_disableInterruptsRX()
+#ifndef hal_UART_DISABLE_RX_INT
+#define hal_UART_DISABLE_RX_INT(s) hal_basicUart_disableInterruptsRX()
 void hal_basicUart_disableInterruptsRX();
 #endif
 

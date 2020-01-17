@@ -28,7 +28,7 @@
 	#define MIN_STACK_SIZE 40 //Due to AVR platform limitations, it is NOT RECOMMENDED to use values < 40, or bad things may happen
 	
 	//Timer settings
-	#define MAX_TIMER_COUNT 1
+	#define MAX_TIMER_COUNT 3
 	#define KERNEL_TIMER_PRESCALER 3
 	#define TICKRATE_MS 1
 	
@@ -49,12 +49,6 @@
 	//CLI options
 	#define RX0_BUFFER_SIZE 64
 	#define MAX_CMD_WORD_SIZE 16
-	
-	//Error handlers
-	#define kErrHandler_queueOverflow()
-	#define kErrHandler_wdtReset()
-	#define kErrHandler_bodReset()
-	#define kErrHandler_devFail()
 
 	//HAL uart settings - comment these lines to use built-in uart driver, or specify your own uart functions
 	//#define hal_uart_init(ubrr) uart0_init(ubrr)

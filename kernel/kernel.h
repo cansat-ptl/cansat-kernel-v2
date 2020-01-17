@@ -38,6 +38,9 @@
 #define KFLAG_LOG_UART 14
 #define KFLAG_DEBUG 15
 
+void kernel_disableContextSwicth();
+void kernel_enableContextSwicth();
+
 void kernel_setFlag(uint8_t flag, uint8_t value);
 uint8_t kernel_checkFlag(uint8_t flag);
 uint64_t kernel_getUptime();
@@ -65,7 +68,7 @@ void kernel_timerService();
 #endif
 
 #ifdef KERNEL_UTIL_MODULE
-	#define util_getArrayLength_m(arr) ((int)(sizeof(arr) / sizeof(arr)[0]))
+	#define util_GET_ARRAY_LENGTH(arr) ((int)(sizeof(arr) / sizeof(arr)[0]))
 	void util_printVersion();
 	uint8_t util_strCompare(char * a, char * b, uint8_t len);
 #endif

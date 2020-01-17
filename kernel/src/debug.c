@@ -34,18 +34,18 @@ const char * const levels[] PROGMEM = {
 inline void debug_sendMessage(char* buffer, uint8_t level, const char * format, va_list args) 
 {
 	#if KERNEL_DEBUG_MODULE == 1	
-		if(level != 0 && !kernel_checkFlag(KFLAG_INIT)){
+		if (level != 0 && !kernel_checkFlag(KFLAG_INIT)) {
 			#if PROFILING == 0
 				//sprintf(buffer, "%02d.%02d.%02d %02d:%02d:%02d ", GPS.day, GPS.month, GPS.year, GPS.hour, GPS.minute, GPS.second);
 			#else
 				sprintf(buffer, "%ld ", (int32_t)kernel_getUptime());
 			#endif
-			hal_uart_puts(buffer);
+			hal_UART_PUTS(buffer);
 		}
 		strcpy_P(buffer, (char*)pgm_read_word(&(levels[level])));
-		hal_uart_puts(buffer);
+		hal_UART_PUTS(buffer);
 		vsprintf(buffer, format, args);
-		hal_uart_puts(buffer);
+		hal_UART_PUTS(buffer);
 	#else
 		#warning Trying to use disabled debug module, this may spawn dragons
 	#endif
@@ -54,18 +54,18 @@ inline void debug_sendMessage(char* buffer, uint8_t level, const char * format, 
 inline void debug_sendMessage_p(char* buffer, uint8_t level, const char * format, va_list args) 
 {
 	#if KERNEL_DEBUG_MODULE == 1		
-		if(level != 0 && !kernel_checkFlag(KFLAG_INIT)){
+		if (level != 0 && !kernel_checkFlag(KFLAG_INIT)) {
 			#if PROFILING == 0
 				//sprintf(buffer, "%02d.%02d.%02d %02d:%02d:%02d ", GPS.day, GPS.month, GPS.year, GPS.hour, GPS.minute, GPS.second);
 			#else
 				sprintf(buffer, "%ld ", (int32_t)kernel_getUptime());
 			#endif
-			hal_uart_puts(buffer);
+			hal_UART_PUTS(buffer);
 		}
 		strcpy_P(buffer, (char*)pgm_read_word(&(levels[level])));
-		hal_uart_puts(buffer);
+		hal_UART_PUTS(buffer);
 		vsprintf_P(buffer, format, args);
-		hal_uart_puts(buffer);
+		hal_UART_PUTS(buffer);
 	#else
 		#warning Trying to use disabled debug module, this may spawn dragons
 	#endif
@@ -74,7 +74,7 @@ inline void debug_sendMessage_p(char* buffer, uint8_t level, const char * format
 void debug_sendMessageSD(char* buffer, uint8_t level, const char * format, va_list args)
 {
 	#if KERNEL_DEBUG_MODULE == 1	
-		if(level != 0 && !kernel_checkFlag(KFLAG_INIT)){
+		if (level != 0 && !kernel_checkFlag(KFLAG_INIT)) {
 			//sprintf(buffer, "%02d.%02d.%02d %02d:%02d:%02d ", GPS.day, GPS.month, GPS.year, GPS.hour, GPS.minute, GPS.second);
 			sd_puts(buffer);
 		}
@@ -90,7 +90,7 @@ void debug_sendMessageSD(char* buffer, uint8_t level, const char * format, va_li
 void debug_sendMessageSD_p(char* buffer, uint8_t level, const char * format, va_list args)
 {
 	#if KERNEL_DEBUG_MODULE == 1
-		if(level != 0 && !kernel_checkFlag(KFLAG_INIT)){
+		if (level != 0 && !kernel_checkFlag(KFLAG_INIT)) {
 			//sprintf(buffer, "%02d.%02d.%02d %02d:%02d:%02d ", GPS.day, GPS.month, GPS.year, GPS.hour, GPS.minute, GPS.second);
 			sd_puts(buffer);
 		}
@@ -107,9 +107,9 @@ void debug_puts(uint8_t level, const char * format)
 	#if KERNEL_DEBUG_MODULE == 1
 	char * levelptr = (char*)pgm_read_word(&(levels[level]));
 		while(pgm_read_byte(levelptr) != 0x00)
-			hal_uart_putc(pgm_read_byte(levelptr++));
+			hal_UART_PUTC(pgm_read_byte(levelptr++));
 		while(pgm_read_byte(format) != 0x00)
-			hal_uart_putc(pgm_read_byte(format++));
+			hal_UART_PUTC(pgm_read_byte(format++));
 	#else
 		#warning Trying to use disabled debug module, this may spawn dragons
 	#endif

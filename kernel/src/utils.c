@@ -8,8 +8,8 @@
 
 uint8_t util_strCompare(char * a, char * b, uint8_t len)
 {
-	for(int i = 0; i < len; i++){
-		if(a[i] != b[i]) return 0;
+	for (int i = 0; i < len; i++) {
+		if (a[i] != b[i]) return 0;
 	}
 	return 1;
 }

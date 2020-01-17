@@ -24,8 +24,8 @@ void kernel_checkMCUCSR()
 
 static void kernel_handleError(uint8_t error)
 {
-	if(kernel_checkFlag(KFLAG_DEBUG)){
-		switch(error){
+	if (kernel_checkFlag(KFLAG_DEBUG)) {
+		switch (error) {
 			case ERR_WDT_RESET:
 			debug_logMessage(PGM_ON, L_NONE, (char *)PSTR("\r\n--------------------------------------------------------------------------------\r\n"));
 			debug_logMessage(PGM_ON, L_NONE, (char *)PSTR("[FATAL] The system has been reset by watchdog.\r\n"));
