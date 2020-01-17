@@ -128,35 +128,31 @@ void debug_putsSD(uint8_t level, const char * format)
 	#endif
 }
 
+static char __buffer[128];
+
 void debug_logMessage(uint8_t pgm, uint8_t level, const char * format, ...)
 {
 	#if KERNEL_DEBUG_MODULE == 1
-		char *buffer;
 		va_list args;
 		
 		va_start(args, format);
 		switch(pgm){
 			case 0:
-				buffer = malloc(128);
-				if(buffer == NULL) return;
+				if(__buffer == NULL) return;
 				
-				debug_sendMessage(buffer, level, format, args);
+				debug_sendMessage(__buffer, level, format, args);
 				#if KERNEL_SD_MODULE == 1
-					debug_sendMessageSD(buffer, level, format, args);
+					debug_sendMessageSD(__buffer, level, format, args);
 				#endif
-				
-				free(buffer);
 			break;
 			case 1:
-				buffer = malloc(128);
-				if(buffer == NULL) return;
+				if(__buffer == NULL) return;
 				
-				debug_sendMessage_p(buffer, level, format, args);
+				debug_sendMessage_p(__buffer, level, format, args);
 				#if KERNEL_SD_MODULE == 1
-					debug_sendMessageSD_p(buffer, level, format, args);
+					debug_sendMessageSD_p(__buffer, level, format, args);
 				#endif
 				
-				free(buffer);
 			break;
 			case 2:
 				debug_puts(level, format);

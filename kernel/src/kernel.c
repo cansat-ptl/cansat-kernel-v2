@@ -233,18 +233,23 @@ kTaskHandle_t kernel_createTask(kTask_t t_pointer, uint16_t t_stackSize, kTaskPr
 	
 	if (kStackUsage + t_stackSize >= KERNEL_STACK_SIZE) return NULL;
 	
-	kStackUsage += t_stackSize;
-		
-	uint8_t* stackPointer = (uint8_t*)(&kernelStack[KERNEL_STACK_SIZE-1] - kStackUsage);
-	if (stackPointer == NULL) return NULL;
+	/* Preparing initial stack frame - DARK MAGIC, DO NOT TOUCH */
 	
-	stackPointer[0] = (uint16_t)t_pointer & 0xFF;
-	stackPointer[-1] = (uint16_t)t_pointer >> 8;
-	stackPointer[-2] = 0;
-	stackPointer[-3] = 0x80;
+	uint8_t* stackPointer = (uint8_t*)(&kernelStack[KERNEL_STACK_SIZE-1] - kStackUsage - 1);  // Calculating task stack pointer
+	if (stackPointer == NULL) return NULL;			// Return null if memory has been corrupted (should never happen lol)
+	
+	kStackUsage += t_stackSize + 16;				// Incrementing stack usage value, 16 bytes for memory protection region
+	
+	stackPointer[0] = (uint16_t)t_pointer & 0xFF;	// Function address - will be grabbed by RETI when the task executes for first time, lower 8 bits
+	stackPointer[-1] = (uint16_t)t_pointer >> 8;		// Upper 8 bits, TODO: 3 byte PC support
+	stackPointer[-2] = 0;							// R0 initial value, overwritten by SREG during context switch, should be initialized separately
+	stackPointer[-3] = 0x80;						// SREG initial value - interrupts enabled
 	
 	for (int i = -4; i > -35; i--)
-		stackPointer[i] = 0;
+		stackPointer[i] = 0;						// R1-R31 initial values
+		
+	for (int i = -t_stackSize; i > -t_stackSize-16; i--)
+		stackPointer[i] = 0xFE;						// Memory protection margin, filled with placeholders
 	
 	kTaskList[kTaskIndex].stackPtr = stackPointer - 35;
 	kTaskList[kTaskIndex].stackSize = t_stackSize;

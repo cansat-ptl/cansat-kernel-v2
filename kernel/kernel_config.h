@@ -22,8 +22,8 @@
 	#define KERNEL_TIMER_MODULE 0
 
 	//Task manager settings
-	#define KERNEL_STACK_SIZE 512
-	#define IDLE_TASK_STACK_SIZE 48
+	#define KERNEL_STACK_SIZE 1200
+	#define IDLE_TASK_STACK_SIZE 100
 	#define MAX_TASK_COUNT 5
 	#define MIN_STACK_SIZE 40 //Due to AVR platform limitations, it is NOT RECOMMENDED to use values < 40, or bad things may happen
 	
