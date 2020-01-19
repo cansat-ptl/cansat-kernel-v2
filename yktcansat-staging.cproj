@@ -147,6 +147,9 @@
     <Compile Include="kernel\hal_pins.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="kernel\src\watchdog.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>

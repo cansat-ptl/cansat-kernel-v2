@@ -38,8 +38,8 @@
 #define KFLAG_LOG_UART 14
 #define KFLAG_DEBUG 15
 
-void kernel_disableContextSwicth();
-void kernel_enableContextSwicth();
+void kernel_disableContextSwitch();
+void kernel_enableContextSwitch();
 
 void kernel_setFlag(uint8_t flag, uint8_t value);
 uint8_t kernel_checkFlag(uint8_t flag);

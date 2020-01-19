@@ -2,7 +2,7 @@
  * utils.c
  *
  * Created: 23.06.2019 10:27:23
- *  Author: WorldSkills-2019
+ *  Author: ThePetrovich
  */ 
 #include "../kernel.h"
 

@@ -2,7 +2,7 @@
  * kernel_config.h
  *
  * Created: 30.07.2019 22:31:10
- *  Author: Admin
+ *  Author: ThePetrovich
  */ 
 
 #ifndef KERNEL_CONFIG_H_
@@ -22,10 +22,13 @@
 	#define KERNEL_TIMER_MODULE 0
 
 	//Task manager settings
-	#define KERNEL_STACK_SIZE 1200
-	#define IDLE_TASK_STACK_SIZE 100
+	#define TASK_STACK_SIZE 900
+	#define TASK_STACK_SAFETY_MARGIN 16
+	#define KERNEL_STACK_SIZE 100
+	#define KERNEL_STACK_SAFETY_MARGIN 32
 	#define MAX_TASK_COUNT 5
 	#define MIN_STACK_SIZE 40 //Due to AVR platform limitations, it is NOT RECOMMENDED to use values < 40, or bad things may happen
+	#define KERNEL_STACK_FRAME_REGISTER_OFFSET -4  //Memory offset, from which General Purpose Registers are stored during stack initialization
 	
 	//Timer settings
 	#define MAX_TIMER_COUNT 3

@@ -12,18 +12,19 @@
 
 typedef void (*kTask_t)(void);
 typedef void (*kTimerISR_t)(void);
-typedef void *kStackPtr_t;
+typedef volatile uint8_t *kStackPtr_t;
 typedef uint8_t byte;
+typedef void kTask;
 
 typedef enum {KSTATE_UNINIT, KSTATE_SUSPENDED, KSTATE_BLOCKED, KSTATE_SEMAPHORE, KSTATE_READY, KSTATE_RUNNING} kTaskStatus_t;
-typedef enum {KTASK_DEFAULT} kTaskType_t;
+typedef enum {KTASK_USER, KTASK_SYSTEM} kTaskType_t;
 typedef enum {KPRIO_HIGH, KPRIO_NORM, KPRIO_LOW, KPRIO_NONE} kTaskPriority_t;
-typedef struct kTaskStruct_t* kTaskHandle_t;
+typedef volatile struct kTaskStruct_t* kTaskHandle_t;
 
 struct kTaskStruct_t {
-	kStackPtr_t *stackPtr;
+	kStackPtr_t stackPtr;
 	kTask_t taskPtr;
-	kStackPtr_t *stackBegin;
+	kStackPtr_t stackBegin;
 	uint16_t stackSize;
 	kTaskPriority_t priority;
 	kTaskStatus_t status;

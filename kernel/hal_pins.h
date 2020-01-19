@@ -2,7 +2,7 @@
  * hal_pins.h
  *
  * Created: 06.12.2019 14:53:02
- *  Author: Анастасия
+ *  Author: ThePetrovich
  */ 
 
 

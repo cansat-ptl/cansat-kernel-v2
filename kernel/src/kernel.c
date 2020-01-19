@@ -16,7 +16,7 @@
 volatile struct kTaskStruct_t *kCurrentTask;
 volatile struct kTaskStruct_t *kNextTask;
 static volatile uint16_t kflags = 0;
-volatile uint16_t e_time = 0;
+volatile uint16_t __e_time = 0; //TODO: change back to uint64_t
 static volatile uint8_t kInterruptDepth = 0;
 static volatile uint8_t kGlobalPid = 1;
 extern uint8_t mcucsr_mirror;
@@ -24,42 +24,38 @@ extern uint8_t mcucsr_mirror;
 static volatile struct kTaskStruct_t kTaskList[MAX_TASK_COUNT];
 static volatile uint8_t kTaskIndex = 0;
 
-static volatile uint8_t kernelStack[KERNEL_STACK_SIZE];
-static volatile uint16_t kStackUsage = 0;
+static volatile uint8_t kernelStack[TASK_STACK_SIZE + KERNEL_STACK_SIZE + KERNEL_STACK_SAFETY_MARGIN];
+static volatile uint16_t kUserTaskStackUsage = 0;
+static volatile uint16_t kSystemStackUsage = 0;
 
-void kernel_enableContextSwicth()
+void kernel_enableContextSwitch()
 {
 	kernel_ENABLE_CONTEXT_SWITCH();
 }
 
-void kernel_disableContextSwicth()
+void kernel_disableContextSwitch()
 {
 	kernel_DISABLE_CONTEXT_SWITCH();
+}
+
+void kernel_setFlag(uint8_t flag, uint8_t value)
+{
+	hal_DISABLE_INTERRUPTS();
+	hal_WRITE_BIT(kflags, flag, value);
+	hal_ENABLE_INTERRUPTS();
+}
+
+uint8_t kernel_checkFlag(uint8_t flag)
+{
+	hal_DISABLE_INTERRUPTS();
+	uint8_t res = hal_CHECK_BIT(kflags, flag);
+	hal_ENABLE_INTERRUPTS();
+	return res;
 }
 
 void kernel_idle() 
 {
 	while(1) hal_NOP();
-}
-
-void kernel_setFlag(uint8_t flag, uint8_t value)
-{
-	kernel_DISABLE_CONTEXT_SWITCH();
-	hal_WRITE_BIT(kflags, flag, value);
-	kernel_ENABLE_CONTEXT_SWITCH();
-} 
-
-uint8_t kernel_checkFlag(uint8_t flag)
-{
-	kernel_DISABLE_CONTEXT_SWITCH();
-	uint8_t res = hal_CHECK_BIT(kflags, flag);
-	kernel_ENABLE_CONTEXT_SWITCH();
-	return res;	
-}
-
-uint64_t kernel_getUptime()
-{
-	return e_time;
 }
 
 uint8_t kernel_setTaskState(kTaskHandle_t t_handle, kTaskStatus_t t_state)
@@ -230,28 +226,36 @@ static void kernel_sortTaskList() //Bubble sort
 kTaskHandle_t kernel_createTask(kTask_t t_pointer, uint16_t t_stackSize, kTaskPriority_t t_priority, kTaskType_t t_type, uint16_t t_execTime)
 {	
 	if (t_pointer == NULL) return NULL;
-	
-	if (kStackUsage + t_stackSize >= KERNEL_STACK_SIZE) return NULL;
-	
+
 	/* Preparing initial stack frame - DARK MAGIC, DO NOT TOUCH */
 	
-	uint8_t* stackPointer = (uint8_t*)(&kernelStack[KERNEL_STACK_SIZE-1] - kStackUsage - 1);  // Calculating task stack pointer
-	if (stackPointer == NULL) return NULL;			// Return null if memory has been corrupted (should never happen lol)
+	kStackPtr_t stackPointer = NULL;
 	
-	kStackUsage += t_stackSize + 16;				// Incrementing stack usage value, 16 bytes for memory protection region
+	if (t_type != KTASK_SYSTEM) {
+		if (kUserTaskStackUsage + t_stackSize + TASK_STACK_SAFETY_MARGIN >= TASK_STACK_SIZE) return NULL;
+		
+		stackPointer = (&kernelStack[TASK_STACK_SIZE-1] - kUserTaskStackUsage - 1 - KERNEL_STACK_SAFETY_MARGIN);  // Calculating task stack pointer
+		kUserTaskStackUsage += t_stackSize + TASK_STACK_SAFETY_MARGIN;	// Incrementing stack usage value, 16 bytes for memory protection region
+		
+		for (int16_t i = -t_stackSize; i > (-1*(int16_t)t_stackSize)-TASK_STACK_SAFETY_MARGIN; i--)
+		stackPointer[i] = 0xFE;						// Memory protection margin, filled with placeholders
+	}
+	else {
+		if (kSystemStackUsage + t_stackSize + TASK_STACK_SAFETY_MARGIN >= KERNEL_STACK_SIZE) return NULL;
+		stackPointer = (&kernelStack[(TASK_STACK_SIZE + KERNEL_STACK_SIZE)-1] - kSystemStackUsage - 1);  // Calculating task stack pointer
+	}
+	
+	if (stackPointer == NULL) return NULL;			// Return null if memory sp is null (how could this happen?)
 	
 	stackPointer[0] = (uint16_t)t_pointer & 0xFF;	// Function address - will be grabbed by RETI when the task executes for first time, lower 8 bits
 	stackPointer[-1] = (uint16_t)t_pointer >> 8;		// Upper 8 bits, TODO: 3 byte PC support
 	stackPointer[-2] = 0;							// R0 initial value, overwritten by SREG during context switch, should be initialized separately
 	stackPointer[-3] = 0x80;						// SREG initial value - interrupts enabled
 	
-	for (int i = -4; i > -35; i--)
+	for (int16_t i = KERNEL_STACK_FRAME_REGISTER_OFFSET; i > (KERNEL_STACK_FRAME_REGISTER_OFFSET-31); i--)
 		stackPointer[i] = 0;						// R1-R31 initial values
-		
-	for (int i = -t_stackSize; i > -t_stackSize-16; i--)
-		stackPointer[i] = 0xFE;						// Memory protection margin, filled with placeholders
 	
-	kTaskList[kTaskIndex].stackPtr = stackPointer - 35;
+	kTaskList[kTaskIndex].stackPtr = stackPointer + (KERNEL_STACK_FRAME_REGISTER_OFFSET-31);
 	kTaskList[kTaskIndex].stackSize = t_stackSize;
 	kTaskList[kTaskIndex].priority = t_priority;
 	kTaskList[kTaskIndex].taskPtr = t_pointer;
@@ -283,15 +287,53 @@ static inline void kernel_taskManager();
 
 uint8_t kernel_init()
 {
-	hal_UART_INIT(12);
-	kTaskHandle_t ct = kernel_createTask(kernel_idle, 100, KPRIO_NONE, KTASK_DEFAULT, 15);
+	hal_UART_INIT(12); 
+	
+	debug_puts(L_NONE, PSTR("[init] kernel: Startup\r\n")); //TODO: re-implement logging switch
+	
+	debug_puts(L_NONE, PSTR("[init] kernel: Starting up task manager                      [OK]\r\n"));
+	debug_puts(L_NONE, PSTR("[init] kernel: Setting up idle task"));
+	
+	kTaskHandle_t ct = kernel_createTask(kernel_idle, 64, KPRIO_NONE, KTASK_SYSTEM, 15);
+	if (ct == NULL) {
+		debug_puts(L_NONE, PSTR("                          [ERR]\r\n"));
+		debug_puts(L_NONE, PSTR("[init] kernel: Memory allocation error\r\n"));
+		while(1);
+	}
+	ct -> pid = 0;
+	debug_puts(L_NONE, PSTR("                          [OK]\r\n"));
+	
+	debug_puts(L_NONE, PSTR("===========================System=Info===========================\r\n"));
+	for (int i = 0; i < kTaskIndex; i++) {
+		debug_puts(L_NONE, PSTR("-----------------------------------------------------------------\r\n"));
+		debug_logMessage(PGM_ON, L_NONE, PSTR(" Task %2d: stackPtr:                                       0x%04X\r\n"), i, kTaskList[i].stackPtr);
+		debug_logMessage(PGM_ON, L_NONE, PSTR("          taskPtr:                                        0x%04X\r\n"), kTaskList[i].taskPtr);
+		debug_logMessage(PGM_ON, L_NONE, PSTR("          stackBegin:                                     0x%04X\r\n"), kTaskList[i].stackBegin);
+		debug_logMessage(PGM_ON, L_NONE, PSTR("          stackSize:                                  %4d bytes\r\n"), kTaskList[i].stackSize);
+		debug_logMessage(PGM_ON, L_NONE, PSTR("          priority:                                         %4d\r\n"), kTaskList[i].priority);
+		debug_logMessage(PGM_ON, L_NONE, PSTR("          pid:                                              %4d\r\n"), kTaskList[i].pid);
+	}
+	debug_puts(L_NONE, PSTR("-----------------------------------------------------------------\r\n"));
+	debug_logMessage(PGM_ON, L_NONE, PSTR("Stack usage:                                           %4d bytes \r\n"), kUserTaskStackUsage + kSystemStackUsage);
+	debug_logMessage(PGM_ON, L_NONE, PSTR("Stack size:                                            %4d bytes \r\n"), TASK_STACK_SIZE + KERNEL_STACK_SIZE);
+	debug_puts(L_NONE, PSTR("=================================================================\r\n"));
+	
+	debug_puts(L_NONE, PSTR("[init] kernel: Starting up first task"));
 	kCurrentTask = ct;
+	debug_puts(L_NONE, PSTR("                        [OK]\r\n"));
 	
+	debug_puts(L_NONE, PSTR("[init] kernel: Setting up system timer"));
 	hal_setupTimer0(3);
+	debug_puts(L_NONE, PSTR("                       [OK]\r\n"));
 	
-	debug_puts(L_NONE, PSTR("[kernel] starting up task manager\r\n"));
-	
+	debug_puts(L_NONE, PSTR("[init] kernel: Starting up system timer"));
 	hal_startTimer0();
+	debug_puts(L_NONE, PSTR("                      [OK]\r\n"));
+	
+	debug_puts(L_NONE, PSTR("[init] kernel: System startup complete\r\n"));
+	_delay_ms(3000);
+	
+	debug_puts(L_NONE, PSTR("\x0C"));
 	
 	hal_ENABLE_INTERRUPTS();
 	kernel_ENABLE_CONTEXT_SWITCH();
@@ -316,7 +358,7 @@ static void kernel_taskSwitch()
 	kernel_restoreContext();
 }
 
-static volatile uint8_t kCurrentTaskIdx = 0;
+static volatile uint8_t kCurrentTaskIdx = 0; //TODO: task switch logic
 static inline void kernel_taskManager()
 {	
 	if (kCurrentTaskIdx == kTaskIndex-1)
@@ -333,7 +375,7 @@ static void kernel_tick()  __attribute__ ( ( naked, noinline ));
 static void kernel_tick()
 {
 	kernel_saveContext();
-	e_time++;
+	__e_time++;
 	if (kCurrentTask -> execTime != 0) {
 		kCurrentTask -> execTime -= 1;
 		//kCurrentTask -> status = KSTATE_READY;
