@@ -16,7 +16,7 @@
 volatile struct kTaskStruct_t *kCurrentTask;
 volatile struct kTaskStruct_t *kNextTask;
 static volatile uint16_t kflags = 0;
-volatile uint16_t __e_time = 0; //TODO: change back to uint64_t
+volatile uint64_t __e_time = 0; //TODO: change back to uint64_t
 static volatile uint8_t kInterruptDepth = 0;
 static volatile uint8_t kGlobalPid = 1;
 extern uint8_t mcucsr_mirror;
@@ -28,14 +28,14 @@ static volatile uint8_t kernelStack[TASK_STACK_SIZE + KERNEL_STACK_SIZE + KERNEL
 static volatile uint16_t kUserTaskStackUsage = 0;
 static volatile uint16_t kSystemStackUsage = 0;
 
-void kernel_enableContextSwitch()
-{
-	kernel_ENABLE_CONTEXT_SWITCH();
-}
-
-void kernel_disableContextSwitch()
+void kernel_enterCriticalSection()
 {
 	kernel_DISABLE_CONTEXT_SWITCH();
+}
+
+void kernel_exitCriticalSection()
+{
+	kernel_ENABLE_CONTEXT_SWITCH();
 }
 
 void kernel_setFlag(uint8_t flag, uint8_t value)
@@ -234,7 +234,7 @@ kTaskHandle_t kernel_createTask(kTask_t t_pointer, uint16_t t_stackSize, kTaskPr
 	if (t_type != KTASK_SYSTEM) {
 		if (kUserTaskStackUsage + t_stackSize + TASK_STACK_SAFETY_MARGIN >= TASK_STACK_SIZE) return NULL;
 		
-		stackPointer = (&kernelStack[TASK_STACK_SIZE-1] - kUserTaskStackUsage - 1 - KERNEL_STACK_SAFETY_MARGIN);  // Calculating task stack pointer
+		stackPointer = (&kernelStack[TASK_STACK_SIZE-1] - kUserTaskStackUsage);  // Calculating task stack pointer
 		kUserTaskStackUsage += t_stackSize + TASK_STACK_SAFETY_MARGIN;	// Incrementing stack usage value, 16 bytes for memory protection region
 		
 		for (int16_t i = -t_stackSize; i > (-1*(int16_t)t_stackSize)-TASK_STACK_SAFETY_MARGIN; i--)
@@ -242,13 +242,14 @@ kTaskHandle_t kernel_createTask(kTask_t t_pointer, uint16_t t_stackSize, kTaskPr
 	}
 	else {
 		if (kSystemStackUsage + t_stackSize + TASK_STACK_SAFETY_MARGIN >= KERNEL_STACK_SIZE) return NULL;
-		stackPointer = (&kernelStack[(TASK_STACK_SIZE + KERNEL_STACK_SIZE)-1] - kSystemStackUsage - 1);  // Calculating task stack pointer
+		stackPointer = (&kernelStack[(TASK_STACK_SIZE + KERNEL_STACK_SIZE + KERNEL_STACK_SAFETY_MARGIN)-1] - kSystemStackUsage);  // Calculating task stack pointer
+		kSystemStackUsage += t_stackSize + TASK_STACK_SAFETY_MARGIN;
 	}
 	
 	if (stackPointer == NULL) return NULL;			// Return null if memory sp is null (how could this happen?)
 	
 	stackPointer[0] = (uint16_t)t_pointer & 0xFF;	// Function address - will be grabbed by RETI when the task executes for first time, lower 8 bits
-	stackPointer[-1] = (uint16_t)t_pointer >> 8;		// Upper 8 bits, TODO: 3 byte PC support
+	stackPointer[-1] = (uint16_t)t_pointer >> 8;	// Upper 8 bits, TODO: 3 byte PC support
 	stackPointer[-2] = 0;							// R0 initial value, overwritten by SREG during context switch, should be initialized separately
 	stackPointer[-3] = 0x80;						// SREG initial value - interrupts enabled
 	
@@ -293,6 +294,10 @@ uint8_t kernel_init()
 	
 	debug_puts(L_NONE, PSTR("[init] kernel: Starting up task manager                      [OK]\r\n"));
 	debug_puts(L_NONE, PSTR("[init] kernel: Setting up idle task"));
+	
+	kStackPtr_t sptr = &kernelStack[(TASK_STACK_SIZE + KERNEL_STACK_SAFETY_MARGIN)-1];
+	for (int16_t i = 0; i > -KERNEL_STACK_SAFETY_MARGIN; i--)
+		sptr[i] = 0xFE;
 	
 	kTaskHandle_t ct = kernel_createTask(kernel_idle, 64, KPRIO_NONE, KTASK_SYSTEM, 15);
 	if (ct == NULL) {

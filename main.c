@@ -16,10 +16,10 @@ kTask simpleTask()
 	while (1) {
 		char ac[] = "[testd] task1: Ight Imma Head Out\r\n";
 		
-		kernel_disableContextSwitch();
+		kernel_exitCriticalSection();
 		debug_logMessage(PGM_ON, L_NONE, PSTR("[testd] task1: It works! IT WORKS! (high priority)\r\n"));
 		debug_puts(L_NONE, PSTR("[testd] task1: Testing non-atomic uart output... asdfasgrtertgawe2345\r\n"));
-		kernel_enableContextSwitch();
+		kernel_enterCriticalSection();
 				
 		float a = 0.1252, b = 23.567, c = 3423.2341, d = 342.1234, e, f, h;
 		e = sin(c);
@@ -31,20 +31,20 @@ kTask simpleTask()
 		d = log(d);
 		_delay_ms(2);
 		
-		kernel_disableContextSwitch();
+		kernel_exitCriticalSection();
 		debug_logMessage(PGM_ON, L_NONE, PSTR("[testd] task1: Math test: h = %f, e = %f, f = %f, d = %f\r\n"), h, e, f, d);
 		debug_logMessage(PGM_OFF, L_NONE, ac);
-		kernel_enableContextSwitch();
+		kernel_enterCriticalSection();
 	}
 }
 kTask simpleTask1()
 {
 	while (1) {
-		char ac[] = "[testd] task2: Ight Imma Head Out\r\n";
-		kernel_disableContextSwitch();
+		/*char ac[] = "[testd] task2: Ight Imma Head Out\r\n";
+		kernel_exitCriticalSection();
 		debug_logMessage(PGM_ON, L_NONE, PSTR("[testd] task2: It works! IT WORKS! (high priority)\r\n"));
 		debug_puts(L_NONE, PSTR("[testd] task2: Testing non-atomic uart output... asdfasgrtertgawe2345\r\n"));
-		kernel_enableContextSwitch();
+		kernel_enterCriticalSection();
 		
 		float a = 123.1446, b = 1.43567, c = 477.12431, d = 5.568, e, f, h;
 		e = sin(c);
@@ -56,21 +56,26 @@ kTask simpleTask1()
 		d = log(d);
 		_delay_ms(2);
 		
-		kernel_disableContextSwitch();
+		kernel_exitCriticalSection();
 		debug_logMessage(PGM_ON, L_NONE, PSTR("[testd] task2: Math test: h = %f, e = %f, f = %f, d = %f\r\n"), h, e, f, d);
 		debug_logMessage(PGM_OFF, L_NONE, ac);
-		kernel_enableContextSwitch();
+		kernel_enterCriticalSection();*/
+		kernel_enterCriticalSection();
+		time_updateSystemTime();
+		debug_logMessage(PGM_ON, L_NONE, PSTR("System time: %d:%02d:%02d:%02d.%03d\r\n"), time_getDays(), time_getHours(), time_getMinutes(), time_getSeconds(), time_getMilliseconds());
+		kernel_exitCriticalSection();
+		_delay_ms(100);
 	}
 }
 
 kTask simpleTask2()
 {
 	while (1) {
-		char ac[] = "[testd] task3: Ight Imma Head Out\r\n";
-		kernel_disableContextSwitch();
+		/*char ac[] = "[testd] task3: Ight Imma Head Out\r\n";
+		kernel_exitCriticalSection();
 		debug_logMessage(PGM_ON, L_NONE, PSTR("[testd] task3: It works! IT WORKS! (high priority)\r\n"));
 		debug_puts(L_NONE, PSTR("[testd] task3: Testing non-atomic uart output... asdfasgrtertgawe2345\r\n"));
-		kernel_enableContextSwitch();
+		kernel_enterCriticalSection();
 		
 		float a = 2.1252, b = 1.12, c = 3345.132, d = 78.1245, e, f, h;
 		e = sin(c);
@@ -82,10 +87,10 @@ kTask simpleTask2()
 		d = log(d);
 		_delay_ms(2);
 		
-		kernel_disableContextSwitch();
+		kernel_exitCriticalSection();
 		debug_logMessage(PGM_ON, L_NONE, PSTR("[testd] task3: Math test: h = %f, e = %f, f = %f, d = %f\r\n"), h, e, f, d);
 		debug_logMessage(PGM_OFF, L_NONE, ac);
-		kernel_enableContextSwitch();
+		kernel_enterCriticalSection();*/
 	}
 }
 

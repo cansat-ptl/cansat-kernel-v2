@@ -40,6 +40,13 @@ struct kTimerStruct_t {
 	uint32_t savePeriod;
 };
 
+struct kSystemTime_t {
+	uint16_t days;
+	uint8_t hours;
+	uint8_t minutes;
+	uint8_t seconds;
+	uint16_t milliseconds;
+};
 
 
 #endif /* TYPES_H_ */

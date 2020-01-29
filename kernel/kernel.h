@@ -38,8 +38,8 @@
 #define KFLAG_LOG_UART 14
 #define KFLAG_DEBUG 15
 
-void kernel_disableContextSwitch();
-void kernel_enableContextSwitch();
+void kernel_exitCriticalSection();
+void kernel_enterCriticalSection();
 
 void kernel_setFlag(uint8_t flag, uint8_t value);
 uint8_t kernel_checkFlag(uint8_t flag);
@@ -86,5 +86,12 @@ void kernel_timerService();
 	void debug_putsSD(uint8_t level, const char * message);
 	void debug_logMessage(uint8_t pgm, uint8_t level, const char * format, ...);
 #endif
+
+void time_updateSystemTime();
+uint16_t time_getMilliseconds();
+uint8_t time_getSeconds();
+uint8_t time_getMinutes();
+uint8_t time_getHours();
+uint16_t time_getDays();
 
 #endif /* KERNEL_H_ */
