@@ -13,10 +13,10 @@
 #define kernel_DISABLE_CONTEXT_SWITCH() hal_CLEAR_BIT(kflags, KFLAG_CSW_ALLOWED)
 #define kernel_ENABLE_CONTEXT_SWITCH() hal_SET_BIT(kflags, KFLAG_CSW_ALLOWED)
 
-volatile struct kTaskStruct_t *kCurrentTask;
-volatile struct kTaskStruct_t *kNextTask;
+static volatile struct kTaskStruct_t *kCurrentTask;
+static volatile struct kTaskStruct_t *kNextTask;
 static volatile uint16_t kflags = 0;
-volatile uint64_t __e_time = 0; //TODO: change back to uint64_t
+volatile uint64_t __e_time = 0;
 static volatile uint8_t kInterruptDepth = 0;
 static volatile uint8_t kGlobalPid = 1;
 extern uint8_t mcucsr_mirror;
@@ -28,6 +28,34 @@ static volatile uint8_t kernelStack[TASK_STACK_SIZE + KERNEL_STACK_SIZE + KERNEL
 static volatile uint16_t kUserTaskStackUsage = 0;
 static volatile uint16_t kSystemStackUsage = 0;
 
+static volatile uint8_t kCurrentTaskIdx = 0; //TODO: task switch logic
+
+static inline void kernel_switchTask();
+static void kernel_tick()  __attribute__ ( ( naked, noinline ));
+void kernel_yield()  __attribute__ ( ( naked, noinline ));
+void kernel_sortTaskList(kTaskHandle_t taskList, uint8_t amount);
+
+kTaskHandle_t kernel_getCurrentTaskHandle()
+{
+	return kCurrentTask;
+}
+
+kTaskHandle_t kernel_getNextTaskHandle()
+{
+	return kNextTask;
+}
+
+kTaskHandle_t kernel_getTaskListPtr()
+{
+	return kTaskList;
+}
+
+uint8_t kernel_getTaskListIndex()
+{
+	return kTaskIndex;
+}
+
+
 void kernel_enterCriticalSection()
 {
 	kernel_DISABLE_CONTEXT_SWITCH();
@@ -36,6 +64,16 @@ void kernel_enterCriticalSection()
 void kernel_exitCriticalSection()
 {
 	kernel_ENABLE_CONTEXT_SWITCH();
+}
+
+inline static void kernel_ISREnter()
+{
+	kInterruptDepth++;
+}
+
+inline static void kernel_ISRExit()
+{
+	if(kInterruptDepth) kInterruptDepth--;
 }
 
 void kernel_setFlag(uint8_t flag, uint8_t value)
@@ -199,30 +237,6 @@ uint8_t pid;
 const char name[8];
 };*/
 
-static inline void kernel_swapTasks(volatile struct kTaskStruct_t * taskA, volatile struct kTaskStruct_t * taskB)
-{
-	struct kTaskStruct_t taskTemp = *taskA;
-	*taskA = *taskB;
-	*taskB = taskTemp;
-}
-
-static void kernel_sortTaskList() //Bubble sort
-{
-	uint8_t swapFlag = 0;
-	
-	for (int i = 0; i < kTaskIndex; i++) {
-		swapFlag = 0;
-		for (int j = 0; j < kTaskIndex-i; j++) {
-			if (kTaskList[j].priority > kTaskList[j+1].priority) {
-				swapFlag = 1;
-				kernel_swapTasks(&kTaskList[j], &kTaskList[j+1]); //Bruh
-			}
-		}
-		if (!swapFlag) break;
-	}
-	return;
-}
-
 kTaskHandle_t kernel_createTask(kTask_t t_pointer, uint16_t t_stackSize, kTaskPriority_t t_priority, kTaskType_t t_type, uint16_t t_execTime)
 {	
 	if (t_pointer == NULL) return NULL;
@@ -261,13 +275,14 @@ kTaskHandle_t kernel_createTask(kTask_t t_pointer, uint16_t t_stackSize, kTaskPr
 	kTaskList[kTaskIndex].priority = t_priority;
 	kTaskList[kTaskIndex].taskPtr = t_pointer;
 	kTaskList[kTaskIndex].stackBegin = stackPointer;
+	kTaskList[kTaskIndex].lock = NULL;
 	kTaskList[kTaskIndex].status = KSTATE_READY;
 	kTaskList[kTaskIndex].type = t_type;
 	kTaskList[kTaskIndex].execTime = t_execTime;
 	kTaskList[kTaskIndex].execTimeMax = t_execTime;
 	kTaskList[kTaskIndex].pid = kGlobalPid;
 	
-	kernel_sortTaskList(); //Bruh
+	kernel_sortTaskList(kTaskList, kTaskIndex); //Bruh
 	
 	kTaskHandle_t handle = NULL;
 	
@@ -283,8 +298,6 @@ kTaskHandle_t kernel_createTask(kTask_t t_pointer, uint16_t t_stackSize, kTaskPr
 
 	return handle;
 }
-
-static inline void kernel_taskManager();
 
 uint8_t kernel_init()
 {
@@ -336,7 +349,7 @@ uint8_t kernel_init()
 	debug_puts(L_NONE, PSTR("                      [OK]\r\n"));
 	
 	debug_puts(L_NONE, PSTR("[init] kernel: System startup complete\r\n"));
-	_delay_ms(3000);
+	//_delay_ms(3000);
 	
 	debug_puts(L_NONE, PSTR("\x0C"));
 	
@@ -346,49 +359,28 @@ uint8_t kernel_init()
 	return 0;
 }
 
-inline static void kernel_ISREnter()
-{
-	kInterruptDepth++;
+static inline void kernel_switchTask()
+{	
+	for (int i = 0; i < kTaskIndex; i++) {
+		if(kTaskList[i].status == KSTATE_READY && &kTaskList[i] != kCurrentTask) kNextTask = &kTaskList[i];
+	}
+	
+	if (kNextTask != kCurrentTask) kernel_switchContext();
 }
 
-inline static void kernel_ISRExit()
-{
-	if(kInterruptDepth) kInterruptDepth--;
-}
-
-static void kernel_taskSwitch()
+void kernel_yield() 
 {
 	kernel_saveContext();
-	kernel_switchContext();
+	kernel_switchTask();
 	kernel_restoreContext();
+	kernel_RET();
 }
-
-static volatile uint8_t kCurrentTaskIdx = 0; //TODO: task switch logic
-static inline void kernel_taskManager()
-{	
-	if (kCurrentTaskIdx == kTaskIndex-1)
-		kCurrentTaskIdx = 0;
-	
-	kNextTask = &kTaskList[kCurrentTaskIdx];
-	kCurrentTaskIdx++;
-	
-	if (kNextTask != kCurrentTask && kNextTask -> stackPtr != NULL) kernel_switchContext();
-}
-
-static void kernel_tick()  __attribute__ ( ( naked, noinline ));
 
 static void kernel_tick()
 {
 	kernel_saveContext();
 	__e_time++;
-	if (kCurrentTask -> execTime != 0) {
-		kCurrentTask -> execTime -= 1;
-		//kCurrentTask -> status = KSTATE_READY;
-	}
-	else {
-		kCurrentTask -> status = KSTATE_SUSPENDED;
-	}
-	kernel_taskManager();
+	kernel_switchTask();
 	//hal_startTimer0();
 	kernel_restoreContext();
 	kernel_RET();

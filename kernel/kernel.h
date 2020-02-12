@@ -47,12 +47,23 @@ uint64_t kernel_getUptime();
 kTaskHandle_t kernel_createTask(kTask_t t_pointer, uint16_t t_stackSize, kTaskPriority_t t_priority, kTaskType_t t_type, uint16_t t_execTime);
 uint8_t kernel_setTaskState(kTaskHandle_t t_handle, kTaskStatus_t t_state);
 
+void kernel_yield();
+
+kTaskHandle_t kernel_getCurrentTaskHandle();
+kTaskHandle_t kernel_getNextTaskHandle();
+kTaskHandle_t kernel_getTaskListPtr();
+uint8_t kernel_getTaskListIndex();
+
 void kernel_checkMCUCSR();
 uint8_t kernel_init();
 
 uint8_t kernel_setTimer(kTimerISR_t t_pointer, uint32_t t_period);
 uint8_t kernel_removeTimer(kTimerISR_t t_pointer);
 void kernel_timerService();
+
+struct kLock_t kernel_createMutex();
+uint8_t kernel_lockMutex(struct kLock_t* mutex);
+uint8_t kernel_unlockMutex(struct kLock_t* mutex);
 
 #ifdef KERNEL_SD_MODULE
 	void sd_puts(char * data);

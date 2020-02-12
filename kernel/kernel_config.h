@@ -30,9 +30,11 @@
 	#define MIN_STACK_SIZE 40 //Due to AVR platform limitations, it is NOT RECOMMENDED to use values < 40, or bad things may happen
 	#define KERNEL_STACK_FRAME_REGISTER_OFFSET -4  //Memory offset, from which General Purpose Registers are stored during stack initialization
 	
+//	#define MAX_LOCK_COUNT 4 //Total maximum amount of mutexes
+	
 	//Timer settings
 	#define MAX_TIMER_COUNT 3
-	#define KERNEL_TIMER_PRESCALER 3
+	#define KERNEL_TIMER_PRESCALER 2
 	#define TICKRATE_MS 1
 	
 	/*             Prescaler values             */
