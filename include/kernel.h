@@ -62,6 +62,7 @@ kStackPtr_t kernel_getStackPtr();
 kStackSize_t kernel_getUserTaskStackUsage();
 kStackSize_t kernel_getSystemTaskStackUsage();
 uint8_t kernel_getTaskListIndex();
+void kernel_setCurrentTask(kTaskHandle_t taskHandle);
 
 void kernel_checkMCUCSR();
 uint8_t kernel_init();

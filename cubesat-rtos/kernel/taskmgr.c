@@ -52,6 +52,11 @@ uint8_t kernel_getTaskPosition(kTaskHandle_t taskHandle)
 	return taskHandle -> position;
 }
 
+void kernel_setCurrentTask(kTaskHandle_t taskHandle) 
+{
+	kCurrentTask = taskHandle;
+}
+
 void kernel_enterCriticalSection()
 {
 	kernel_DISABLE_CONTEXT_SWITCH();
