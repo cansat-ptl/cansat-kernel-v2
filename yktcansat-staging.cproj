@@ -113,6 +113,7 @@
   <avrgcc.compiler.directories.IncludePaths>
     <ListValues>
       <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.2.209\include</Value>
+      <Value>../include</Value>
     </ListValues>
   </avrgcc.compiler.directories.IncludePaths>
   <avrgcc.compiler.optimization.level>Optimize debugging experience (-Og)</avrgcc.compiler.optimization.level>
@@ -144,16 +145,79 @@
     <Compile Include="config.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="kernel\hal_pins.h">
+    <Compile Include="cubesat-rtos\hal\gpio.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="kernel\src\mutex.c">
+    <Compile Include="cubesat-rtos\hal\interrupts.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="kernel\src\time.c">
+    <Compile Include="cubesat-rtos\hal\stackframe.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="kernel\src\watchdog.c">
+    <Compile Include="cubesat-rtos\hal\timers.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="cubesat-rtos\hal\watchdog.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="cubesat-rtos\kernel\avr\platform.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="cubesat-rtos\kernel\init.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="cubesat-rtos\kernel\stack.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="hal_pins.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\hal\gpio.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\hal\hal.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\hal\timers.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\hal\uart.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\kernel.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\threads\threads.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\types.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="cubesat-rtos\hal\uart.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="cubesat-rtos\threads\mutex.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="cubesat-rtos\kernel\debug.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="cubesat-rtos\kernel\taskmgr.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="cubesat-rtos\kernel\tasklist.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="cubesat-rtos\utils\time.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="cubesat-rtos\utils\utils.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\utils\time.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel_config.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="main.c">
@@ -161,37 +225,16 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="kernel\hal.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="kernel\kernel.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="kernel\kernel_config.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="kernel\src\debug.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="kernel\src\hal.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="kernel\src\kernel.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="kernel\src\kernel_utils.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="kernel\src\utils.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="kernel\types.h">
-      <SubType>compile</SubType>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="kernel" />
-    <Folder Include="kernel\src" />
+    <Folder Include="cubesat-rtos" />
+    <Folder Include="cubesat-rtos\kernel\avr" />
+    <Folder Include="cubesat-rtos\threads" />
+    <Folder Include="include" />
+    <Folder Include="cubesat-rtos\hal" />
+    <Folder Include="cubesat-rtos\utils" />
+    <Folder Include="cubesat-rtos\kernel" />
+    <Folder Include="include\hal" />
+    <Folder Include="include\utils" />
+    <Folder Include="include\threads" />
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>

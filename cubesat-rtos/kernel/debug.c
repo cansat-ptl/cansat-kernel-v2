@@ -7,8 +7,8 @@
 
 #include <stdarg.h>
 #include <stdlib.h>
-#include "../kernel.h"
-#include "../hal.h"
+#include <kernel.h>
+#include <hal/hal.h>
 
 #if KERNEL_DEBUG_MODULE == 1
 
