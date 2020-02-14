@@ -15,6 +15,7 @@
 static volatile struct kTaskStruct_t *kCurrentTask;
 static volatile struct kTaskStruct_t *kNextTask;
 static volatile uint16_t kflags = 0;
+static volatile uint8_t taskMgrFlags = 0;
 volatile uint64_t __e_time = 0;
 static volatile uint8_t kInterruptDepth = 0;
 static volatile uint8_t kGlobalPid = 1;
@@ -22,9 +23,12 @@ static volatile uint8_t kGlobalPid = 1;
 static volatile struct kTaskStruct_t kTaskList[MAX_TASK_COUNT];
 static volatile uint8_t kTaskIndex = 0;
 
+static volatile uint16_t kTaskActiveTicks = 0;
 static volatile uint8_t kCurrentTaskIdx = 0; //TODO: task switch logic
+static volatile uint8_t kPreviousTaskIdx = 0; //TODO: task switch logic
 
 static inline void kernel_switchTask();
+void kernel_switchTo(kTaskHandle_t handle) __attribute__ (( naked, noinline ));
 static void kernel_tick()  __attribute__ ( ( naked, noinline ));
 
 kTaskHandle_t kernel_getCurrentTaskHandle()
@@ -92,27 +96,16 @@ uint8_t kernel_checkFlag(uint8_t flag)
 	return res;
 }
 
-uint8_t kernel_setTaskState(kTaskHandle_t t_handle, kTaskStatus_t t_state)
+uint8_t kernel_setTaskState(kTaskHandle_t t_handle, kTaskState_t t_state)
 {
 	if (t_handle == NULL) return ERR_NULLPTR;
 	
-	t_handle -> status = t_state;
+	t_handle -> state = t_state;
 	
 	return 0;
 }
 
-/*typedef struct taskStruct {
-void *stackPtr;
-void *statusPtr;
-task taskPtr;
-taskPriority_t priority;
-taskStatus_t status;
-taskType_t type;
-uint8_t pid;
-const char name[8];
-};*/
-
-kTaskHandle_t kernel_createTask(kTask_t startupPointer, kStackSize_t taskStackSize, kTaskPriority_t taskPriority, kTaskType_t taskType)
+kTaskHandle_t kernel_createTask(kTask_t startupPointer, kStackSize_t taskStackSize, uint8_t taskPriority, kTaskType_t taskType)
 {	
 	if (startupPointer == NULL) return NULL;
 
@@ -126,7 +119,7 @@ kTaskHandle_t kernel_createTask(kTask_t startupPointer, kStackSize_t taskStackSi
 	kTaskList[kTaskIndex].taskPtr = startupPointer;
 	kTaskList[kTaskIndex].stackBegin = stackPointer;
 	kTaskList[kTaskIndex].lock = NULL;
-	kTaskList[kTaskIndex].status = KSTATE_READY;
+	kTaskList[kTaskIndex].state = KSTATE_READY;
 	kTaskList[kTaskIndex].type = taskType;
 	kTaskList[kTaskIndex].pid = kGlobalPid;
 	
@@ -159,26 +152,69 @@ inline void kernel_restoreContext()
 
 static inline void kernel_switchContext()
 {
-	if (hal_CHECK_BIT(kflags, KFLAG_CSW_ALLOWED)) {
 		kCurrentTask = kNextTask;
-	}
 }
 
 static inline void kernel_switchTask()
 {	
-	if (kCurrentTaskIdx == kTaskIndex-1)
-	kCurrentTaskIdx = 0;
+	uint8_t switchReady = 0;
+	kPreviousTaskIdx = kCurrentTaskIdx;
 	
-	kNextTask = &kTaskList[kCurrentTaskIdx];
-	kCurrentTaskIdx++;
-	
-	if (kNextTask != kCurrentTask && kNextTask -> stackPtr != NULL && kNextTask -> taskPtr != NULL) kernel_switchContext();
+	if (hal_CHECK_BIT(kflags, KFLAG_CSW_ALLOWED)) {
+		for (int i = 0; i < kTaskIndex && !switchReady; i++) {
+			switch (kTaskList[i].state) {
+				
+				case KSTATE_READY:
+					kNextTask = &kTaskList[i];
+					switchReady = 1;
+					if (kTaskList[i].priority == KPRIO_REALTIME)
+						kTaskActiveTicks = 0;
+					else
+						kTaskActiveTicks = 1 + kTaskList[i].priority;
+				break;
+				
+				case KSTATE_SLEEPING:
+					if (hal_CHECK_BIT(kflags, KFLAG_TIMER_ISR)) {
+						if (kTaskList[i].sleepTime != 0) {
+							kTaskList[i].sleepTime--;
+						}
+						else {
+							kTaskList[i].state = KSTATE_READY;
+							i--;
+						}
+					}
+				break;
+				
+				default:
+				break;
+			}
+		}
+	}
+	if (kCurrentTask != kNextTask && switchReady) kernel_switchContext();
 }
 
-void kernel_yield() 
+void kernel_yield(uint16_t sleep) 
 {
 	kernel_saveContext();
+	
+	if (sleep == 0) {
+		kCurrentTask -> state = KSTATE_SUSPENDED;
+	}
+	else {
+		kCurrentTask -> state = KSTATE_SLEEPING;
+		kCurrentTask -> sleepTime = sleep; 
+	}
+	
 	kernel_switchTask();
+	kernel_restoreContext();
+	kernel_RET();
+}
+
+void kernel_switchTo(kTaskHandle_t handle)
+{
+	kernel_saveContext();
+	kNextTask = handle;
+	kernel_switchContext();
 	kernel_restoreContext();
 	kernel_RET();
 }
@@ -186,9 +222,11 @@ void kernel_yield()
 static void kernel_tick()
 {
 	kernel_saveContext();
+	hal_SET_BIT(kflags, KFLAG_TIMER_ISR);
 	__e_time++;
 	kernel_switchTask();
 	//hal_startTimer0();
+	hal_CLEAR_BIT(kflags, KFLAG_TIMER_ISR);
 	kernel_restoreContext();
 	kernel_RET();
 }

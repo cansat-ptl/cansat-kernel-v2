@@ -26,8 +26,9 @@ uint8_t kernel_lockMutex(struct kLock_t* mutex)
 	kTaskHandle_t runningTask = kernel_getCurrentTaskHandle();
 	runningTask -> lock = mutex;
 	
-	if (mutex -> lockCount == 0) {
+	if (mutex -> lockCount == 0 && mutex ->owner == NULL) {
 		mutex -> lockCount = 1;
+		mutex -> owner = runningTask;
 		hal_ENABLE_INTERRUPTS();
 		hal_STATUS_REG = sreg;
 		kernel_exitCriticalSection();
@@ -38,7 +39,7 @@ uint8_t kernel_lockMutex(struct kLock_t* mutex)
 		hal_ENABLE_INTERRUPTS();
 		hal_STATUS_REG = sreg;
 		kernel_exitCriticalSection();
-		kernel_yield();
+		kernel_switchTo(mutex -> owner);
 		return 1;
 	}
 }
@@ -51,6 +52,7 @@ uint8_t kernel_unlockMutex(struct kLock_t* mutex)
 	if (mutex == NULL) return 1;
 	
 	mutex -> lockCount = 0;
+	mutex -> owner = NULL;
 	kTaskHandle_t taskList = kernel_getTaskListPtr();
 	uint8_t taskIndex = kernel_getTaskListIndex();
 	

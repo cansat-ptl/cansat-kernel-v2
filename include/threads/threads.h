@@ -8,7 +8,14 @@
 #ifndef THREADS_H_
 #define THREADS_H_
 
+#include <stdint.h>
+#include <string.h>
+#include <stdio.h>
 #include <types.h>
+#include <hal/hal.h>
+
+void kernel_exitCriticalSection();
+void kernel_enterCriticalSection();
 
 struct kLock_t kernel_createMutex();
 uint8_t kernel_lockMutex(struct kLock_t* mutex);

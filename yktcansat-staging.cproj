@@ -96,49 +96,49 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <ToolchainSettings>
       <AvrGcc>
-  <avrgcc.common.Device>-mmcu=atmega128 -B "%24(PackRepoDir)\atmel\ATmega_DFP\1.2.209\gcc\dev\atmega128"</avrgcc.common.Device>
-  <avrgcc.common.optimization.RelaxBranches>True</avrgcc.common.optimization.RelaxBranches>
-  <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
-  <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
-  <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
-  <avrgcc.common.outputfiles.srec>True</avrgcc.common.outputfiles.srec>
-  <avrgcc.common.outputfiles.usersignatures>False</avrgcc.common.outputfiles.usersignatures>
-  <avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>
-  <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
-  <avrgcc.compiler.symbols.DefSymbols>
-    <ListValues>
-      <Value>DEBUG</Value>
-    </ListValues>
-  </avrgcc.compiler.symbols.DefSymbols>
-  <avrgcc.compiler.directories.IncludePaths>
-    <ListValues>
-      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.2.209\include</Value>
-      <Value>../include</Value>
-    </ListValues>
-  </avrgcc.compiler.directories.IncludePaths>
-  <avrgcc.compiler.optimization.level>Optimize debugging experience (-Og)</avrgcc.compiler.optimization.level>
-  <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
-  <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
-  <avrgcc.compiler.optimization.DebugLevel>Maximum (-g3)</avrgcc.compiler.optimization.DebugLevel>
-  <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
-  <avrgcc.compiler.warnings.ExtraWarnings>True</avrgcc.compiler.warnings.ExtraWarnings>
-  <avrgcc.compiler.warnings.Pedantic>True</avrgcc.compiler.warnings.Pedantic>
-  <avrgcc.compiler.miscellaneous.Verbose>True</avrgcc.compiler.miscellaneous.Verbose>
-  <avrgcc.linker.general.NoSharedLibraries>True</avrgcc.linker.general.NoSharedLibraries>
-  <avrgcc.linker.general.UseVprintfLibrary>True</avrgcc.linker.general.UseVprintfLibrary>
-  <avrgcc.linker.libraries.Libraries>
-    <ListValues>
-      <Value>libm</Value>
-    </ListValues>
-  </avrgcc.linker.libraries.Libraries>
-  <avrgcc.linker.miscellaneous.LinkerFlags>-Wl,-u,vfprintf -lprintf_flt -lm</avrgcc.linker.miscellaneous.LinkerFlags>
-  <avrgcc.assembler.general.IncludePaths>
-    <ListValues>
-      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.2.209\include</Value>
-    </ListValues>
-  </avrgcc.assembler.general.IncludePaths>
-  <avrgcc.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcc.assembler.debugging.DebugLevel>
-</AvrGcc>
+        <avrgcc.common.Device>-mmcu=atmega128 -B "%24(PackRepoDir)\atmel\ATmega_DFP\1.2.209\gcc\dev\atmega128"</avrgcc.common.Device>
+        <avrgcc.common.optimization.RelaxBranches>True</avrgcc.common.optimization.RelaxBranches>
+        <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
+        <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
+        <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
+        <avrgcc.common.outputfiles.srec>True</avrgcc.common.outputfiles.srec>
+        <avrgcc.common.outputfiles.usersignatures>False</avrgcc.common.outputfiles.usersignatures>
+        <avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>
+        <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
+        <avrgcc.compiler.symbols.DefSymbols>
+          <ListValues>
+            <Value>DEBUG</Value>
+          </ListValues>
+        </avrgcc.compiler.symbols.DefSymbols>
+        <avrgcc.compiler.directories.IncludePaths>
+          <ListValues>
+            <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.2.209\include</Value>
+            <Value>../include</Value>
+          </ListValues>
+        </avrgcc.compiler.directories.IncludePaths>
+        <avrgcc.compiler.optimization.level>Optimize debugging experience (-Og)</avrgcc.compiler.optimization.level>
+        <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
+        <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
+        <avrgcc.compiler.optimization.DebugLevel>Maximum (-g3)</avrgcc.compiler.optimization.DebugLevel>
+        <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
+        <avrgcc.compiler.warnings.ExtraWarnings>True</avrgcc.compiler.warnings.ExtraWarnings>
+        <avrgcc.compiler.warnings.Pedantic>True</avrgcc.compiler.warnings.Pedantic>
+        <avrgcc.compiler.miscellaneous.Verbose>True</avrgcc.compiler.miscellaneous.Verbose>
+        <avrgcc.linker.general.NoSharedLibraries>True</avrgcc.linker.general.NoSharedLibraries>
+        <avrgcc.linker.general.UseVprintfLibrary>True</avrgcc.linker.general.UseVprintfLibrary>
+        <avrgcc.linker.libraries.Libraries>
+          <ListValues>
+            <Value>libm</Value>
+          </ListValues>
+        </avrgcc.linker.libraries.Libraries>
+        <avrgcc.linker.miscellaneous.LinkerFlags>-Wl,-u,vfprintf -lprintf_flt -lm</avrgcc.linker.miscellaneous.LinkerFlags>
+        <avrgcc.assembler.general.IncludePaths>
+          <ListValues>
+            <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.2.209\include</Value>
+          </ListValues>
+        </avrgcc.assembler.general.IncludePaths>
+        <avrgcc.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcc.assembler.debugging.DebugLevel>
+      </AvrGcc>
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
@@ -169,6 +169,15 @@
     <Compile Include="cubesat-rtos\kernel\stack.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="cubesat-rtos\threads\mutex.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="cubesat-rtos\timers\timermgr.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="cubesat-rtos\timers\timers.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="hal_pins.h">
       <SubType>compile</SubType>
     </Compile>
@@ -187,6 +196,18 @@
     <Compile Include="include\kernel.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="include\kernel\control.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\kernel\debug.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\kernel\memory.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\kernel\tasks.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="include\threads\threads.h">
       <SubType>compile</SubType>
     </Compile>
@@ -194,9 +215,6 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="cubesat-rtos\hal\uart.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="cubesat-rtos\threads\mutex.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="cubesat-rtos\kernel\debug.c">
@@ -217,6 +235,9 @@
     <Compile Include="include\utils\time.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="include\utils\utils.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="kernel_config.h">
       <SubType>compile</SubType>
     </Compile>
@@ -227,12 +248,15 @@
   <ItemGroup>
     <Folder Include="cubesat-rtos" />
     <Folder Include="cubesat-rtos\kernel\avr" />
-    <Folder Include="cubesat-rtos\threads" />
+    <Folder Include="cubesat-rtos\threads\" />
+    <Folder Include="cubesat-rtos\timers" />
     <Folder Include="include" />
     <Folder Include="cubesat-rtos\hal" />
     <Folder Include="cubesat-rtos\utils" />
     <Folder Include="cubesat-rtos\kernel" />
     <Folder Include="include\hal" />
+    <Folder Include="include\kernel" />
+    <Folder Include="include\timers" />
     <Folder Include="include\utils" />
     <Folder Include="include\threads" />
   </ItemGroup>

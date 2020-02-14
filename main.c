@@ -20,10 +20,12 @@ kTask simpleTask()
 		//kernel_lockMutex(&mutex0);
 		debug_puts(L_NONE, PSTR("Job 1 starts\r\n"));
 		resourse = 2;
-		//_delay_ms(1000);
+		kernel_yield(500);
 		debug_puts(L_NONE, PSTR("Job 1 ends\r\n"));
+		kernel_yield(500);
 		//kernel_unlockMutex(&mutex0);
-		kernel_setTaskState(kernel_getCurrentTaskHandle(), KSTATE_SUSPENDED);
+		//kernel_setTaskState(kernel_getCurrentTaskHandle(), KSTATE_SUSPENDED);
+		//while(1);
 	}
 }
 kTask simpleTask1()
@@ -32,10 +34,12 @@ kTask simpleTask1()
 		//kernel_lockMutex(&mutex0);
 		debug_puts(L_NONE, PSTR("Job 2 starts\r\n"));
 		resourse += 2;
-		//_delay_ms(1000);
+		_delay_ms(1000);
 		debug_puts(L_NONE, PSTR("Job 2 ends\r\n"));
 		//kernel_unlockMutex(&mutex0);
+		_delay_ms(1000);
 		kernel_setTaskState(kernel_getCurrentTaskHandle(), KSTATE_SUSPENDED);
+		while(1);
 	}
 }
 
@@ -45,10 +49,12 @@ kTask simpleTask2()
 		//kernel_lockMutex(&mutex0);
 		debug_puts(L_NONE, PSTR("Job 3 starts\r\n"));
 		resourse *= 3;
-		//_delay_ms(1000);
+		_delay_ms(1000);
 		debug_puts(L_NONE, PSTR("Job 3 ends\r\n"));
 		//kernel_unlockMutex(&mutex0);
+		_delay_ms(1000);
 		kernel_setTaskState(kernel_getCurrentTaskHandle(), KSTATE_SUSPENDED);
+		while(1);
 	}
 }
 
@@ -56,9 +62,9 @@ int main()
 {
 	mutex0 = kernel_createMutex();
 	
-	t1 = kernel_createTask(simpleTask, 256, KPRIO_HIGH, KTASK_USER);
-	t2 = kernel_createTask(simpleTask1, 256, KPRIO_HIGH, KTASK_USER);
-	t3 = kernel_createTask(simpleTask2, 256, KPRIO_HIGH, KTASK_USER);
+	t1 = kernel_createTask(simpleTask, 256, 3, KTASK_USER);
+	t2 = kernel_createTask(simpleTask1, 256, 3, KTASK_USER);
+	t3 = kernel_createTask(simpleTask2, 256, 3, KTASK_USER);
 	kernel_init();
 	//kernel_createTask(simpleTask3, 64, KPRIO_HIGH, KTASK_DEFAULT, 200, "test3");
 	while (1);

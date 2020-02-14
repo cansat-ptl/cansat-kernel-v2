@@ -5,10 +5,7 @@
  *  Author: ThePetrovich
  */ 
 
-#include <stdarg.h>
-#include <stdlib.h>
 #include <kernel.h>
-#include <hal/hal.h>
 
 #if KERNEL_DEBUG_MODULE == 1
 
@@ -104,6 +101,7 @@ void debug_sendMessageSD_p(char* buffer, uint8_t level, const char * format, va_
 
 void debug_puts(uint8_t level, const char * format)
 {
+	kernel_enterCriticalSection();
 	#if KERNEL_DEBUG_MODULE == 1
 	char * levelptr = (char*)pgm_read_word(&(levels[level]));
 		while(pgm_read_byte(levelptr) != 0x00)
@@ -113,6 +111,7 @@ void debug_puts(uint8_t level, const char * format)
 	#else
 		#warning Trying to use disabled debug module, this may spawn dragons
 	#endif
+	kernel_exitCriticalSection();
 }
 
 void debug_putsSD(uint8_t level, const char * format)
@@ -132,6 +131,7 @@ static char __buffer[128];
 
 void debug_logMessage(uint8_t pgm, uint8_t level, const char * format, ...)
 {
+	kernel_enterCriticalSection();
 	#if KERNEL_DEBUG_MODULE == 1
 		va_list args;
 		
@@ -165,4 +165,5 @@ void debug_logMessage(uint8_t pgm, uint8_t level, const char * format, ...)
 	#else
 		#warning Trying to use disabled debug module, this may spawn dragons
 	#endif
+	kernel_exitCriticalSection();
 }

@@ -22,7 +22,7 @@ uint8_t kernel_init()
 	
 	kernel_prepareMemoryBarrier(kernel_getStackPtr() + (TASK_STACK_SIZE + KERNEL_STACK_SAFETY_MARGIN)-1, KERNEL_STACK_SAFETY_MARGIN, 0xFE);
 	
-	kTaskHandle_t ct = kernel_createTask(kernel_idle, 64, KPRIO_NONE, KTASK_SYSTEM);
+	kTaskHandle_t ct = kernel_createTask(kernel_idle, 64, 0, KTASK_SYSTEM);
 	if (ct == NULL) {
 		debug_puts(L_NONE, PSTR("                          [ERR]\r\n"));
 		debug_puts(L_NONE, PSTR("[init] kernel: Memory allocation error\r\n"));
