@@ -44,7 +44,7 @@ uint8_t kernel_init()
 	debug_puts(L_NONE, PSTR("                      [OK]\r\n"));
 	
 	debug_puts(L_NONE, PSTR("[init] kernel: System startup complete\r\n"));
-	_delay_ms(3000);
+	_delay_ms(100);
 	
 	debug_puts(L_NONE, PSTR("\x0C"));
 	

@@ -16,6 +16,8 @@
 
 void kernel_exitCriticalSection();
 void kernel_enterCriticalSection();
+uint8_t kernel_startAtomicOperation();
+void kernel_endAtomicOperation(uint8_t sreg);
 
 struct kLock_t kernel_createMutex();
 uint8_t kernel_lockMutex(struct kLock_t* mutex);

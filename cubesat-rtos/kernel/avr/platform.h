@@ -114,4 +114,5 @@
 	[_SPL_] "i" _SFR_IO_ADDR(SPL), \
 	[_SPH_] "i" _SFR_IO_ADDR(SPH) \
 )
+
 #endif /* PLATFORM_H_ */

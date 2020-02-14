@@ -29,6 +29,7 @@ uint8_t kernel_getTaskListIndex();
 void kernel_setCurrentTask(kTaskHandle_t taskHandle);
 
 void kernel_yield(uint16_t sleep) __attribute__ (( naked, noinline ));
+void kernel_stopTask(kTaskState_t exitState);
 void kernel_switchTo(kTaskHandle_t handle) __attribute__ (( naked, noinline ));
 
 #endif /* TASKMGR_H_ */

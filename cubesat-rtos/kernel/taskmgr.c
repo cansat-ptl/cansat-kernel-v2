@@ -6,6 +6,7 @@
  */ 
 
 #include <kernel.h>
+#include <hal/hal.h>
 #include "../kernel_config.h"
 #include "avr/platform.h"
 
@@ -69,6 +70,21 @@ void kernel_enterCriticalSection()
 void kernel_exitCriticalSection()
 {
 	kernel_ENABLE_CONTEXT_SWITCH();
+}
+
+uint8_t kernel_startAtomicOperation()
+{
+	kernel_enterCriticalSection();
+	uint8_t sreg = hal_STATUS_REG;
+	hal_DISABLE_INTERRUPTS();
+	return sreg;
+}
+
+void kernel_endAtomicOperation(uint8_t sreg)
+{
+	kernel_exitCriticalSection();
+	hal_ENABLE_INTERRUPTS();
+	hal_STATUS_REG = sreg;
 }
 
 inline static void kernel_ISREnter()
@@ -193,16 +209,19 @@ static inline void kernel_switchTask()
 	if (kCurrentTask != kNextTask && switchReady) kernel_switchContext();
 }
 
+inline void kernel_stopTask(kTaskState_t exitState)
+{
+	kCurrentTask -> state = exitState;
+	kernel_yield(0);
+}
+
 void kernel_yield(uint16_t sleep) 
 {
 	kernel_saveContext();
 	
-	if (sleep == 0) {
-		kCurrentTask -> state = KSTATE_SUSPENDED;
-	}
-	else {
+	if (sleep != 0) {
 		kCurrentTask -> state = KSTATE_SLEEPING;
-		kCurrentTask -> sleepTime = sleep; 
+		kCurrentTask -> sleepTime = sleep;
 	}
 	
 	kernel_switchTask();
@@ -213,7 +232,6 @@ void kernel_yield(uint16_t sleep)
 void kernel_switchTo(kTaskHandle_t handle)
 {
 	kernel_saveContext();
-	kNextTask = handle;
 	kernel_switchContext();
 	kernel_restoreContext();
 	kernel_RET();
