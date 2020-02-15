@@ -145,28 +145,28 @@
     <Compile Include="config.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="cubesat-rtos\hal\gpio.c">
+    <Compile Include="cubesat-rtos\dev\basic\gpio.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="cubesat-rtos\hal\interrupts.c">
+    <Compile Include="cubesat-rtos\dev\basic\uart.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="cubesat-rtos\hal\stackframe.c">
+    <Compile Include="cubesat-rtos\dev\basic\watchdog.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="cubesat-rtos\hal\timers.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="cubesat-rtos\hal\watchdog.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="cubesat-rtos\kernel\avr\platform.h">
+    <Compile Include="cubesat-rtos\kernel\flags.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="cubesat-rtos\kernel\init.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="cubesat-rtos\kernel\stack.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="cubesat-rtos\platform\avr\stackframe.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="cubesat-rtos\platform\avr\timers.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="cubesat-rtos\threads\mutex.c">
@@ -181,16 +181,13 @@
     <Compile Include="hal_pins.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="include\hal\gpio.h">
+    <Compile Include="include\dev\basic\gpio.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\dev\basic\uart.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="include\hal\hal.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\hal\timers.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\hal\uart.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="include\kernel.h">
@@ -208,13 +205,19 @@
     <Compile Include="include\kernel\tasks.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="include\platform\avr\avr.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\platform\avr\timers.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\platform\platform.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="include\threads\threads.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="include\types.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="cubesat-rtos\hal\uart.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="cubesat-rtos\kernel\debug.c">
@@ -247,15 +250,21 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cubesat-rtos" />
-    <Folder Include="cubesat-rtos\kernel\avr" />
+    <Folder Include="cubesat-rtos\dev\basic" />
+    <Folder Include="cubesat-rtos\dev" />
+    <Folder Include="cubesat-rtos\platform" />
+    <Folder Include="cubesat-rtos\platform\avr" />
     <Folder Include="cubesat-rtos\threads\" />
     <Folder Include="cubesat-rtos\timers" />
     <Folder Include="include" />
-    <Folder Include="cubesat-rtos\hal" />
     <Folder Include="cubesat-rtos\utils" />
     <Folder Include="cubesat-rtos\kernel" />
+    <Folder Include="include\dev\basic" />
     <Folder Include="include\hal" />
     <Folder Include="include\kernel" />
+    <Folder Include="include\dev" />
+    <Folder Include="include\platform" />
+    <Folder Include="include\platform\avr" />
     <Folder Include="include\timers" />
     <Folder Include="include\utils" />
     <Folder Include="include\threads" />

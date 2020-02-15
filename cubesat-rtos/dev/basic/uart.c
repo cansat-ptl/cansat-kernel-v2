@@ -5,9 +5,10 @@
  *  Author: ThePetrovich
  */ 
 
-#include <hal/hal.h>
+#include <platform/platform.h>
+#include <dev/basic/uart.h>
 
-void hal_basicUart_init (uint16_t ubrr)
+void basicUart_init (uint16_t ubrr)
 {
 	UBRR0H = (ubrr >> 8);
 	UBRR0L = (ubrr & 0xFF);
@@ -15,28 +16,27 @@ void hal_basicUart_init (uint16_t ubrr)
 	UCSR0C = (0<<USBS)|(1<<UCSZ00)|(1<<UCSZ01)|(0<<UCSZ02)|(0<<UPM00)|(0<<UPM01)|(0<<UMSEL0);
 }
 
-void hal_basicUart_putc(char c)
+void basicUart_putc(char c)
 {
 	UDR0 = c;
 	while (!(UCSR0A & (1<<UDRE)));
 }
 
-void hal_basicUart_puts(char * msg)
+void basicUart_puts(char * msg)
 {
 	int i = 0;
 	while (msg[i] != '\0') {
-		UDR0 = msg[i];
-		while (!(UCSR0A & (1<<UDRE)));
+		basicUart_putc(msg[i]);
 		i++;
 	}
 }
 
-void hal_basicUart_enableInterruptsRX()
+void basicUart_enableInterruptsRX()
 {
 	UCSR0B |= (1 << RXCIE);
 }
 
-void hal_basicUart_disableInterruptsRX()
+void basicUart_disableInterruptsRX()
 {
 	UCSR0B &= ~(1 << RXCIE);
 }

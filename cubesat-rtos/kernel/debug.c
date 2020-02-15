@@ -6,6 +6,7 @@
  */ 
 
 #include <kernel.h>
+#include <hal/hal.h>
 
 #if KERNEL_DEBUG_MODULE == 1
 
