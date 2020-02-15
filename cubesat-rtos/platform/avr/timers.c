@@ -5,6 +5,7 @@
  *  Author: Admin
  */ 
 #include <platform/platform.h>
+#include <kernel.h>
 
 void platform_setupTimer1A(uint8_t prescaler)
 {
@@ -62,4 +63,10 @@ void platform_stopTimer0()
 	TIMSK &= ~(1 << OCIE0);
 	platform_ENABLE_INTERRUPTS();
 	platform_STATUS_REG = sreg;
+}
+
+ISR(TIMER0_COMP_vect, ISR_NAKED) 
+{
+	kernel_tick();
+	platform_RETI();
 }

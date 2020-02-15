@@ -17,10 +17,12 @@ kTaskHandle_t t1, t2, t3;
 kTask simpleTask()
 {
 	while (1) {
+		kernel_lockMutex(&mutex0);
 		debug_puts(L_NONE, PSTR("Job 1 starts\r\n"));
 		resourse = 2;
 		kernel_yield(100);
 		debug_puts(L_NONE, PSTR("Job 1 ends\r\n"));
+		kernel_unlockMutex(&mutex0);
 		kernel_yield(100);
 		//kernel_setTaskState(kernel_getCurrentTaskHandle(), KSTATE_SUSPENDED);
 		//while(1);
@@ -29,10 +31,12 @@ kTask simpleTask()
 kTask simpleTask1()
 {
 	while (1) {
+		kernel_lockMutex(&mutex0);
 		debug_puts(L_NONE, PSTR("Job 2 starts\r\n"));
 		resourse += 2;
 		_delay_ms(200);
 		debug_puts(L_NONE, PSTR("Job 2 ends\r\n"));
+		kernel_unlockMutex(&mutex0);
 		_delay_ms(200);
 		//kernel_setTaskState(kernel_getCurrentTaskHandle(), KSTATE_SUSPENDED);
 		//while(1);
@@ -42,10 +46,12 @@ kTask simpleTask1()
 kTask simpleTask2()
 {
 	while (1) {
+		kernel_lockMutex(&mutex0);
 		debug_puts(L_NONE, PSTR("Job 3 starts\r\n"));
 		resourse *= 3;
 		_delay_ms(200);
 		debug_puts(L_NONE, PSTR("Job 3 ends\r\n"));
+		kernel_unlockMutex(&mutex0);
 		_delay_ms(200);
 		//kernel_setTaskState(kernel_getCurrentTaskHandle(), KSTATE_SUSPENDED);
 		//while(1);

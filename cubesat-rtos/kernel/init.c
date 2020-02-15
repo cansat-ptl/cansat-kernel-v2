@@ -6,6 +6,8 @@
  */ 
 #include <kernel.h>
 
+extern volatile kTaskHandle_t kIdleTaskHandle;
+
 void kernel_idle()
 {
 	while(1) platform_NOP();
@@ -32,19 +34,20 @@ uint8_t kernel_init()
 	debug_puts(L_NONE, PSTR("                          [OK]\r\n"));
 	
 	debug_puts(L_NONE, PSTR("[init] kernel: Starting up first task"));
+	kIdleTaskHandle = ct;
 	kernel_setCurrentTask(ct);
 	debug_puts(L_NONE, PSTR("                        [OK]\r\n"));
 	
 	debug_puts(L_NONE, PSTR("[init] kernel: Setting up system timer"));
-	platform_setupTimer0(3);
+	platform_setupSystemTimer();
 	debug_puts(L_NONE, PSTR("                       [OK]\r\n"));
 	
 	debug_puts(L_NONE, PSTR("[init] kernel: Starting up system timer"));
-	platform_startTimer0();
+	platform_startSystemTimer();
 	debug_puts(L_NONE, PSTR("                      [OK]\r\n"));
 	
 	debug_puts(L_NONE, PSTR("[init] kernel: System startup complete\r\n"));
-	_delay_ms(100);
+	platform_DELAY_MS(100);
 	
 	debug_puts(L_NONE, PSTR("\x0C"));
 	

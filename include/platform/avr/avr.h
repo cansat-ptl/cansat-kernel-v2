@@ -25,6 +25,7 @@
 #include <avr/wdt.h>
 
 #include <kernel.h>
+#include <platform/avr/timers.h>
 
 #define platform_DISABLE_INTERRUPTS() asm volatile ("cli"::)
 #define platform_ENABLE_INTERRUPTS() asm volatile ("sei"::)
@@ -136,5 +137,9 @@
 	[_SPL_] "i" _SFR_IO_ADDR(SPL), \
 	[_SPH_] "i" _SFR_IO_ADDR(SPH) \
 )
+
+#define platform_setupSystemTimer() platform_setupTimer0(KERNEL_TIMER_PRESCALER);
+#define platform_startSystemTimer() platform_startTimer0();
+#define platform_stopSystemTimer() platform_stopTimer0();
 
 #endif /* AVR_H_ */
