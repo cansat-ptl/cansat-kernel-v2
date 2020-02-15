@@ -55,13 +55,6 @@
 	//CLI options
 	#define RX0_BUFFER_SIZE 64
 	#define MAX_CMD_WORD_SIZE 16
-
-	//HAL uart settings - comment these lines to use built-in uart driver, or specify your own uart functions
-	//#define hal_uart_init(ubrr) uart0_init(ubrr)
-	//#define hal_uart_putc(c) uart0_putc(c)
-	//#define hal_uart_puts(s) uart0_puts(s)
-	//#define hal_uart_enableInterruptsRX() rx0_enableInterrupts()
-	//#define hal_uart_disableInterruptsRX() rx0_disableInterrupts()
 	
 	//HAL timer selection - uncomment the timer to select it
 	#define HAL_USE_TIMER0

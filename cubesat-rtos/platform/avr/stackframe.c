@@ -9,7 +9,7 @@
 #include <types.h>
 #include "../kernel_config.h"
 //TODO: return codes
-uint8_t hal_prepareStackFrame(kStackPtr_t regionPointer, kTask_t taskPointer, kStackSize_t stackSize)
+uint8_t platform_prepareStackFrame(kStackPtr_t regionPointer, kTask_t taskPointer, kStackSize_t stackSize)
 {
 	if (regionPointer == NULL) return 0;			// Return null if memory sp is null (how could this happen?)
 	

@@ -4,34 +4,11 @@
  * Created: 13.02.2020 19:32:11
  *  Author: Admin
  */ 
+#include <dev/basic/gpio.h>
 #include <hal/hal.h>
 
-void hal_setupPins()
-{
-	PORTA = 0;
-	DDRA = 0;
-	PORTB = 0;
-	DDRB = 0;
-	PORTC = 0;
-	DDRC = 0;
-	PORTD = 0;
-	DDRD = 0;
-	PORTE = 0;
-	DDRE = 0;
-	PORTF = 0;
-	DDRF = 0;
-	DDRG |= (1 << PG3);
-	DDRB |= (1 << PD4);
-	hal_setPinMode(&JUMPER_DDR, JUMPER_OUT, OUTPUT);
-	hal_writePin(&JUMPER_PORT, JUMPER_OUT, HIGH);
-	DDRC |= (1 << PC4);
-	DDRC |= (1 << PC5);
-	DDRC |= (1 << PC6);
-	DDRC |= (1 << PC7);
-}
-
 //0 - OUTPUT, 1 - INPUT, 2 - INPUT_PULLUP
-void hal_pinMode(uint8_t pin, uint8_t value)
+void gpio_pinMode(uint8_t pin, uint8_t value)
 {
 	uint8_t nvalue = !value;
 	if (pin < 8) {
@@ -52,11 +29,11 @@ void hal_pinMode(uint8_t pin, uint8_t value)
 		return;
 	}
 	if(value == INPUT_PULLUP)
-	hal_digitalWrite(pin, HIGH);
+	gpio_digitalWrite(pin, HIGH);
 	return;
 }
 
-void hal_digitalWrite(uint8_t pin, uint8_t value)
+void gpio_digitalWrite(uint8_t pin, uint8_t value)
 {
 	if (pin < 8){
 		hal_WRITE_BIT(PORTA, pin, value);
@@ -84,7 +61,7 @@ void hal_digitalWrite(uint8_t pin, uint8_t value)
 	}
 }
 
-uint8_t hal_digitalRead(uint8_t pin)
+uint8_t gpio_digitalRead(uint8_t pin)
 {
 	if (pin < 8)
 	return hal_CHECK_BIT(PINA, pin);

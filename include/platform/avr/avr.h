@@ -1,18 +1,40 @@
 /*
- * platform.h
+ * avr.h
  *
- * Created: 13.02.2020 21:53:32
+ * Created: 15.02.2020 19:56:42
  *  Author: Admin
  */ 
 
 
-#ifndef PLATFORM_H_
-#define PLATFORM_H_
+#ifndef AVR_H_
+#define AVR_H_
+
+#ifndef F_CPU
+#define F_CPU 8000000L						//CPU frequency
+#endif
+
+#include <types.h>
+#include <avr/io.h>
+#include <avr/iom128.h>
+#include <util/delay.h>
+#include <avr/pgmspace.h>
+#include <avr/eeprom.h>
+#include <avr/wdt.h>
+#include <avr/common.h>
+#include <avr/interrupt.h>
+#include <avr/wdt.h>
 
 #include <kernel.h>
 
-#define kernel_RET() asm volatile ("ret \n\t" ::)
-#define kernel_RETI() asm volatile ("reti \n\t" ::)
+#define platform_DISABLE_INTERRUPTS() asm volatile ("cli"::)
+#define platform_ENABLE_INTERRUPTS() asm volatile ("sei"::)
+
+#define platform_STATUS_REG SREG
+#define platform_NOP() asm volatile ("nop"::)
+#define platform_DELAY_MS(x) _delay_ms(x);
+
+#define platform_RET() asm volatile ("ret \n\t" ::)
+#define platform_RETI() asm volatile ("reti \n\t" ::)
 
 #define platform_RESTORE_CONTEXT() asm volatile ( \
 	";------Context-Restore------\n\t"\
@@ -59,7 +81,7 @@
 	"pop r0						\n\t" \
 	";---------------------------\n\t" \
 	: \
-	:	[_SREG_] "i" _SFR_IO_ADDR(hal_STATUS_REG), \
+	:	[_SREG_] "i" _SFR_IO_ADDR(platform_STATUS_REG), \
 	[_SPL_] "i" _SFR_IO_ADDR(SPL), \
 	[_SPH_] "i" _SFR_IO_ADDR(SPH) \
 )
@@ -110,9 +132,9 @@
 	"st X+, r0					\n\t" \
 	";---------------------------\n\t" \
 	: \
-	:	[_SREG_] "i" _SFR_IO_ADDR(hal_STATUS_REG), \
+	:	[_SREG_] "i" _SFR_IO_ADDR(platform_STATUS_REG), \
 	[_SPL_] "i" _SFR_IO_ADDR(SPL), \
 	[_SPH_] "i" _SFR_IO_ADDR(SPH) \
 )
 
-#endif /* PLATFORM_H_ */
+#endif /* AVR_H_ */

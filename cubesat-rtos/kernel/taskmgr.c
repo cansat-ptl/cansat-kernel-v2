@@ -5,10 +5,10 @@
  *  Author: ThePetrovich
  */ 
 
+#include <platform/platform.h>
 #include <kernel.h>
 #include <hal/hal.h>
 #include "../kernel_config.h"
-#include "avr/platform.h"
 
 #define kernel_DISABLE_CONTEXT_SWITCH() hal_CLEAR_BIT(kflags, KFLAG_CSW_ALLOWED)
 #define kernel_ENABLE_CONTEXT_SWITCH() hal_SET_BIT(kflags, KFLAG_CSW_ALLOWED)
@@ -75,16 +75,16 @@ void kernel_exitCriticalSection()
 uint8_t kernel_startAtomicOperation()
 {
 	kernel_enterCriticalSection();
-	uint8_t sreg = hal_STATUS_REG;
-	hal_DISABLE_INTERRUPTS();
+	uint8_t sreg = platform_STATUS_REG;
+	platform_DISABLE_INTERRUPTS();
 	return sreg;
 }
 
 void kernel_endAtomicOperation(uint8_t sreg)
 {
 	kernel_exitCriticalSection();
-	hal_ENABLE_INTERRUPTS();
-	hal_STATUS_REG = sreg;
+	platform_ENABLE_INTERRUPTS();
+	platform_STATUS_REG = sreg;
 }
 
 inline static void kernel_ISREnter()
@@ -99,16 +99,16 @@ inline static void kernel_ISRExit()
 
 void kernel_setFlag(uint8_t flag, uint8_t value)
 {
-	hal_DISABLE_INTERRUPTS();
+	platform_DISABLE_INTERRUPTS();
 	hal_WRITE_BIT(kflags, flag, value);
-	hal_ENABLE_INTERRUPTS();
+	platform_ENABLE_INTERRUPTS();
 }
 
 uint8_t kernel_checkFlag(uint8_t flag)
 {
-	hal_DISABLE_INTERRUPTS();
+	platform_DISABLE_INTERRUPTS();
 	uint8_t res = hal_CHECK_BIT(kflags, flag);
-	hal_ENABLE_INTERRUPTS();
+	platform_ENABLE_INTERRUPTS();
 	return res;
 }
 
@@ -177,12 +177,13 @@ static inline void kernel_switchTask()
 	kPreviousTaskIdx = kCurrentTaskIdx;
 	
 	if (hal_CHECK_BIT(kflags, KFLAG_CSW_ALLOWED)) {
-		for (int i = 0; i < kTaskIndex && !switchReady; i++) {
+		for (int i = 0; i < kTaskIndex; i++) {
 			switch (kTaskList[i].state) {
 				
 				case KSTATE_READY:
 					kNextTask = &kTaskList[i];
 					switchReady = 1;
+					kCurrentTaskIdx = i;
 					if (kTaskList[i].priority == KPRIO_REALTIME)
 						kTaskActiveTicks = 0;
 					else
@@ -203,6 +204,10 @@ static inline void kernel_switchTask()
 				
 				default:
 				break;
+			}
+			if (switchReady) {
+				if (i < kPreviousTaskIdx) switchReady = 0;
+				else break;
 			}
 		}
 	}
@@ -226,7 +231,7 @@ void kernel_yield(uint16_t sleep)
 	
 	kernel_switchTask();
 	kernel_restoreContext();
-	kernel_RET();
+	platform_RET();
 }
 
 void kernel_switchTo(kTaskHandle_t handle)
@@ -234,7 +239,7 @@ void kernel_switchTo(kTaskHandle_t handle)
 	kernel_saveContext();
 	kernel_switchContext();
 	kernel_restoreContext();
-	kernel_RET();
+	platform_RET();
 }
 
 static void kernel_tick()
@@ -242,11 +247,17 @@ static void kernel_tick()
 	kernel_saveContext();
 	hal_SET_BIT(kflags, KFLAG_TIMER_ISR);
 	__e_time++;
-	kernel_switchTask();
+	if (kTaskActiveTicks != 0 && kCurrentTask -> priority != KPRIO_REALTIME)
+		kTaskActiveTicks--;
+	else {
+		kernel_switchTask();
+	}
+	
+	
 	//hal_startTimer0();
 	hal_CLEAR_BIT(kflags, KFLAG_TIMER_ISR);
 	kernel_restoreContext();
-	kernel_RET();
+	platform_RET();
 }
 
 ISR(TIMER0_COMP_vect, ISR_NAKED)
@@ -254,5 +265,5 @@ ISR(TIMER0_COMP_vect, ISR_NAKED)
 	//kernel_taskService();
 	kernel_tick();
 	//kernel_taskSwitch();
-	kernel_RETI();
+	platform_RETI();
 }

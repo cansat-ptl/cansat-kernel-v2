@@ -8,15 +8,11 @@
 #ifndef CONFIG_H_
 #define CONFIG_H_
 
-#define F_CPU 8000000L						//CPU frequency
-
 //#define DEBUG 1
 
 //------------------------Project-settings------------------------
-#include <avr/io.h>
 #include <string.h>
 #include <stdio.h>
-#include <util/delay.h>
 #include <kernel.h>
 //----------------------------------------------------------------
 

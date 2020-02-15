@@ -8,7 +8,7 @@
 
 void kernel_idle()
 {
-	while(1) hal_NOP();
+	while(1) platform_NOP();
 }
 
 uint8_t kernel_init()
@@ -36,11 +36,11 @@ uint8_t kernel_init()
 	debug_puts(L_NONE, PSTR("                        [OK]\r\n"));
 	
 	debug_puts(L_NONE, PSTR("[init] kernel: Setting up system timer"));
-	hal_setupTimer0(3);
+	platform_setupTimer0(3);
 	debug_puts(L_NONE, PSTR("                       [OK]\r\n"));
 	
 	debug_puts(L_NONE, PSTR("[init] kernel: Starting up system timer"));
-	hal_startTimer0();
+	platform_startTimer0();
 	debug_puts(L_NONE, PSTR("                      [OK]\r\n"));
 	
 	debug_puts(L_NONE, PSTR("[init] kernel: System startup complete\r\n"));
@@ -48,7 +48,7 @@ uint8_t kernel_init()
 	
 	debug_puts(L_NONE, PSTR("\x0C"));
 	
-	hal_ENABLE_INTERRUPTS();
+	platform_ENABLE_INTERRUPTS();
 	kernel_exitCriticalSection();
 
 	return 0;

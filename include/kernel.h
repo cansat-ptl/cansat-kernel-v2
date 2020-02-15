@@ -11,6 +11,10 @@
 #define KERNEL_VER "0.0.0-bleeding"
 #define KERNEL_TIMESTAMP __TIMESTAMP__
 
+#include <stdint.h>
+#include <string.h>
+#include <stdio.h>
+
 #include <types.h>
 #include <hal/hal.h>
 #include <threads/threads.h>
@@ -18,11 +22,8 @@
 #include <kernel/tasks.h>
 #include <kernel/memory.h>
 #include <kernel/debug.h>
+#include <platform/platform.h>
 #include "../kernel_config.h"
-
-#include <stdint.h>
-#include <string.h>
-#include <stdio.h>
 
 uint8_t kernel_setTimer(kTimerISR_t t_pointer, uint32_t t_period);
 uint8_t kernel_removeTimer(kTimerISR_t t_pointer);

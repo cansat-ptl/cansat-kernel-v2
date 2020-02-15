@@ -51,7 +51,7 @@ kStackPtr_t kernel_setupTaskStack(kTask_t startupPointer, kStackSize_t taskStack
 		kSystemStackUsage += taskStackSize + TASK_STACK_SAFETY_MARGIN;
 	}
 	
-	hal_prepareStackFrame(stackPointer, startupPointer, taskStackSize);
+	platform_prepareStackFrame(stackPointer, startupPointer, taskStackSize);
 	
 	return stackPointer;
 }

@@ -15,21 +15,11 @@
 #define HAL_MOD_VER "0.2.2-staging"
 #define HAL_MOD_TIMESTAMP __TIMESTAMP__
 
-#include <avr/io.h>
-#include <util/delay.h>
-#include <stdint.h>
-#include <avr/pgmspace.h>
-#include <avr/eeprom.h>
-#include <avr/wdt.h>
-#include <avr/common.h>
-#include <avr/interrupt.h>
-#include <avr/iom128.h>
-#include <avr/wdt.h>
-
 #include <types.h>
-#include <hal/gpio.h>
-#include <hal/timers.h>
-#include <hal/uart.h>
+#include <dev/basic/uart.h>
+#include <dev/basic/gpio.h>
+#include <platform/platform.h>
+
 #include "../kernel_config.h"
 #include "../hal_pins.h"
 
@@ -46,19 +36,30 @@
 	#define hal_STOP_SYSTEM_TIMER() hal_stopTimer1A()
 #endif
 
-#define hal_DISABLE_INTERRUPTS() asm volatile ("cli"::)
-#define hal_ENABLE_INTERRUPTS() asm volatile ("sei"::)
-
-#define hal_STATUS_REG SREG
-#define hal_NOP() asm volatile ("nop"::)
-#define hal_DELAY_MS(x) _delay_ms(x);
-
 #define hal_SET_BIT(x,y) x |= (1 << y)
 #define hal_CLEAR_BIT(x,y) x &= ~(1 << y)
 #define hal_CHECK_BIT(x,y) ((0u == (x & (1 << y))) ? 0u : 1u)
 #define hal_SWITCH_BIT(x,y) (x ^= (1 << y))
 #define hal_WRITE_BIT(x,y,z) x ^= (-1 * z ^ x) & (1 << y);
 
-uint8_t hal_prepareStackFrame(kStackPtr_t regionPointer, kTask_t taskPointer, kStackSize_t stackSize);
+#ifndef hal_UART_INIT
+	#define hal_UART_INIT(ubrr) basicUart_init(ubrr)
+#endif
+
+#ifndef hal_UART_PUTC
+	#define hal_UART_PUTC(c) basicUart_putc(c)
+#endif
+
+#ifndef hal_UART_PUTS
+	#define hal_UART_PUTS(s) basicUart_puts(s)
+#endif
+
+#ifndef hal_UART_ENABLE_RX_INT
+	#define hal_UART_ENABLE_RX_INT() basicUart_enableInterruptsRX()
+#endif
+
+#ifndef hal_UART_DISABLE_RX_INT
+	#define hal_UART_DISABLE_RX_INT(s) basicUart_disableInterruptsRX()
+#endif
 
 #endif /* HAL_H_ */
