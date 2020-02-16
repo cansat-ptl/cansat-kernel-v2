@@ -11,33 +11,49 @@
 
 uint8_t resourse = 1;
 
-kMutex_t mutex0;
+kMutex_t mutex0, mutex1;
 kTaskHandle_t t1, t2, t3;
+
+void deadlockTest2() {
+	kernel_lockMutex(&mutex0);
+	kernel_yield(200);
+	kernel_lockMutex(&mutex1);
+	kernel_yield(200);
+	kernel_unlockMutex(&mutex1);
+	kernel_unlockMutex(&mutex0);
+}
+
+void deadlockTest1() {
+	kernel_lockMutex(&mutex1);
+	kernel_yield(200);
+	kernel_lockMutex(&mutex0);
+	kernel_yield(200);
+	kernel_unlockMutex(&mutex0);
+	kernel_unlockMutex(&mutex1);
+}
 
 kTask simpleTask()
 {
+	kernel_yield(1500);
 	while (1) {
-		kernel_lockMutex(&mutex0);
 		debug_puts(L_NONE, PSTR("Job 1 starts, accessing resourse\r\n"));
-		resourse = 2;
-		kernel_yield(500);
+		deadlockTest1();
+		kernel_yield(200);
 		debug_puts(L_NONE, PSTR("Job 1 ends, accessing resourse\r\n"));
-		kernel_unlockMutex(&mutex0);
-		kernel_yield(500);
+		kernel_yield(200);
 		//kernel_setTaskState(kernel_getCurrentTaskHandle(), KSTATE_SUSPENDED);
 		//while(1);
 	}
 }
 kTask simpleTask1()
 {
+	kernel_yield(1500);
 	while (1) {
-		kernel_lockMutex(&mutex0);
 		debug_puts(L_NONE, PSTR("Job 2 starts, accessing resourse\r\n"));
-		resourse += 2;
-		kernel_yield(600);
+		deadlockTest2();
+		kernel_yield(300);
 		debug_puts(L_NONE, PSTR("Job 2 ends, accessing resourse\r\n"));
-		kernel_unlockMutex(&mutex0);
-		kernel_yield(600);
+		kernel_yield(300);
 		//kernel_setTaskState(kernel_getCurrentTaskHandle(), KSTATE_SUSPENDED);
 		//while(1);
 	}
@@ -45,13 +61,12 @@ kTask simpleTask1()
 
 kTask simpleTask2()
 {
+	kernel_yield(1500);
 	while (1) {
-		kernel_lockMutex(&mutex0);
 		debug_puts(L_NONE, PSTR("Job 3 starts, accessing resourse\r\n"));
 		resourse *= 3;
 		kernel_yield(400);
 		debug_puts(L_NONE, PSTR("Job 3 ends, accessing resourse\r\n"));
-		kernel_unlockMutex(&mutex0);
 		kernel_yield(400);
 		//kernel_setTaskState(kernel_getCurrentTaskHandle(), KSTATE_SUSPENDED);
 		//while(1);

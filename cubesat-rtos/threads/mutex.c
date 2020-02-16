@@ -26,7 +26,6 @@ uint8_t kernel_lockMutex(struct kLock_t* mutex)
 		
 		//debug_puts(L_NONE, PSTR("threads: attempting to lock mutex..."));
 		
-		runningTask -> lock = mutex;
 		if (mutex -> lockCount == 0 || mutex -> owner == NULL) {
 			mutex -> lockCount = 1;
 			mutex -> owner = runningTask;
@@ -35,6 +34,7 @@ uint8_t kernel_lockMutex(struct kLock_t* mutex)
 			return 0;
 		}
 		else {
+			runningTask -> lock = mutex;
 			//debug_puts(L_NONE, PSTR("error: locked\r\n"));
 			kernel_setTaskState(kernel_getCurrentTaskHandle(), KSTATE_BLOCKED);
 			kernel_endAtomicOperation(sreg);
