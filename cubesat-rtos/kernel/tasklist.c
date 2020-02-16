@@ -7,6 +7,20 @@
 
 #include <kernel.h>
 
+static volatile struct kTaskStruct_t kTaskList[MAX_TASK_COUNT];
+static volatile uint8_t kGlobalPid = 1;
+static volatile uint8_t kTaskIndex = 0;
+
+kTaskHandle_t kernel_getTaskListPtr()
+{
+	return kTaskList;
+}
+
+uint8_t kernel_getTaskListIndex()
+{
+	return kTaskIndex;
+}
+
 void kernel_resetTask(kTaskHandle_t taskList, uint8_t position)
 {
 	taskList[position].stackPtr = NULL;
@@ -51,4 +65,39 @@ void kernel_sortTaskList(kTaskHandle_t taskList, uint8_t amount) //Bubble sort
 	
 	kernel_updateTaskPositions(taskList, amount);
 	return;
+}
+
+kTaskHandle_t kernel_createTask(kTask_t startupPointer, kStackSize_t taskStackSize, uint8_t taskPriority, kTaskType_t taskType)
+{
+	if (startupPointer == NULL) return NULL;
+
+	kStackPtr_t stackPointer = kernel_setupTaskStack(startupPointer, taskStackSize, taskType);
+	
+	if (stackPointer == NULL) return NULL;
+	
+	kTaskList[kTaskIndex].stackPtr = stackPointer + (KERNEL_STACK_FRAME_REGISTER_OFFSET-31);
+	kTaskList[kTaskIndex].stackSize = taskStackSize;
+	kTaskList[kTaskIndex].priority = taskPriority;
+	kTaskList[kTaskIndex].taskPtr = startupPointer;
+	kTaskList[kTaskIndex].stackBegin = stackPointer;
+	kTaskList[kTaskIndex].lock = NULL;
+	kTaskList[kTaskIndex].state = KSTATE_READY;
+	kTaskList[kTaskIndex].type = taskType;
+	kTaskList[kTaskIndex].pid = kGlobalPid;
+	
+	kernel_sortTaskList(kTaskList, kTaskIndex); //Bruh
+	
+	kTaskHandle_t handle = NULL;
+	
+	for (int i = 0; i < kTaskIndex+1; i++) {
+		if (kTaskList[i].pid == kGlobalPid) {
+			handle = &kTaskList[i];
+			break;
+		}
+	}
+	
+	kGlobalPid++;
+	kTaskIndex++;
+
+	return handle;
 }
