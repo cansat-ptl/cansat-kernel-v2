@@ -8,6 +8,8 @@
 
 extern volatile kTaskHandle_t kIdleTaskHandle;
 
+void kernel_startScheduler(kTaskHandle_t taskList, uint8_t taskIndex);
+
 void kernel_idle()
 {
 	while(1) platform_NOP();
@@ -19,7 +21,10 @@ uint8_t kernel_init()
 	
 	debug_puts(L_NONE, PSTR("[init] kernel: Startup\r\n")); //TODO: re-implement logging switch
 	
-	debug_puts(L_NONE, PSTR("[init] kernel: Starting up task manager                      [OK]\r\n"));
+	debug_puts(L_NONE, PSTR("[init] kernel: Starting up task manager"));
+	kernel_startScheduler(kernel_getTaskListPtr(), kernel_getTaskListIndex());
+	debug_puts(L_NONE, PSTR("                      [OK]\r\n"));
+	
 	debug_puts(L_NONE, PSTR("[init] kernel: Setting up idle task"));
 	
 	kernel_prepareMemoryBarrier(kernel_getStackPtr() + (TASK_STACK_SIZE + KERNEL_STACK_SAFETY_MARGIN)-1, KERNEL_STACK_SAFETY_MARGIN, 0xFE);

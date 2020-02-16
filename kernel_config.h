@@ -22,12 +22,12 @@
 	#define KERNEL_TIMER_MODULE 0
 
 	//Task manager settings
-	#define TASK_STACK_SIZE 900
+	#define TASK_STACK_SIZE 1000
 	#define TASK_STACK_SAFETY_MARGIN 16
 	#define KERNEL_STACK_SIZE 100
 	#define KERNEL_STACK_SAFETY_MARGIN 32
 	#define KERNEL_HEAP_SIZE 200
-	#define MAX_TASK_COUNT 5
+	#define MAX_TASK_COUNT 10
 	#define MIN_STACK_SIZE 40 //Due to AVR platform limitations, it is NOT RECOMMENDED to use values < 40, or bad things may happen
 	#define KERNEL_STACK_FRAME_REGISTER_OFFSET -4  //Memory offset, from which General Purpose Registers are stored during stack initialization
 	

@@ -145,6 +145,9 @@
     <Compile Include="config.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="cubesat-rtos\debug\debug.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="cubesat-rtos\dev\basic\gpio.c">
       <SubType>compile</SubType>
     </Compile>
@@ -158,6 +161,9 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="cubesat-rtos\kernel\init.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="cubesat-rtos\kernel\scheduler.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="cubesat-rtos\kernel\stack.c">
@@ -220,9 +226,6 @@
     <Compile Include="include\types.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="cubesat-rtos\kernel\debug.c">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="cubesat-rtos\kernel\taskmgr.c">
       <SubType>compile</SubType>
     </Compile>
@@ -252,6 +255,7 @@
     <Folder Include="cubesat-rtos" />
     <Folder Include="cubesat-rtos\dev\basic" />
     <Folder Include="cubesat-rtos\dev" />
+    <Folder Include="cubesat-rtos\debug" />
     <Folder Include="cubesat-rtos\platform" />
     <Folder Include="cubesat-rtos\platform\avr" />
     <Folder Include="cubesat-rtos\threads\" />
