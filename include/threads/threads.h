@@ -23,4 +23,11 @@ struct kLock_t kernel_createMutex();
 uint8_t kernel_lockMutex(struct kLock_t* mutex);
 uint8_t kernel_unlockMutex(struct kLock_t* mutex);
 
+struct kLock_t kernel_createSemaphore(uint8_t resourceAmount);
+uint8_t kernel_waitSemaphore(struct kLock_t* semaphore);
+uint8_t kernel_signalSemaphore(struct kLock_t* semaphore);
+
+void kernel_acquireSpinlock(kSpinlock_t* spinlock);
+void kernel_releaseSpinlock(kSpinlock_t* spinlock);
+
 #endif /* THREADS_H_ */

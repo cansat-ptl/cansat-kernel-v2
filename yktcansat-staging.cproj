@@ -178,6 +178,12 @@
     <Compile Include="cubesat-rtos\threads\mutex.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="cubesat-rtos\threads\semaphore.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="cubesat-rtos\threads\spinlock.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="cubesat-rtos\timers\timermgr.c">
       <SubType>compile</SubType>
     </Compile>

@@ -18,12 +18,14 @@ typedef void kTask;
 
 typedef uint8_t byte;
 
-typedef enum {KSTATE_UNINIT, KSTATE_SUSPENDED, KSTATE_SLEEPING, KSTATE_BLOCKED, KSTATE_READY, KSTATE_RUNNING} kTaskState_t;
+typedef enum {KSTATE_UNINIT, KSTATE_SUSPENDED, KSTATE_SLEEPING, KSTATE_BLOCKED, KSTATE_SEMAPHORE, KSTATE_READY, KSTATE_RUNNING} kTaskState_t;
 typedef enum {KTASK_USER, KTASK_SYSTEM} kTaskType_t;
 typedef enum {KTIMER_SINGLERUN, KTASK_REPEATED} kTimerType_t;
 typedef enum {KLOCK_SEMAPHORE, KLOCK_MUTEX, KLOCK_SEMAPHORE_RECURSIVE} kLockType_t;
 typedef volatile struct kTaskStruct_t* kTaskHandle_t;
 typedef struct kLock_t kMutex_t;
+typedef struct kLock_t kSemaphore_t;
+typedef uint8_t kSpinlock_t;
 
 struct kLock_t 
 {
