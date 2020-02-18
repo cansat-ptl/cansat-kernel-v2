@@ -28,6 +28,8 @@ kTask simpleTask()
 	uint8_t hellosize = strlen(hello);
 	queue0 = threads_fifoInit(buff, 32);
 	
+	kTaskHandle_t handle = kernel_getCurrentTaskHandle();
+	
 	while (1) {
 		uint16_t startTime = kernel_getUptime();
 		threads_mutexLock(&mutex0);

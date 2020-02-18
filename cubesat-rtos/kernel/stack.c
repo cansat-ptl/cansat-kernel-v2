@@ -55,3 +55,21 @@ kStackPtr_t kernel_setupTaskStack(kTask_t startupPointer, kStackSize_t taskStack
 	
 	return stackPointer;
 }
+
+uint8_t kernel_checkStackProtectionRegion(kTaskHandle_t checkedTask)
+{
+	if (checkedTask == NULL) return 1;
+	
+	uint8_t sreg = threads_startAtomicOperation();
+	
+	kStackPtr_t stackEnd = checkedTask -> stackBegin;
+	
+	for (int16_t i = 1; i <= CFG_TASK_STACK_SAFETY_MARGIN+1; i++) {
+		if (stackEnd[i] != 0xFE) {
+			debug_puts(L_ERROR, PSTR("kernel: stack corruption detected\r\n")); //TODO: stack corruption hook
+		}
+	}
+	
+	threads_endAtomicOperation(sreg);
+	return 0;
+}
