@@ -21,7 +21,7 @@ kLifo_t queue0;
 kTask simpleTask()
 {
 	kernel_yield(1500);
-	debug_puts(L_NONE, PSTR("Job 1 starts, creating queue\r\n"));
+	debug_logMessage(PGM_ON, L_INFO, PSTR("Job 1 starts, creating queue\r\n"));
 	
 	char buff[32];
 	char hello[] = "Hello from task1!";
@@ -29,25 +29,28 @@ kTask simpleTask()
 	queue0 = threads_lifoInit(buff, 32);
 	
 	while (1) {
+		uint16_t startTime = kernel_getUptime();
 		threads_mutexLock(&mutex0);
-		debug_puts(L_NONE, PSTR("Job 1 runs, sending character to queue\r\n"));
+		debug_logMessage(PGM_ON, L_INFO, PSTR("Job 1 runs, sending character to queue\r\n"));
 		for (int i = hellosize+1; i >= 0; i--) {
 			if (threads_lifoWrite(&queue0, hello[i])) {
-				debug_logMessage(PGM_ON, L_NONE, PSTR("Lifo write success, written character = %c\r\n"), hello[i]);
+				debug_logMessage(PGM_ON, L_INFO, PSTR("Lifo write success, written character = %c\r\n"), hello[i]);
 			}
 			else {
-				debug_logMessage(PGM_PUTS, L_NONE, PSTR("Lifo write error\r\n"));
+				debug_logMessage(PGM_ON, L_INFO, PSTR("Lifo write error\r\n"));
 			}
 		}
-		debug_puts(L_NONE, PSTR("Job 1 ends\r\n"));
+		debug_logMessage(PGM_ON, L_INFO, PSTR("Job 1 ends\r\n"));
 		threads_mutexUnlock(&mutex0);
+		uint16_t endTime = kernel_getUptime();
+		debug_logMessage(PGM_ON, L_INFO, PSTR("Job 1 exec time: %d\r\n"), endTime-startTime);
 		kernel_yield(200);
 	}
 }
 kTask simpleTask1()
 {
 	kernel_yield(1500);
-	debug_puts(L_NONE, PSTR("Job 2 starts\r\n"));
+	debug_logMessage(PGM_ON, L_INFO, PSTR("Job 2 starts\r\n"));
 	char hello1[32];
 	while (1) {
 		threads_mutexLock(&mutex0);
@@ -56,9 +59,9 @@ kTask simpleTask1()
 			hello1[pos] = threads_lifoRead(&queue0);
 			pos++;
 		}
-		debug_logMessage(PGM_ON, L_NONE, PSTR("Lifo contents: %s\r\n"), hello1);
+		debug_logMessage(PGM_ON, L_INFO, PSTR("Lifo contents: %s\r\n"), hello1);
 		
-		debug_puts(L_NONE, PSTR("Job 2 ends\r\n"));
+		debug_logMessage(PGM_ON, L_INFO, PSTR("Job 2 ends\r\n"));
 		threads_mutexUnlock(&mutex0);
 		kernel_yield(200);
 	}

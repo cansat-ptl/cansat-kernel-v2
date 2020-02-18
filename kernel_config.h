@@ -50,7 +50,7 @@
 	//Debug logging options
 	#define LOGGING 1
 	#define VERBOSE 0
-	#define PROFILING 1
+	#define PROFILING 0
 	
 	//CLI options
 	#define RX0_BUFFER_SIZE 64
