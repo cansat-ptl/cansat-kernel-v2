@@ -181,6 +181,9 @@
     <Compile Include="cubesat-rtos\platform\avr\timers.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="cubesat-rtos\threads\atomic.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="cubesat-rtos\threads\fifo.c">
       <SubType>compile</SubType>
     </Compile>

@@ -14,29 +14,31 @@
 	//#include "../drivers/interfaces/uart.h"
 
 	//Kernel modules - set to 0 to disable
-	#define KERNEL_SD_MODULE 0
-	#define KERNEL_WDT_MODULE 0
-	#define KERNEL_UTIL_MODULE 0
-	#define KERNEL_DEBUG_MODULE 1
-	#define KERNEL_CLI_MODULE 0
-	#define KERNEL_TIMER_MODULE 0
+	#define CFG_KERNEL_SD_MODULE 0
+	#define CFG_KERNEL_WDT_MODULE 0
+	#define CFG_KERNEL_UTIL_MODULE 0
+	#define CFG_KERNEL_DEBUG_MODULE 1
+	#define CFG_KERNEL_CLI_MODULE 0
+	#define CFG_KERNEL_TIMER_MODULE 0
 
 	//Task manager settings
-	#define TASK_STACK_SIZE 1000
-	#define TASK_STACK_SAFETY_MARGIN 16
-	#define KERNEL_STACK_SIZE 100
-	#define KERNEL_STACK_SAFETY_MARGIN 32
-	#define KERNEL_HEAP_SIZE 200
-	#define MAX_TASK_COUNT 10
-	#define MIN_STACK_SIZE 40 //Due to AVR platform limitations, it is NOT RECOMMENDED to use values < 40, or bad things may happen
-	#define KERNEL_STACK_FRAME_REGISTER_OFFSET -4  //Memory offset, from which General Purpose Registers are stored during stack initialization
+	#define CFG_TASK_STACK_SIZE 1000
+	#define CFG_TASK_STACK_SAFETY_MARGIN 16
+	#define CFG_KERNEL_STACK_SIZE 100
+	#define CFG_KERNEL_STACK_SAFETY_MARGIN 32
+	#define CFG_KERNEL_HEAP_SIZE 200
+	#define CFG_MAX_TASK_COUNT 10
+	#define CFG_MIN_STACK_SIZE 40 //Due to AVR platform limitations, it is NOT RECOMMENDED to use values < 40, or bad things may happen
+	#define CFG_KERNEL_STACK_FRAME_REGISTER_OFFSET -4  //Memory offset, from which General Purpose Registers are stored during stack initialization
+	
+	#define CFG_NO_INTERRUPTS_IN_CRITICAL_SECTIONS 1
 	
 //	#define MAX_LOCK_COUNT 4 //Total maximum amount of mutexes
 	
 	//Timer settings
-	#define MAX_TIMER_COUNT 3
-	#define KERNEL_TIMER_PRESCALER 3
-	#define TICKRATE_MS 1
+	#define CFG_MAX_TIMER_COUNT 3
+	#define CFG_KERNEL_TIMER_PRESCALER 3
+	#define CFG_TICKRATE_MS 1
 	
 	/*             Prescaler values             */
 	/* 0 - timer disabled                       */
@@ -48,16 +50,16 @@
 	/* 6 & 7 - external clock (datasheet)       */
 	
 	//Debug logging options
-	#define LOGGING 1
-	#define VERBOSE 0
-	#define PROFILING 0
+	#define CFG_LOGGING 1
+	#define CFG_VERBOSE 0
+	#define CFG_PROFILING 0
 	
 	//CLI options
-	#define RX0_BUFFER_SIZE 64
-	#define MAX_CMD_WORD_SIZE 16
+	#define CFG_RX0_BUFFER_SIZE 64
+	#define CFG_MAX_CMD_WORD_SIZE 16
 	
 	//HAL timer selection - uncomment the timer to select it
-	#define HAL_USE_TIMER0
+	#define CFG_HAL_USE_TIMER0
 	//#define HAL_USE_TIMER1A
 #endif
 #endif /* KERNEL_CONFIG_H_ */

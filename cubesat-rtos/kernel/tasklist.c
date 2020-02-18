@@ -7,7 +7,7 @@
 
 #include <kernel.h>
 
-static volatile struct kTaskStruct_t kTaskList[MAX_TASK_COUNT];
+static volatile struct kTaskStruct_t kTaskList[CFG_MAX_TASK_COUNT];
 static volatile uint8_t kGlobalPid = 1;
 static volatile uint8_t kTaskIndex = 0;
 
@@ -75,7 +75,7 @@ kTaskHandle_t kernel_createTask(kTask_t startupPointer, kStackSize_t taskStackSi
 	
 	if (stackPointer == NULL) return NULL;
 	
-	kTaskList[kTaskIndex].stackPtr = stackPointer + (KERNEL_STACK_FRAME_REGISTER_OFFSET-31);
+	kTaskList[kTaskIndex].stackPtr = stackPointer + (CFG_KERNEL_STACK_FRAME_REGISTER_OFFSET-31);
 	kTaskList[kTaskIndex].stackSize = taskStackSize;
 	kTaskList[kTaskIndex].priority = taskPriority;
 	kTaskList[kTaskIndex].taskPtr = startupPointer;

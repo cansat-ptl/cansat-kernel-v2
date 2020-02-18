@@ -16,7 +16,7 @@ kSemaphore_t semaphore0;
 kSpinlock_t spinlock0;
 kTaskHandle_t t1, t2, t3;
 
-kLifo_t queue0;
+kFifo_t queue0;
 
 kTask simpleTask()
 {
@@ -26,18 +26,18 @@ kTask simpleTask()
 	char buff[32];
 	char hello[] = "Hello from task1!";
 	uint8_t hellosize = strlen(hello);
-	queue0 = threads_lifoInit(buff, 32);
+	queue0 = threads_fifoInit(buff, 32);
 	
 	while (1) {
 		uint16_t startTime = kernel_getUptime();
 		threads_mutexLock(&mutex0);
 		debug_logMessage(PGM_ON, L_INFO, PSTR("Job 1 runs, sending character to queue\r\n"));
-		for (int i = hellosize+1; i >= 0; i--) {
-			if (threads_lifoWrite(&queue0, hello[i])) {
-				debug_logMessage(PGM_ON, L_INFO, PSTR("Lifo write success, written character = %c\r\n"), hello[i]);
+		for (int i = 0; i < hellosize; i++) {
+			if (threads_fifoWrite(&queue0, hello[i])) {
+				debug_logMessage(PGM_ON, L_INFO, PSTR("Fifo write success, written character = %c\r\n"), hello[i]);
 			}
 			else {
-				debug_logMessage(PGM_ON, L_INFO, PSTR("Lifo write error\r\n"));
+				debug_logMessage(PGM_ON, L_INFO, PSTR("Fifo write error\r\n"));
 			}
 		}
 		debug_logMessage(PGM_ON, L_INFO, PSTR("Job 1 ends\r\n"));
@@ -55,8 +55,8 @@ kTask simpleTask1()
 	while (1) {
 		threads_mutexLock(&mutex0);
 		uint8_t pos = 0;
-		while (threads_lifoAvailable(&queue0)) {
-			hello1[pos] = threads_lifoRead(&queue0);
+		while (threads_fifoAvailable(&queue0)) {
+			hello1[pos] = threads_fifoRead(&queue0);
 			pos++;
 		}
 		debug_logMessage(PGM_ON, L_INFO, PSTR("Lifo contents: %s\r\n"), hello1);

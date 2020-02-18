@@ -15,7 +15,7 @@
 #include <types.h>
 #include <hal/hal.h>
 
-#ifdef KERNEL_DEBUG_MODULE
+#ifdef CFG_KERNEL_DEBUG_MODULE
 	#define PGM_ON 1
 	#define PGM_OFF 0
 	#define PGM_PUTS 2

@@ -18,7 +18,7 @@ uint8_t platform_prepareStackFrame(kStackPtr_t regionPointer, kTask_t taskPointe
 	regionPointer[-2] = 0;							// R0 initial value, overwritten by SREG during context switch, should be initialized separately
 	regionPointer[-3] = 0x80;						// SREG initial value - interrupts enabled
 	
-	for (int16_t i = KERNEL_STACK_FRAME_REGISTER_OFFSET; i > (KERNEL_STACK_FRAME_REGISTER_OFFSET-31); i--)
+	for (int16_t i = CFG_KERNEL_STACK_FRAME_REGISTER_OFFSET; i > (CFG_KERNEL_STACK_FRAME_REGISTER_OFFSET-31); i--)
 		regionPointer[i] = 0;						// R1-R31 initial values
 	return 0;
 }

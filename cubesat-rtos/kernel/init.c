@@ -27,7 +27,7 @@ uint8_t kernel_init()
 	
 	debug_puts(L_NONE, PSTR("[init] kernel: Setting up idle task"));
 	
-	kernel_prepareMemoryBarrier(kernel_getStackPtr() + (TASK_STACK_SIZE + KERNEL_STACK_SAFETY_MARGIN)-1, KERNEL_STACK_SAFETY_MARGIN, 0xFE);
+	kernel_prepareMemoryBarrier(kernel_getStackPtr() + (CFG_TASK_STACK_SIZE + CFG_KERNEL_STACK_SAFETY_MARGIN)-1, CFG_KERNEL_STACK_SAFETY_MARGIN, 0xFE);
 	
 	kTaskHandle_t ct = kernel_createTask(kernel_idle, 64, 0, KTASK_SYSTEM);
 	if (ct == NULL) {

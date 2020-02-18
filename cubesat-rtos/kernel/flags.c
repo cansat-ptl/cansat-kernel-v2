@@ -22,21 +22,6 @@ void threads_exitCriticalSection()
 	kernel_ENABLE_CONTEXT_SWITCH();
 }
 
-uint8_t threads_startAtomicOperation()
-{
-	threads_enterCriticalSection();
-	uint8_t sreg = platform_STATUS_REG;
-	platform_DISABLE_INTERRUPTS();
-	return sreg;
-}
-
-void threads_endAtomicOperation(uint8_t sreg)
-{
-	threads_exitCriticalSection();
-	platform_ENABLE_INTERRUPTS();
-	platform_STATUS_REG = sreg;
-}
-
 void kernel_setFlag(uint8_t flag, uint8_t value)
 {
 	platform_DISABLE_INTERRUPTS();

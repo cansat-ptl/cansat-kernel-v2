@@ -138,7 +138,7 @@
 	[_SPH_] "i" _SFR_IO_ADDR(SPH) \
 )
 
-#define platform_setupSystemTimer() platform_setupTimer0(KERNEL_TIMER_PRESCALER);
+#define platform_setupSystemTimer() platform_setupTimer0(CFG_KERNEL_TIMER_PRESCALER);
 #define platform_startSystemTimer() platform_startTimer0();
 #define platform_stopSystemTimer() platform_stopTimer0();
 
