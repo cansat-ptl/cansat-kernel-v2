@@ -10,15 +10,15 @@
 void kernel_acquireSpinlock(kSpinlock_t* spinlock) 
 {
 	while(1) {
+		uint8_t sreg = kernel_startAtomicOperation();
 		if(*spinlock == 0) {
-			uint8_t sreg = kernel_startAtomicOperation();
 			if(*spinlock == 0) {
 				*spinlock = 1;
 				kernel_endAtomicOperation(sreg);
 				return;
 			}
-			kernel_endAtomicOperation(sreg);
 		}
+		kernel_endAtomicOperation(sreg);
 	}
 }
 

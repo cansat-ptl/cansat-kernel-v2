@@ -20,11 +20,11 @@ kTask simpleTask()
 {
 	kernel_yield(1500);
 	while (1) {
-		kernel_acquireSpinlock(&spinlock0);
+		//kernel_acquireSpinlock(&spinlock0);
 		debug_puts(L_NONE, PSTR("Job 1 starts, acquiring spinlock\r\n"));
 		_delay_ms(50);
 		debug_puts(L_NONE, PSTR("Job 1 ends, releasing spinlock\r\n"));
-		kernel_releaseSpinlock(&spinlock0);
+		//kernel_releaseSpinlock(&spinlock0);
 		kernel_yield(200);
 		//kernel_setTaskState(kernel_getCurrentTaskHandle(), KSTATE_SUSPENDED);
 		//while(1);
@@ -34,11 +34,11 @@ kTask simpleTask1()
 {
 	kernel_yield(1500);
 	while (1) {
-		kernel_acquireSpinlock(&spinlock0);
+		//kernel_acquireSpinlock(&spinlock0);
 		debug_puts(L_NONE, PSTR("Job 2 starts, acquiring spinlock\r\n"));
 		_delay_ms(50);
 		debug_puts(L_NONE, PSTR("Job 2 ends, releasing spinlock\r\n"));
-		kernel_releaseSpinlock(&spinlock0);
+		//kernel_releaseSpinlock(&spinlock0);
 		kernel_yield(200);
 		//kernel_setTaskState(kernel_getCurrentTaskHandle(), KSTATE_SUSPENDED);
 		//while(1);
