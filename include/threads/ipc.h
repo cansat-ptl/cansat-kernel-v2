@@ -15,6 +15,12 @@ kLifo_t threads_lifoInit(char* pointer, uint8_t size);
 uint8_t threads_lifoAvailable(kLifo_t* lifo);
 uint8_t threads_lifoWrite(kLifo_t* queue, char data);
 char threads_lifoRead(kLifo_t* queue);
-uint8_t threads_lifoWriteMulti(kLifo_t* queue, char* data, uint8_t size);
+char threads_lifoPeek(kLifo_t* queue);
+
+kFifo_t threads_fifoInit(char* pointer, uint8_t size);
+uint8_t threads_fifoAvailable(kFifo_t* fifo);
+uint8_t threads_fifoWrite(kFifo_t* fifo, char data);
+char threads_fifoRead(kFifo_t* fifo);
+char threads_fifoPeek(kFifo_t* fifo);
 
 #endif /* IPC_H_ */

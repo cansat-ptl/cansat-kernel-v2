@@ -27,7 +27,8 @@ typedef volatile struct kTaskStruct_t* kTaskHandle_t;
 typedef struct kLock_t kMutex_t;
 typedef struct kLock_t kSemaphore_t;
 typedef uint8_t kSpinlock_t;
-typedef struct kBuffer_t kLifo_t;
+typedef struct kLifo_t kLifo_t;
+typedef struct kFifo_t kFifo_t;
 
 struct kLock_t 
 {
@@ -36,11 +37,19 @@ struct kLock_t
 	kLockType_t type;
 };
 
-struct kBuffer_t
+struct kLifo_t
 {
 	char* pointer;
 	uint8_t size;
 	uint8_t currentPosition;	
+};
+
+struct kFifo_t
+{
+	char* pointer;
+	uint8_t size;
+	uint8_t inputPosition;
+	uint8_t outputPosition;
 };
 
 struct kTaskStruct_t 

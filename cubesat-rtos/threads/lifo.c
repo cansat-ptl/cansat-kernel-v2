@@ -9,11 +9,11 @@
 
 kLifo_t threads_lifoInit(char* pointer, uint8_t size)
 {
-	kLifo_t queue;
-	queue.size = size;
-	queue.pointer = pointer;
-	queue.currentPosition = 0;
-	return queue;
+	kLifo_t lifo;
+	lifo.size = size;
+	lifo.pointer = pointer;
+	lifo.currentPosition = 0;
+	return lifo;
 }
 
 uint8_t threads_lifoAvailable(kLifo_t* lifo) 
@@ -50,22 +50,6 @@ uint8_t threads_lifoWrite(kLifo_t* lifo, char data)
 	}
 }
 
-uint8_t threads_lifoWriteMulti(kLifo_t* lifo, char* data, uint8_t size)
-{
-	if (lifo == NULL) return 0;
-	
-	uint8_t sreg = threads_startAtomicOperation();
-	
-	uint8_t dataWritten, result = 0;
-	
-	for (dataWritten = 0; dataWritten < size && result; dataWritten++) {
-		result = threads_lifoWrite(lifo, data[dataWritten]);
-	}
-	
-	threads_endAtomicOperation(sreg);
-	return dataWritten;
-}
-
 char threads_lifoRead(kLifo_t* lifo)
 {
 	if (lifo == NULL) return 0;
@@ -75,6 +59,23 @@ char threads_lifoRead(kLifo_t* lifo)
 	if (lifo -> currentPosition != 0) {
 		char data = lifo -> pointer[lifo -> currentPosition];
 		lifo -> currentPosition--;
+		threads_endAtomicOperation(sreg);
+		return data;
+	}
+	else {
+		threads_endAtomicOperation(sreg);
+		return 0;
+	}
+}
+
+char threads_lifoPeek(kLifo_t* lifo)
+{
+	if (lifo == NULL) return 0;
+	
+	uint8_t sreg = threads_startAtomicOperation();
+	
+	if (lifo -> currentPosition != 0) {
+		char data = lifo -> pointer[lifo -> currentPosition];
 		threads_endAtomicOperation(sreg);
 		return data;
 	}
