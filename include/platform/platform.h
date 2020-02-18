@@ -12,6 +12,6 @@
 #include <platform/avr/avr.h>
 #include <platform/avr/timers.h>
 
-uint8_t platform_prepareStackFrame(kStackPtr_t regionPointer, kTask_t taskPointer, kStackSize_t stackSize);
+uint8_t platform_prepareStackFrame(kStackPtr_t regionPointer, kTask_t taskPointer);
 
 #endif /* PLATFORM_H_ */

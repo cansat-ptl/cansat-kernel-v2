@@ -22,16 +22,25 @@ typedef enum {KSTATE_UNINIT, KSTATE_SUSPENDED, KSTATE_SLEEPING, KSTATE_BLOCKED, 
 typedef enum {KTASK_USER, KTASK_SYSTEM} kTaskType_t;
 typedef enum {KTIMER_SINGLERUN, KTASK_REPEATED} kTimerType_t;
 typedef enum {KLOCK_SEMAPHORE, KLOCK_MUTEX, KLOCK_SEMAPHORE_RECURSIVE} kLockType_t;
+	
 typedef volatile struct kTaskStruct_t* kTaskHandle_t;
 typedef struct kLock_t kMutex_t;
 typedef struct kLock_t kSemaphore_t;
 typedef uint8_t kSpinlock_t;
+typedef struct kBuffer_t kLifo_t;
 
 struct kLock_t 
 {
 	kTaskHandle_t owner;
 	uint8_t lockCount;
 	kLockType_t type;
+};
+
+struct kBuffer_t
+{
+	char* pointer;
+	uint8_t size;
+	uint8_t currentPosition;	
 };
 
 struct kTaskStruct_t 

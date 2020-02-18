@@ -7,7 +7,7 @@
 
 #include <kernel.h>
 
-void kernel_acquireSpinlock(kSpinlock_t* spinlock) 
+void kernel_spinlockAcquire(kSpinlock_t* spinlock) 
 {
 	while(1) {
 		uint8_t sreg = kernel_startAtomicOperation();
@@ -22,7 +22,7 @@ void kernel_acquireSpinlock(kSpinlock_t* spinlock)
 	}
 }
 
-void kernel_releaseSpinlock(kSpinlock_t* spinlock)
+void kernel_spinlockRelease(kSpinlock_t* spinlock)
 {
 	uint8_t sreg = kernel_startAtomicOperation();
 	*spinlock = 0;

@@ -184,6 +184,9 @@
     <Compile Include="cubesat-rtos\threads\mutex.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="cubesat-rtos\threads\lifo.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="cubesat-rtos\threads\semaphore.c">
       <SubType>compile</SubType>
     </Compile>

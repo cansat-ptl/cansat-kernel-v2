@@ -7,7 +7,7 @@
 
 #include <kernel.h>
 
-struct kLock_t kernel_createSemaphore(uint8_t resourceAmount)  //TODO: this function is a stub. You can help by improving it
+struct kLock_t kernel_semaphoreInit(uint8_t resourceAmount)  //TODO: this function is a stub. You can help by improving it
 {
 	kSemaphore_t semaphore;
 	semaphore.type = KLOCK_SEMAPHORE;
@@ -16,7 +16,7 @@ struct kLock_t kernel_createSemaphore(uint8_t resourceAmount)  //TODO: this func
 }
 
 
-uint8_t kernel_waitSemaphore(struct kLock_t* semaphore)
+uint8_t kernel_semaphoreWait(struct kLock_t* semaphore)
 {
 	if (semaphore == NULL) return 1;
 	
@@ -42,7 +42,7 @@ uint8_t kernel_waitSemaphore(struct kLock_t* semaphore)
 	}
 }
 
-uint8_t kernel_signalSemaphore(struct kLock_t* semaphore)
+uint8_t kernel_semaphoreSignal(struct kLock_t* semaphore)
 {
 	uint8_t sreg = kernel_startAtomicOperation();
 	

@@ -86,7 +86,8 @@ static inline void kernel_switchContext()
 
 static inline void kernel_switchTask()
 {	
-	kernel_schedule();
+	if (hal_CHECK_BIT(_kflags, KFLAG_CSW_ALLOWED))
+		kernel_schedule();
 	if (kNextTask != kCurrentTask) kernel_switchContext();
 }
 

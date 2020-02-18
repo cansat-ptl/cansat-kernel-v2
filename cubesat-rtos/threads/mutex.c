@@ -7,7 +7,7 @@
 
 #include <kernel.h>
 
-struct kLock_t kernel_createMutex()  //TODO: this function is a stub. You can help by improving it
+struct kLock_t kernel_mutexInit()  //TODO: this function is a stub. You can help by improving it
 {
 	struct kLock_t mutex;
 	mutex.type = KLOCK_MUTEX;
@@ -16,7 +16,7 @@ struct kLock_t kernel_createMutex()  //TODO: this function is a stub. You can he
 }
 
 
-uint8_t kernel_lockMutex(struct kLock_t* mutex)
+uint8_t kernel_mutexLock(struct kLock_t* mutex)
 {
 	if (mutex == NULL) return 1;
 	
@@ -43,7 +43,7 @@ uint8_t kernel_lockMutex(struct kLock_t* mutex)
 	}
 }
 
-uint8_t kernel_unlockMutex(struct kLock_t* mutex)
+uint8_t kernel_mutexUnlock(struct kLock_t* mutex)
 {
 	uint8_t sreg = kernel_startAtomicOperation();
 	
