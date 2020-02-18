@@ -235,6 +235,12 @@
     <Compile Include="include\platform\platform.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="include\threads\ipc.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\threads\primitives.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="include\threads\threads.h">
       <SubType>compile</SubType>
     </Compile>

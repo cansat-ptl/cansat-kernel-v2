@@ -5,9 +5,9 @@
  *  Author: Admin
  */ 
 
-#include <kernel.h>
+#include <threads/threads.h>
 
-struct kLock_t kernel_semaphoreInit(uint8_t resourceAmount)  //TODO: this function is a stub. You can help by improving it
+struct kLock_t threads_semaphoreInit(uint8_t resourceAmount)  //TODO: this function is a stub. You can help by improving it
 {
 	kSemaphore_t semaphore;
 	semaphore.type = KLOCK_SEMAPHORE;
@@ -16,12 +16,12 @@ struct kLock_t kernel_semaphoreInit(uint8_t resourceAmount)  //TODO: this functi
 }
 
 
-uint8_t kernel_semaphoreWait(struct kLock_t* semaphore)
+uint8_t threads_semaphoreWait(struct kLock_t* semaphore)
 {
 	if (semaphore == NULL) return 1;
 	
 	while (1) {
-		uint8_t sreg = kernel_startAtomicOperation();
+		uint8_t sreg = threads_startAtomicOperation();
 		kTaskHandle_t runningTask = kernel_getCurrentTaskHandle();
 		
 		//debug_puts(L_NONE, PSTR("threads: attempting to lock acquire semaphore..."));
@@ -29,22 +29,22 @@ uint8_t kernel_semaphoreWait(struct kLock_t* semaphore)
 		if (semaphore -> lockCount != 0) {
 			semaphore -> lockCount--;
 			//debug_puts(L_NONE, PSTR("success!\r\n"));
-			kernel_endAtomicOperation(sreg);
+			threads_endAtomicOperation(sreg);
 			return 0;
 		}
 		else {
 			runningTask -> lock = semaphore;
 			//debug_puts(L_NONE, PSTR("error: occupied\r\n"));
 			kernel_setTaskState(kernel_getCurrentTaskHandle(), KSTATE_SEMAPHORE);
-			kernel_endAtomicOperation(sreg);
+			threads_endAtomicOperation(sreg);
 			kernel_yield(0);
 		}
 	}
 }
 
-uint8_t kernel_semaphoreSignal(struct kLock_t* semaphore)
+uint8_t threads_semaphoreSignal(struct kLock_t* semaphore)
 {
-	uint8_t sreg = kernel_startAtomicOperation();
+	uint8_t sreg = threads_startAtomicOperation();
 	
 	//debug_puts(L_NONE, PSTR("threads: signaling semaphore\r\n"));
 	if (semaphore == NULL) return 1;
@@ -62,6 +62,6 @@ uint8_t kernel_semaphoreSignal(struct kLock_t* semaphore)
 		}
 	}
 	
-	kernel_endAtomicOperation(sreg);
+	threads_endAtomicOperation(sreg);
 	return 0;
 }

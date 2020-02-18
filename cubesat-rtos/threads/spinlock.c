@@ -5,26 +5,26 @@
  *  Author: Admin
  */ 
 
-#include <kernel.h>
+#include <threads/threads.h>
 
-void kernel_spinlockAcquire(kSpinlock_t* spinlock) 
+void threads_spinlockAcquire(kSpinlock_t* spinlock) 
 {
 	while(1) {
-		uint8_t sreg = kernel_startAtomicOperation();
+		uint8_t sreg = threads_startAtomicOperation();
 		if(*spinlock == 0) {
 			if(*spinlock == 0) {
 				*spinlock = 1;
-				kernel_endAtomicOperation(sreg);
+				threads_endAtomicOperation(sreg);
 				return;
 			}
 		}
-		kernel_endAtomicOperation(sreg);
+		threads_endAtomicOperation(sreg);
 	}
 }
 
-void kernel_spinlockRelease(kSpinlock_t* spinlock)
+void threads_spinlockRelease(kSpinlock_t* spinlock)
 {
-	uint8_t sreg = kernel_startAtomicOperation();
+	uint8_t sreg = threads_startAtomicOperation();
 	*spinlock = 0;
-	kernel_endAtomicOperation(sreg);
+	threads_endAtomicOperation(sreg);
 }

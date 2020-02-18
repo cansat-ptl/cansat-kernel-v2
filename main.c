@@ -26,13 +26,13 @@ kTask simpleTask()
 	char buff[32];
 	char hello[] = "Hello from task1!";
 	uint8_t hellosize = strlen(hello);
-	queue0 = kernel_lifoInit(buff, 32);
+	queue0 = threads_lifoInit(buff, 32);
 	
 	while (1) {
-		kernel_mutexLock(&mutex0);
+		threads_mutexLock(&mutex0);
 		debug_puts(L_NONE, PSTR("Job 1 runs, sending character to queue\r\n"));
 		for (int i = hellosize+1; i >= 0; i--) {
-			if (kernel_lifoWrite(&queue0, hello[i])) {
+			if (threads_lifoWrite(&queue0, hello[i])) {
 				debug_logMessage(PGM_ON, L_NONE, PSTR("Lifo write success, written character = %c\r\n"), hello[i]);
 			}
 			else {
@@ -40,7 +40,7 @@ kTask simpleTask()
 			}
 		}
 		debug_puts(L_NONE, PSTR("Job 1 ends\r\n"));
-		kernel_mutexUnlock(&mutex0);
+		threads_mutexUnlock(&mutex0);
 		kernel_yield(200);
 	}
 }
@@ -50,16 +50,16 @@ kTask simpleTask1()
 	debug_puts(L_NONE, PSTR("Job 2 starts\r\n"));
 	char hello1[32];
 	while (1) {
-		kernel_mutexLock(&mutex0);
+		threads_mutexLock(&mutex0);
 		uint8_t pos = 0;
-		while (kernel_lifoAvailable(&queue0)) {
-			hello1[pos] = kernel_lifoRead(&queue0);
+		while (threads_lifoAvailable(&queue0)) {
+			hello1[pos] = threads_lifoRead(&queue0);
 			pos++;
 		}
 		debug_logMessage(PGM_ON, L_NONE, PSTR("Lifo contents: %s\r\n"), hello1);
 		
 		debug_puts(L_NONE, PSTR("Job 2 ends\r\n"));
-		kernel_mutexUnlock(&mutex0);
+		threads_mutexUnlock(&mutex0);
 		kernel_yield(200);
 	}
 }
@@ -68,12 +68,12 @@ kTask simpleTask2()
 {
 	kernel_yield(1500);
 	while (1) {
-		kernel_semaphoreWait(&semaphore0);
+		threads_semaphoreWait(&semaphore0);
 		debug_puts(L_NONE, PSTR("Job 3 starts, waiting for semaphore\r\n"));
 		resourse *= 3;
 		kernel_yield(400);
 		debug_puts(L_NONE, PSTR("Job 3 ends, signaling semaphore\r\n"));
-		kernel_semaphoreSignal(&semaphore0);
+		threads_semaphoreSignal(&semaphore0);
 		kernel_yield(400);
 		//kernel_setTaskState(kernel_getCurrentTaskHandle(), KSTATE_SUSPENDED);
 		//while(1);
@@ -82,22 +82,22 @@ kTask simpleTask2()
 kTask simpleTask3()
 {
 	while (1) {
-		kernel_semaphoreWait(&semaphore0);
+		threads_semaphoreWait(&semaphore0);
 		debug_puts(L_NONE, PSTR("Job 4 starts, waiting for semaphore\r\n"));
 		kernel_yield(200);
 		debug_puts(L_NONE, PSTR("Job 4 ends, signaling semaphore\r\n"));
-		kernel_semaphoreSignal(&semaphore0);
+		threads_semaphoreSignal(&semaphore0);
 		kernel_yield(200);
 	}
 }
 kTask simpleTask4()
 {
 	while (1) {
-		kernel_semaphoreWait(&semaphore0);
+		threads_semaphoreWait(&semaphore0);
 		debug_puts(L_NONE, PSTR("Job 5 starts, waiting for semaphore\r\n"));
 		kernel_yield(200);
 		debug_puts(L_NONE, PSTR("Job 5 ends, signaling semaphore\r\n"));
-		kernel_semaphoreSignal(&semaphore0);
+		threads_semaphoreSignal(&semaphore0);
 		kernel_yield(200);
 		//kernel_setTaskState(kernel_getCurrentTaskHandle(), KSTATE_SUSPENDED);
 		//while(1);
@@ -106,11 +106,11 @@ kTask simpleTask4()
 kTask simpleTask5()
 {
 	while (1) {
-		kernel_semaphoreWait(&semaphore0);
+		threads_semaphoreWait(&semaphore0);
 		debug_puts(L_NONE, PSTR("Job 6 starts, waiting for semaphore\r\n"));
 		kernel_yield(200);
 		debug_puts(L_NONE, PSTR("Job 6 ends, signaling semaphore\r\n"));
-		kernel_semaphoreSignal(&semaphore0);
+		threads_semaphoreSignal(&semaphore0);
 		kernel_yield(200);
 		//kernel_setTaskState(kernel_getCurrentTaskHandle(), KSTATE_SUSPENDED);
 		//while(1);
@@ -119,8 +119,8 @@ kTask simpleTask5()
 
 int main()
 {
-	mutex0 = kernel_mutexInit();
-	semaphore0 = kernel_semaphoreInit(2);
+	mutex0 = threads_mutexInit();
+	semaphore0 = threads_semaphoreInit(2);
 	
 	kernel_createTask(simpleTask, 250, 5, KTASK_USER);
 	kernel_createTask(simpleTask1, 250, 5, KTASK_USER);

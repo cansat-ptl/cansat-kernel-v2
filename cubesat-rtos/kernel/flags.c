@@ -12,27 +12,27 @@
 volatile uint16_t _kflags = 0;
 volatile uint8_t _kTaskMgrFlags = 0;
 
-void kernel_enterCriticalSection()
+void threads_enterCriticalSection()
 {
 	kernel_DISABLE_CONTEXT_SWITCH();
 }
 
-void kernel_exitCriticalSection()
+void threads_exitCriticalSection()
 {
 	kernel_ENABLE_CONTEXT_SWITCH();
 }
 
-uint8_t kernel_startAtomicOperation()
+uint8_t threads_startAtomicOperation()
 {
-	kernel_enterCriticalSection();
+	threads_enterCriticalSection();
 	uint8_t sreg = platform_STATUS_REG;
 	platform_DISABLE_INTERRUPTS();
 	return sreg;
 }
 
-void kernel_endAtomicOperation(uint8_t sreg)
+void threads_endAtomicOperation(uint8_t sreg)
 {
-	kernel_exitCriticalSection();
+	threads_exitCriticalSection();
 	platform_ENABLE_INTERRUPTS();
 	platform_STATUS_REG = sreg;
 }

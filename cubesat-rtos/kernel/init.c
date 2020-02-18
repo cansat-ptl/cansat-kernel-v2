@@ -57,7 +57,7 @@ uint8_t kernel_init()
 	debug_puts(L_NONE, PSTR("\x0C"));
 	
 	platform_ENABLE_INTERRUPTS();
-	kernel_exitCriticalSection();
+	threads_exitCriticalSection();
 
 	return 0;
 }

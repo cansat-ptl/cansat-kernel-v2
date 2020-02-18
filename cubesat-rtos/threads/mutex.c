@@ -5,9 +5,9 @@
  *  Author: Admin
  */ 
 
-#include <kernel.h>
+#include <threads/threads.h>
 
-struct kLock_t kernel_mutexInit()  //TODO: this function is a stub. You can help by improving it
+struct kLock_t threads_mutexInit()  //TODO: this function is a stub. You can help by improving it
 {
 	struct kLock_t mutex;
 	mutex.type = KLOCK_MUTEX;
@@ -16,12 +16,12 @@ struct kLock_t kernel_mutexInit()  //TODO: this function is a stub. You can help
 }
 
 
-uint8_t kernel_mutexLock(struct kLock_t* mutex)
+uint8_t threads_mutexLock(struct kLock_t* mutex)
 {
 	if (mutex == NULL) return 1;
 	
 	while (1) {
-		uint8_t sreg = kernel_startAtomicOperation();
+		uint8_t sreg = threads_startAtomicOperation();
 		kTaskHandle_t runningTask = kernel_getCurrentTaskHandle();
 		
 		//debug_puts(L_NONE, PSTR("threads: attempting to lock mutex..."));
@@ -30,22 +30,22 @@ uint8_t kernel_mutexLock(struct kLock_t* mutex)
 			mutex -> lockCount = 1;
 			mutex -> owner = runningTask;
 			//debug_puts(L_NONE, PSTR("success!\r\n"));
-			kernel_endAtomicOperation(sreg);
+			threads_endAtomicOperation(sreg);
 			return 0;
 		}
 		else {
 			runningTask -> lock = mutex;
 			//debug_puts(L_NONE, PSTR("error: locked\r\n"));
 			kernel_setTaskState(kernel_getCurrentTaskHandle(), KSTATE_BLOCKED);
-			kernel_endAtomicOperation(sreg);
+			threads_endAtomicOperation(sreg);
 			kernel_yield(0);
 		}
 	}
 }
 
-uint8_t kernel_mutexUnlock(struct kLock_t* mutex)
+uint8_t threads_mutexUnlock(struct kLock_t* mutex)
 {
-	uint8_t sreg = kernel_startAtomicOperation();
+	uint8_t sreg = threads_startAtomicOperation();
 	
 	//debug_puts(L_NONE, PSTR("threads: unlocking mutex\r\n"));
 	if (mutex == NULL) return 1;
@@ -64,6 +64,6 @@ uint8_t kernel_mutexUnlock(struct kLock_t* mutex)
 		}
 	}
 	
-	kernel_endAtomicOperation(sreg);
+	threads_endAtomicOperation(sreg);
 	return 0;
 }
