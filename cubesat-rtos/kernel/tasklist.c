@@ -97,7 +97,6 @@ kTaskHandle_t kernel_createTask(kTask_t startupPointer, kStackSize_t taskStackSi
 	kTaskList[kTaskIndex].priority = taskPriority;
 	kTaskList[kTaskIndex].taskPtr = startupPointer;
 	kTaskList[kTaskIndex].stackBegin = stackPointer;
-	kTaskList[kTaskIndex].returnAddress = startupPointer;
 	kTaskList[kTaskIndex].lock = NULL;
 	kTaskList[kTaskIndex].state = KSTATE_READY;
 	kTaskList[kTaskIndex].type = taskType;

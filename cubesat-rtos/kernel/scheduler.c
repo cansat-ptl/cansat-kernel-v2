@@ -9,8 +9,8 @@
 
 static volatile kTaskHandle_t kSchedulingList;
 static volatile uint8_t kSchedulingAmount;
-static volatile uint8_t kCurrentTaskIdx = 0; //TODO: task switch logic
-static volatile uint8_t kNextTaskIdx = 0; //TODO: task switch logic
+static volatile uint8_t kCurrentTaskIdx = 0;
+static volatile uint8_t kNextTaskIdx = 0;
 
 static volatile uint8_t kSchedState = 0;
 static volatile uint8_t kSwitchReady = 0;

@@ -12,8 +12,6 @@
 #include <types.h>
 #include "../kernel_config.h"
 
-extern volatile struct kTaskStruct_t* kCurrentTask;
-
 //TODO: return codes
 uint8_t platform_prepareStackFrame(kStackPtr_t stackPointer, kTask_t taskPointer)
 {
@@ -39,7 +37,7 @@ void platform_stackCorruptionHook()
 	uint8_t taskIndex = kernel_getTaskListIndex();
 	
 	handle -> state = KSTATE_SUSPENDED;
-	debug_puts(L_NONE, PSTR("kernel: Executing task corruption hook\r\n"));
+	debug_puts(L_NONE, PSTR("kernel: Executing task corruption hook\r\n")); //TODO: debug information
 	for (int i = 0; i < taskIndex; i++) {
 		if (taskList[i].lock -> owner == handle) {
 			taskList[i].state = KSTATE_READY;

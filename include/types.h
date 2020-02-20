@@ -19,6 +19,7 @@ typedef void kTask;
 typedef uint8_t byte;
 
 typedef enum {KSTATE_UNINIT, KSTATE_SUSPENDED, KSTATE_SLEEPING, KSTATE_BLOCKED, KSTATE_SEMAPHORE, KSTATE_READY, KSTATE_RUNNING} kTaskState_t;
+typedef enum {KEVENT_NONE, KEVENT_FIRED} kEventState_t;
 typedef enum {KTASK_USER, KTASK_SYSTEM} kTaskType_t;
 typedef enum {KTIMER_SINGLERUN, KTASK_REPEATED} kTimerType_t;
 typedef enum {KLOCK_SEMAPHORE, KLOCK_MUTEX, KLOCK_SEMAPHORE_RECURSIVE} kLockType_t;
@@ -52,19 +53,28 @@ struct kFifo_t
 	uint8_t outputPosition;
 };
 
+struct kEvent_t
+{
+	kTask_t eventHandler;
+	kEventState_t state;
+	uint16_t eventFlags;
+};
+
 struct kTaskStruct_t 
 {
 	kStackPtr_t stackPtr;
-	kTask_t returnAddress;
-	kTask_t taskPtr;
 	kStackPtr_t stackBegin;
+	kTask_t taskPtr;
 	kStackSize_t stackSize;
 	uint8_t priority;
 	kTaskState_t state;
 	uint16_t sleepTime;
 	struct kLock_t* lock;
+	struct kEvent_t notification;
 	kTaskType_t type;
 	uint8_t pid;
+	uint8_t flags;
+	char name[9];
 };
 
 struct kTimerStruct_t 

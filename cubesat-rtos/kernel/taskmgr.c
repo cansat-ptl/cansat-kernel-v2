@@ -10,8 +10,8 @@
 #include <hal/hal.h>
 #include "../kernel_config.h"
 
-volatile struct kTaskStruct_t *kCurrentTask;
-volatile struct kTaskStruct_t *kNextTask;
+static volatile struct kTaskStruct_t *kCurrentTask;
+static volatile struct kTaskStruct_t *kNextTask;
 volatile uint64_t __e_time = 0;
 extern volatile uint16_t _kflags;
 extern volatile uint8_t _kTaskMgrFlags;

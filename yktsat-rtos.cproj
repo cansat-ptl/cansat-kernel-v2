@@ -163,9 +163,6 @@
     <Compile Include="cubesat-rtos\dev\basic\watchdog.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="cubesat-rtos\kernel\events.c">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="cubesat-rtos\kernel\flags.c">
       <SubType>compile</SubType>
     </Compile>
@@ -185,6 +182,9 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="cubesat-rtos\threads\atomic.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="cubesat-rtos\threads\notifications.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="cubesat-rtos\threads\fifo.c">

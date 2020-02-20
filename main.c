@@ -45,7 +45,7 @@ kTask simpleTask()
 		//debug_logMessage(PGM_ON, L_INFO, PSTR("task1: Job 1 ends\r\n"));
 		threads_mutexUnlock(&mutex0);
 		
-		*(handle -> stackBegin - handle -> stackSize - 5) = 0;
+		*(handle -> stackBegin - handle -> stackSize - 5) = 99;
 		
 		uint16_t endTime = kernel_getUptime();
 		debug_logMessage(PGM_ON, L_INFO, PSTR("task1: Job 1 exec time: %d\r\n"), endTime-startTime);
@@ -81,7 +81,6 @@ kTask simpleTask2()
 	while (1) {
 	//	debug_logMessage(PGM_ON, L_INFO, PSTR("task3: Job 3 runs, sending character to queue\r\n"));
 		threads_mutexLock(&mutex0);
-		uint8_t pos = 0;
 		for (int i = 0; i < hellosize; i++) {
 			if (threads_fifoWrite(&queue0, hello1[i])) {
 				//debug_logMessage(PGM_ON, L_INFO, PSTR("task3: Fifo write success, written character = %c\r\n"), hello1[i]);
