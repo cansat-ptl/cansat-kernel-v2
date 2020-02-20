@@ -55,6 +55,7 @@ struct kFifo_t
 struct kTaskStruct_t 
 {
 	kStackPtr_t stackPtr;
+	kTask_t returnAddress;
 	kTask_t taskPtr;
 	kStackPtr_t stackBegin;
 	kStackSize_t stackSize;
@@ -63,7 +64,6 @@ struct kTaskStruct_t
 	uint16_t sleepTime;
 	struct kLock_t* lock;
 	kTaskType_t type;
-	uint8_t position;
 	uint8_t pid;
 };
 

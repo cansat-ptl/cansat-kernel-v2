@@ -40,6 +40,5 @@ void kernel_setFlag(uint8_t flag, uint8_t value);
 uint8_t kernel_checkFlag(uint8_t flag);
 uint64_t kernel_getUptime();
 void kernel_checkMCUCSR();
-uint8_t kernel_init();
 
 #endif /* CONTROL_H_ */

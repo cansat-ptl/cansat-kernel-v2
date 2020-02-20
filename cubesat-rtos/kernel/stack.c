@@ -11,6 +11,8 @@ static volatile uint8_t kernelMemory[CFG_TASK_STACK_SIZE + CFG_KERNEL_STACK_SIZE
 static volatile kStackSize_t kUserTaskStackUsage = 0;
 static volatile kStackSize_t kSystemStackUsage = 0;
 
+void platform_handleStackCorruption();
+
 kStackPtr_t kernel_getStackPtr()
 {
 	return kernelMemory;
@@ -62,12 +64,15 @@ uint8_t kernel_checkStackProtectionRegion(kTaskHandle_t checkedTask)
 	
 	uint8_t sreg = threads_startAtomicOperation();
 	
-	kStackPtr_t stackEnd = checkedTask -> stackBegin;
-	
-	for (int16_t i = 1; i <= CFG_TASK_STACK_SAFETY_MARGIN+1; i++) {
-		if (stackEnd[i] != 0xFE) {
-			debug_puts(L_ERROR, PSTR("kernel: stack corruption detected\r\n")); //TODO: stack corruption hook
-		}
+	if (checkedTask -> type != KTASK_SYSTEM) {
+		kStackPtr_t stackEnd = checkedTask -> stackBegin - checkedTask -> stackSize - CFG_TASK_STACK_SAFETY_MARGIN;
+		
+		for (int16_t i = 1; i < CFG_TASK_STACK_SAFETY_MARGIN+1; i++) {
+			if (stackEnd[i] != 0xFE) {
+				debug_puts(L_NONE, PSTR("kernel: Stack corruption detected\r\n"));
+				platform_handleStackCorruption();
+			}
+		}	
 	}
 	
 	threads_endAtomicOperation(sreg);

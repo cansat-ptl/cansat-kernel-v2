@@ -30,6 +30,7 @@
 	#define CFG_MAX_TASK_COUNT 10
 	#define CFG_MIN_STACK_SIZE 40 //Due to AVR platform limitations, it is NOT RECOMMENDED to use values < 40, or bad things may happen
 	#define CFG_KERNEL_STACK_FRAME_REGISTER_OFFSET -4  //Memory offset, from which General Purpose Registers are stored during stack initialization
+	#define CFG_KERNEL_STACK_FRAME_END_OFFSET 31
 	
 	#define CFG_NO_INTERRUPTS_IN_CRITICAL_SECTIONS 1
 	

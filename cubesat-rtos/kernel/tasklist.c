@@ -34,13 +34,6 @@ void kernel_resetTask(kTaskHandle_t taskList, uint8_t position)
 	taskList[position].pid = 0;
 }
 
-void kernel_updateTaskPositions(kTaskHandle_t taskList, uint8_t amount)
-{
-	for (int i = 0; i < amount; i++) {
-		taskList[i].position = i;
-	}
-}
-
 inline void kernel_swapTasks(volatile struct kTaskStruct_t * taskA, volatile struct kTaskStruct_t * taskB)
 {
 	struct kTaskStruct_t taskTemp = *taskA;
@@ -63,31 +56,64 @@ void kernel_sortTaskList(kTaskHandle_t taskList, uint8_t amount) //Bubble sort
 		if (!swapFlag) break;
 	}
 	
-	kernel_updateTaskPositions(taskList, amount);
 	return;
 }
 
 kTaskHandle_t kernel_createTask(kTask_t startupPointer, kStackSize_t taskStackSize, uint8_t taskPriority, kTaskType_t taskType)
 {
-	if (startupPointer == NULL) return NULL;
-
+	#if CFG_LOGGING == 1
+		debug_logMessage(PGM_ON, L_NONE, PSTR("[init] taskmgr: Registering new task, PID=%d, StartPTR=0x%08X, Stack=%d, Prio=%d\r\n"), kGlobalPid, startupPointer, taskStackSize, taskPriority);
+	#endif
+	
+	if (startupPointer == NULL) {
+		#if CFG_LOGGING == 1
+			debug_puts(L_NONE, PSTR("[init] taskmgr: Task registration                            [ERR]\r\n"));
+			debug_puts(L_NONE, PSTR("[init] taskmgr: Task registration error: PTR=NULL\r\n"));
+		#endif
+		return NULL;
+	}
+	
+	#if CFG_LOGGING == 1
+		debug_puts(L_NONE, PSTR("[init] taskmgr: Allocating memory\r\n"));
+	#endif
+	
 	kStackPtr_t stackPointer = kernel_setupTaskStack(startupPointer, taskStackSize, taskType);
 	
-	if (stackPointer == NULL) return NULL;
+	if (stackPointer == NULL) {
+		#if CFG_LOGGING == 1
+			debug_puts(L_NONE, PSTR("[init] taskmgr: Task registration                            [ERR]\r\n"));
+			debug_puts(L_NONE, PSTR("[init] taskmgr: Failed to allocate memory\r\n"));
+		#endif
+		return NULL;
+	}
 	
-	kTaskList[kTaskIndex].stackPtr = stackPointer + (CFG_KERNEL_STACK_FRAME_REGISTER_OFFSET-31);
+	#if CFG_LOGGING == 1
+		debug_puts(L_NONE, PSTR("[init] taskmgr: Memory allocation                            [OK]\r\n"));
+		debug_puts(L_NONE, PSTR("[init] taskmgr: Preparing task structure fields"));
+	#endif
+	
+	kTaskList[kTaskIndex].stackPtr = stackPointer + (CFG_KERNEL_STACK_FRAME_REGISTER_OFFSET-CFG_KERNEL_STACK_FRAME_END_OFFSET);
 	kTaskList[kTaskIndex].stackSize = taskStackSize;
 	kTaskList[kTaskIndex].priority = taskPriority;
 	kTaskList[kTaskIndex].taskPtr = startupPointer;
 	kTaskList[kTaskIndex].stackBegin = stackPointer;
+	kTaskList[kTaskIndex].returnAddress = startupPointer;
 	kTaskList[kTaskIndex].lock = NULL;
 	kTaskList[kTaskIndex].state = KSTATE_READY;
 	kTaskList[kTaskIndex].type = taskType;
 	kTaskList[kTaskIndex].pid = kGlobalPid;
 	
+	#if CFG_LOGGING == 1
+		debug_puts(L_NONE, PSTR("              [OK]\r\n"));
+	#endif
+	
 	kernel_sortTaskList(kTaskList, kTaskIndex); //Bruh
 	
 	kTaskHandle_t handle = NULL;
+	
+	#if CFG_LOGGING == 1
+		debug_puts(L_NONE, PSTR("[init] taskmgr: Assigning task handle"));
+	#endif
 	
 	for (int i = 0; i < kTaskIndex+1; i++) {
 		if (kTaskList[i].pid == kGlobalPid) {
@@ -96,8 +122,16 @@ kTaskHandle_t kernel_createTask(kTask_t startupPointer, kStackSize_t taskStackSi
 		}
 	}
 	
+	#if CFG_LOGGING == 1
+		debug_puts(L_NONE, PSTR("                        [OK]\r\n"));
+	#endif
+	
 	kGlobalPid++;
 	kTaskIndex++;
-
+	
+	#if CFG_LOGGING == 1
+		debug_puts(L_NONE, PSTR("[init] taskmgr: Task registration                            [OK]\r\n"));
+	#endif
+	
 	return handle;
 }

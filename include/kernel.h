@@ -25,6 +25,9 @@
 #include <platform/platform.h>
 #include "../kernel_config.h"
 
+uint8_t kernel_startScheduler();
+void kernel_init();
+
 uint8_t kernel_setTimer(kTimerISR_t t_pointer, uint32_t t_period);
 uint8_t kernel_removeTimer(kTimerISR_t t_pointer);
 void kernel_timerService();

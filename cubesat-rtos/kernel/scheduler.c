@@ -15,7 +15,7 @@ static volatile uint8_t kNextTaskIdx = 0; //TODO: task switch logic
 static volatile uint8_t kSchedState = 0;
 static volatile uint8_t kSwitchReady = 0;
 
-void kernel_startScheduler(kTaskHandle_t taskList, uint8_t taskIndex)
+void kernel_initScheduler(kTaskHandle_t taskList, uint8_t taskIndex)
 {
 	kSchedulingList = taskList;
 	kSchedulingAmount = taskIndex;
@@ -45,6 +45,7 @@ static void scheduler_stateSearching()
 
 static void scheduler_stateFound() 
 {
+	kernel_checkStackProtectionRegion(kernel_getCurrentTaskHandle());
 	kernel_setNextTask(&kSchedulingList[kNextTaskIdx]);
 	kCurrentTaskIdx = kNextTaskIdx;
 	kNextTaskIdx = 0;
