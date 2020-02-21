@@ -45,7 +45,6 @@ static void scheduler_stateSearching()
 
 static void scheduler_stateFound() 
 {
-	kernel_checkStackProtectionRegion(kernel_getCurrentTaskHandle());
 	kernel_setNextTask(&kSchedulingList[kNextTaskIdx]);
 	kCurrentTaskIdx = kNextTaskIdx;
 	kNextTaskIdx = 0;

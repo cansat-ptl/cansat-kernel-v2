@@ -26,7 +26,7 @@ uint8_t threads_mutexLock(struct kLock_t* mutex)
 		
 		//debug_puts(L_NONE, PSTR("threads: attempting to lock mutex..."));
 		
-		if (mutex -> lockCount == 0 || mutex -> owner == NULL) {
+		if (mutex -> lockCount == 0 || mutex -> owner == NULL || mutex -> owner -> state == KSTATE_UNINIT) {
 			mutex -> lockCount = 1;
 			mutex -> owner = runningTask;
 			//debug_puts(L_NONE, PSTR("success!\r\n"));

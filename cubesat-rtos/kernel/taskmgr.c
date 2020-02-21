@@ -76,7 +76,8 @@ inline void kernel_restoreContext()
 
 static inline void kernel_switchContext()
 {
-		kCurrentTask = kNextTask;
+	kernel_checkStackProtectionRegion(kernel_getCurrentTaskHandle());
+	kCurrentTask = kNextTask;
 }
 
 static inline void kernel_switchTask()

@@ -36,7 +36,7 @@ void platform_stackCorruptionHook()
 	kTaskHandle_t taskList = kernel_getTaskListPtr();
 	uint8_t taskIndex = kernel_getTaskListIndex();
 	
-	handle -> state = KSTATE_SUSPENDED;
+	handle -> state = KSTATE_UNINIT;
 	debug_puts(L_NONE, PSTR("kernel: Executing task corruption hook\r\n")); //TODO: debug information
 	for (int i = 0; i < taskIndex; i++) {
 		if (taskList[i].lock -> owner == handle) {
@@ -52,7 +52,9 @@ void platform_stackCorruptionHook()
 void platform_handleStackCorruption()
 {
 	kTaskHandle_t handle = kernel_getCurrentTaskHandle();
-	kStackPtr_t stackPointer = handle -> stackPtr - (CFG_KERNEL_STACK_FRAME_REGISTER_OFFSET-CFG_KERNEL_STACK_FRAME_END_OFFSET);
-	stackPointer[0] = (uint16_t)platform_stackCorruptionHook & 0xFF;
-	stackPointer[-1] = (uint16_t)platform_stackCorruptionHook >> 8;
+	kStackPtr_t stackPointer = handle -> stackBegin;
+	platform_prepareStackFrame(stackPointer, platform_stackCorruptionHook);
+	handle -> stackPtr = stackPointer + (CFG_KERNEL_STACK_FRAME_REGISTER_OFFSET-CFG_KERNEL_STACK_FRAME_END_OFFSET);
+	
+	
 }

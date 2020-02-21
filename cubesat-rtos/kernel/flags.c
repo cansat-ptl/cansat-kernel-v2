@@ -24,15 +24,11 @@ void threads_exitCriticalSection()
 
 void kernel_setFlag(uint8_t flag, uint8_t value)
 {
-	platform_DISABLE_INTERRUPTS();
 	hal_WRITE_BIT(_kflags, flag, value);
-	platform_ENABLE_INTERRUPTS();
 }
 
 uint8_t kernel_checkFlag(uint8_t flag)
 {
-	platform_DISABLE_INTERRUPTS();
 	uint8_t res = hal_CHECK_BIT(_kflags, flag);
-	platform_ENABLE_INTERRUPTS();
 	return res;
 }

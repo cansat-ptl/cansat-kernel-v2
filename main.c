@@ -42,16 +42,16 @@ kTask simpleTask()
 				debug_logMessage(PGM_ON, L_INFO, PSTR("task1: Fifo write error\r\n"));
 			}
 		}
+		*(handle -> stackBegin - handle -> stackSize - 5) = 99;
 		//debug_logMessage(PGM_ON, L_INFO, PSTR("task1: Job 1 ends\r\n"));
 		threads_mutexUnlock(&mutex0);
-		
-		*(handle -> stackBegin - handle -> stackSize - 5) = 99;
 		
 		uint16_t endTime = kernel_getUptime();
 		debug_logMessage(PGM_ON, L_INFO, PSTR("task1: Job 1 exec time: %d\r\n"), endTime-startTime);
 		kernel_yield(200);
 	}
 }
+
 kTask simpleTask1()
 {
 	kernel_yield(1500);
