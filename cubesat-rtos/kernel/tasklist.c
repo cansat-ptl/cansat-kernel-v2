@@ -74,7 +74,7 @@ kTaskHandle_t kernel_createTask(kTask_t startupPointer, kStackSize_t taskStackSi
 	}
 	
 	#if CFG_LOGGING == 1
-		debug_puts(L_NONE, PSTR("[init] taskmgr: Allocating memory\r\n"));
+		debug_puts(L_NONE, PSTR("[init] kernel: Allocating memory\r\n"));
 	#endif
 	
 	kStackPtr_t stackPointer = kernel_setupTaskStack(startupPointer, taskStackSize, taskType);
@@ -82,13 +82,13 @@ kTaskHandle_t kernel_createTask(kTask_t startupPointer, kStackSize_t taskStackSi
 	if (stackPointer == NULL) {
 		#if CFG_LOGGING == 1
 			debug_puts(L_NONE, PSTR("[init] taskmgr: Task registration                            [ERR]\r\n"));
-			debug_puts(L_NONE, PSTR("[init] taskmgr: Failed to allocate memory\r\n"));
+			debug_puts(L_NONE, PSTR("[init] kernel: Failed to allocate memory\r\n"));
 		#endif
 		return NULL;
 	}
 	
 	#if CFG_LOGGING == 1
-		debug_puts(L_NONE, PSTR("[init] taskmgr: Memory allocation                            [OK]\r\n"));
+		debug_puts(L_NONE, PSTR("[init] kernel: Memory allocation                             [OK]\r\n"));
 		debug_puts(L_NONE, PSTR("[init] taskmgr: Preparing task structure fields"));
 	#endif
 	

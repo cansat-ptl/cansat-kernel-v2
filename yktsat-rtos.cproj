@@ -184,6 +184,18 @@
     <Compile Include="cubesat-rtos\platform\avr\timers.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="cubesat-rtos\systemd\init\init.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="cubesat-rtos\systemd\init\systemd.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="cubesat-rtos\systemd\services\calls.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="cubesat-rtos\systemd\services\services.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="cubesat-rtos\threads\atomic.c">
       <SubType>compile</SubType>
     </Compile>
@@ -289,18 +301,6 @@
     <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="systemd\init\init.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="systemd\init\systemd.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="systemd\services\calls.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="systemd\services\services.c">
-      <SubType>compile</SubType>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cubesat-rtos" />
@@ -309,6 +309,9 @@
     <Folder Include="cubesat-rtos\debug" />
     <Folder Include="cubesat-rtos\platform" />
     <Folder Include="cubesat-rtos\platform\avr" />
+    <Folder Include="cubesat-rtos\systemd\" />
+    <Folder Include="cubesat-rtos\systemd\init\" />
+    <Folder Include="cubesat-rtos\systemd\services\" />
     <Folder Include="cubesat-rtos\threads\" />
     <Folder Include="include" />
     <Folder Include="cubesat-rtos\utils" />
@@ -322,9 +325,6 @@
     <Folder Include="include\platform\avr" />
     <Folder Include="include\utils" />
     <Folder Include="include\threads" />
-    <Folder Include="systemd" />
-    <Folder Include="systemd\init" />
-    <Folder Include="systemd\services" />
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>

@@ -28,7 +28,8 @@ uint8_t kernel_startScheduler()
 	#if CFG_LOGGING == 1
 		debug_puts(L_NONE, PSTR("[init] kernel: Starting up task manager"));
 	#endif
-	
+	//debug_puts(L_NONE, PSTR("[init] kernel: Starting up task manager                      [OK]\r\n"));
+	//.................................................................
 	kernel_initScheduler(kernel_getTaskListPtr(), kernel_getTaskListIndex());
 	
 	#if CFG_LOGGING == 1
