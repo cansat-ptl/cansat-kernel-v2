@@ -17,19 +17,24 @@ void systemd_idle()
 
 uint8_t systemd_addCall(sdService_t t_ptr)
 {
+	uint8_t sreg = threads_startAtomicOperation();
+	
 	if (sdCallIndex < CFG_SYSTEMD_MAX_SERVICES) {
 		sdCallQueue[sdCallIndex] = t_ptr;
 		sdCallIndex++;
 		
+		threads_endAtomicOperation(sreg);
 		return 0;
 	}
 	else {
+		threads_endAtomicOperation(sreg);
 		return 1;
 	}
 }
 
 uint8_t systemd_removeCall()
 {
+	uint8_t sreg = threads_startAtomicOperation();
 	if (sdCallIndex != 0) {
 		sdCallIndex--;
 		for (int i = 0; i < CFG_SYSTEMD_MAX_SERVICES-1; i++) {
@@ -41,15 +46,18 @@ uint8_t systemd_removeCall()
 		sdCallQueue[0] = systemd_idle;
 	}
 	
+	threads_endAtomicOperation(sreg);
 	return 0;
 }
 
 void systemd_clearCallQueue()
 {
+	uint8_t sreg = threads_startAtomicOperation();
 	for (int i = 0; i < CFG_SYSTEMD_MAX_SERVICES; i++) {
 		sdCallQueue[i] = systemd_idle;
 	}
 	sdCallIndex = 0;
+	threads_endAtomicOperation(sreg);
 }
 
 void systemd_serviceManager()

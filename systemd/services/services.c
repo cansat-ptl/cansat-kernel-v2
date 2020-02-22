@@ -12,6 +12,8 @@ static volatile struct sdServiceStruct_t sdServiceQueue[CFG_SYSTEMD_MAX_SERVICES
 extern volatile uint8_t sdCallIndex;
 extern volatile sdService_t sdCallQueue[CFG_SYSTEMD_MAX_SERVICES];
 
+kMutex_t sdQueueOpLock;
+
 static inline void systemd_resetServiceByPosition(uint8_t position)
 {
 	sdServiceQueue[position].pointer = systemd_idle;
@@ -22,6 +24,7 @@ static inline void systemd_resetServiceByPosition(uint8_t position)
 
 uint8_t systemd_addService(uint8_t taskType, sdService_t t_ptr, uint16_t t_delay, uint8_t startupState)
 {
+	uint8_t sreg = threads_startAtomicOperation();
 	if (t_delay == 0) t_delay = 1;
 	
 	for (int i = 0; i <= sdServiceIndex; i++) {
@@ -31,6 +34,7 @@ uint8_t systemd_addService(uint8_t taskType, sdService_t t_ptr, uint16_t t_delay
 			if (taskType == SDSERVICE_REPEATED) sdServiceQueue[i].repeatPeriod = t_delay - 1;
 			else sdServiceQueue[i].repeatPeriod = 0;
 			
+			threads_endAtomicOperation(sreg);
 			return 0;
 		}
 	}
@@ -42,15 +46,18 @@ uint8_t systemd_addService(uint8_t taskType, sdService_t t_ptr, uint16_t t_delay
 		else sdServiceQueue[sdServiceIndex].repeatPeriod = 0;
 		sdServiceIndex++;
 		
+		threads_endAtomicOperation(sreg);
 		return 0;
 	}
 	else {
+		threads_endAtomicOperation(sreg);
 		return 1;
 	}
 }
 
 uint8_t systemd_removeServiceByPosition(uint8_t position)
 {
+	uint8_t sreg = threads_startAtomicOperation();
 	sdServiceIndex--;
 	systemd_resetServiceByPosition(position);
 	for (int j = position; j < CFG_SYSTEMD_MAX_SERVICES-1; j++) {
@@ -58,11 +65,14 @@ uint8_t systemd_removeServiceByPosition(uint8_t position)
 	}
 	systemd_resetServiceByPosition(CFG_SYSTEMD_MAX_SERVICES-1);
 	
+	threads_endAtomicOperation(sreg);
 	return 0;
 }
 
 uint8_t systemd_removeService(sdService_t t_pointer)
 {
+	uint8_t sreg = threads_startAtomicOperation();
+	
 	uint8_t position;
 		
 	sdServiceIndex--;
@@ -77,30 +87,40 @@ uint8_t systemd_removeService(sdService_t t_pointer)
 			sdServiceQueue[j] = sdServiceQueue[j+1];
 		}
 		systemd_resetServiceByPosition(CFG_SYSTEMD_MAX_SERVICES-1);
+		
+		threads_endAtomicOperation(sreg);
 		return 0;
 	}
 	else {
+		threads_endAtomicOperation(sreg);
 		return 1;
 	}
 }
 
 void systemd_clearServiceQueue()
 {
+	uint8_t sreg = threads_startAtomicOperation();
 	for (int i = 0; i < CFG_SYSTEMD_MAX_SERVICES; i++) {
 		systemd_resetServiceByPosition(i);
 	}
 	sdServiceIndex = 0;
+	threads_endAtomicOperation(sreg);
 }
 
 uint8_t systemd_setServiceState(sdService_t t_pointer, uint8_t state)
 {
+	uint8_t sreg = threads_startAtomicOperation();
+	
 	for (int i = 0; i < CFG_SYSTEMD_MAX_SERVICES-1; i++) {
 		if (sdServiceQueue[i].pointer == t_pointer) {
 			sdServiceQueue[i].state = state;
+			
+			threads_endAtomicOperation(sreg);
 			return 0;
 		}
 	}
 	
+	threads_endAtomicOperation(sreg);
 	return 1;
 }
 
