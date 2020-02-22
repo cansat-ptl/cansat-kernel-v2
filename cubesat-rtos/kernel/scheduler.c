@@ -15,13 +15,15 @@ static volatile uint8_t kNextTaskIdx = 0;
 static volatile uint8_t kSchedState = 0;
 static volatile uint8_t kSwitchReady = 0;
 
+extern volatile uint16_t kTaskActiveTicks;
+
 void kernel_initScheduler(kTaskHandle_t taskList, uint8_t taskIndex)
 {
 	kSchedulingList = taskList;
 	kSchedulingAmount = taskIndex;
 }
 
-static void scheduler_stateSearching()
+static inline void scheduler_stateSearching()
 {
 	uint8_t schedulingAmount = kSchedulingAmount;
 	for (int i = 0; i < schedulingAmount+1; i++) {
@@ -43,16 +45,17 @@ static void scheduler_stateSearching()
 	}
 }
 
-static void scheduler_stateFound() 
+static inline void scheduler_stateFound() 
 {
 	kernel_setNextTask(&kSchedulingList[kNextTaskIdx]);
 	kCurrentTaskIdx = kNextTaskIdx;
+	kTaskActiveTicks = CFG_TICKS_PER_TASK;
 	kNextTaskIdx = 0;
 	kSwitchReady = 1;
 	return;
 }
 
-static void scheduler_stateFoundLower()
+static inline void scheduler_stateFoundLower()
 {
 	kSchedState = 0;
 	kNextTaskIdx = 0;

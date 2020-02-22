@@ -143,9 +143,9 @@ int main()
 	kernel_createTask(simpleTask, 250, 5, KTASK_USER);
 	kernel_createTask(simpleTask1, 250, 5, KTASK_USER);
 	kernel_createTask(simpleTask2, 250, 5, KTASK_USER);
-	//kernel_createTask(simpleTask3, 150, 2, KTASK_USER);
-	//kernel_createTask(simpleTask4, 150, 1, KTASK_USER);
-	//kernel_createTask(simpleTask5, 250, 3, KTASK_USER);
+	kernel_createTask(simpleTask3, 150, 2, KTASK_USER);
+	kernel_createTask(simpleTask4, 150, 1, KTASK_USER);
+	kernel_createTask(simpleTask5, 250, 3, KTASK_USER);
 	kernel_startScheduler();
 	//kernel_createTask(simpleTask3, 64, KPRIO_HIGH, KTASK_DEFAULT, 200, "test3");
 	while (1);

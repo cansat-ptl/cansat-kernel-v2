@@ -92,7 +92,7 @@ kTaskHandle_t kernel_createTask(kTask_t startupPointer, kStackSize_t taskStackSi
 		debug_puts(L_NONE, PSTR("[init] taskmgr: Preparing task structure fields"));
 	#endif
 	
-	kTaskList[kTaskIndex].stackPtr = stackPointer + (CFG_KERNEL_STACK_FRAME_REGISTER_OFFSET-CFG_KERNEL_STACK_FRAME_END_OFFSET);
+	kTaskList[kTaskIndex].stackPtr = stackPointer + (CFG_KERNEL_STACK_FRAME_REGISTER_OFFSET + CFG_KERNEL_STACK_FRAME_END_OFFSET);
 	kTaskList[kTaskIndex].stackSize = taskStackSize;
 	kTaskList[kTaskIndex].priority = taskPriority;
 	kTaskList[kTaskIndex].taskPtr = startupPointer;

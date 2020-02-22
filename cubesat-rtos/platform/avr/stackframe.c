@@ -23,7 +23,7 @@ uint8_t platform_prepareStackFrame(kStackPtr_t stackPointer, kTask_t taskPointer
 	stackPointer[-2] = 0;							// R0 initial value, overwritten by SREG during context switch, should be initialized separately
 	stackPointer[-3] = 0x80;						// SREG initial value - interrupts enabled
 	
-	for (int16_t i = CFG_KERNEL_STACK_FRAME_REGISTER_OFFSET; i > (CFG_KERNEL_STACK_FRAME_REGISTER_OFFSET-31); i--)
+	for (int16_t i = CFG_KERNEL_STACK_FRAME_REGISTER_OFFSET; i > (CFG_KERNEL_STACK_FRAME_REGISTER_OFFSET + CFG_KERNEL_STACK_FRAME_END_OFFSET); i--)
 		stackPointer[i] = 0;						// R1-R31 initial values
 	return 0;
 }
@@ -47,6 +47,7 @@ void platform_stackCorruptionHook()
 	}
 	threads_endAtomicOperation(sreg);
 	kernel_yield(0);
+	while(1);
 }
 
 void platform_handleStackCorruption()
@@ -54,7 +55,5 @@ void platform_handleStackCorruption()
 	kTaskHandle_t handle = kernel_getCurrentTaskHandle();
 	kStackPtr_t stackPointer = handle -> stackBegin;
 	platform_prepareStackFrame(stackPointer, platform_stackCorruptionHook);
-	handle -> stackPtr = stackPointer + (CFG_KERNEL_STACK_FRAME_REGISTER_OFFSET-CFG_KERNEL_STACK_FRAME_END_OFFSET);
-	
-	
+	handle -> stackPtr = stackPointer + (CFG_KERNEL_STACK_FRAME_REGISTER_OFFSET+CFG_KERNEL_STACK_FRAME_END_OFFSET);
 }

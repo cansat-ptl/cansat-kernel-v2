@@ -13,6 +13,9 @@
 #define F_CPU 8000000L						//CPU frequency
 #endif
 
+#define AVRDEF_VER "0.0.1-bleeding"
+#define AVRDEF_TIMESTAMP __TIMESTAMP__
+
 #include <types.h>
 #include <avr/io.h>
 #include <avr/iom128.h>
@@ -141,5 +144,7 @@
 #define platform_setupSystemTimer() platform_setupTimer0(CFG_KERNEL_TIMER_PRESCALER);
 #define platform_startSystemTimer() platform_startTimer0();
 #define platform_stopSystemTimer() platform_stopTimer0();
+
+uint8_t platform_prepareStackFrame(kStackPtr_t regionPointer, kTask_t taskPointer);
 
 #endif /* AVR_H_ */

@@ -33,9 +33,6 @@ uint8_t kernel_startScheduler()
 	
 	#if CFG_LOGGING == 1
 		debug_puts(L_NONE, PSTR("                      [OK]\r\n"));
-	#endif
-	
-	#if CFG_LOGGING == 1
 		debug_puts(L_NONE, PSTR("[init] kernel: Preparing safety memory barrier"));
 	#endif
 	
@@ -45,7 +42,7 @@ uint8_t kernel_startScheduler()
 		debug_puts(L_NONE, PSTR("               [OK]\r\n"));
 	#endif
 	
-	kTaskHandle_t ct = kernel_createTask(kernel_idle, 64, 0, KTASK_SYSTEM);
+	kTaskHandle_t ct = kernel_createTask(kernel_idle, 64, KPRIO_IDLE, KTASK_SYSTEM);
 	if (ct == NULL) {
 		while(1);
 	}

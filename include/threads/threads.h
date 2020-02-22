@@ -8,6 +8,9 @@
 #ifndef THREADS_H_
 #define THREADS_H_
 
+#define THREADS_VER "0.0.1-bleeding"
+#define THREADS_TIMESTAMP __TIMESTAMP__
+
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>

@@ -18,7 +18,7 @@ extern volatile uint8_t _kTaskMgrFlags;
 static volatile uint8_t kInterruptDepth = 0;
 volatile kTaskHandle_t kIdleTaskHandle;
 
-static volatile uint16_t kTaskActiveTicks = 0;
+volatile uint16_t kTaskActiveTicks = 0;
 
 static inline void kernel_switchTask();
 void kernel_schedule();
@@ -76,7 +76,9 @@ inline void kernel_restoreContext()
 
 static inline void kernel_switchContext()
 {
-	kernel_checkStackProtectionRegion(kernel_getCurrentTaskHandle());
+	#if CFG_ENABLE_MEMORY_PROTETCTION == 1
+		kernel_checkStackProtectionRegion(kernel_getCurrentTaskHandle());
+	#endif
 	kCurrentTask = kNextTask;
 }
 
@@ -107,13 +109,13 @@ void kernel_tick()
 	
 	hal_SET_BIT(_kflags, KFLAG_TIMER_ISR);
 	
-	if (kTaskActiveTicks != 0 && kCurrentTask -> priority != KPRIO_REALTIME)
+	if (kTaskActiveTicks != 0 && kCurrentTask -> priority != KPRIO_REALTIME  && kCurrentTask -> priority != KPRIO_IDLE)
 		kTaskActiveTicks--;
 	else {
 		kernel_switchTask();
 	}
 	
-	__e_time++;
+	__e_time += CFG_TICKRATE_MS;
 	
 	hal_CLEAR_BIT(_kflags, KFLAG_TIMER_ISR);
 	kernel_restoreContext();

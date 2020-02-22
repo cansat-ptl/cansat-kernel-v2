@@ -22,19 +22,18 @@
 	#define CFG_KERNEL_TIMER_MODULE 0
 
 	//Task manager settings
-	#define CFG_TASK_STACK_SIZE 1000
+	#define CFG_TASK_STACK_SIZE 1500
 	#define CFG_TASK_STACK_SAFETY_MARGIN 16
 	#define CFG_KERNEL_STACK_SIZE 100
 	#define CFG_KERNEL_STACK_SAFETY_MARGIN 32
-	#define CFG_KERNEL_HEAP_SIZE 200
 	#define CFG_MAX_TASK_COUNT 10
 	#define CFG_MIN_STACK_SIZE 40 //Due to AVR platform limitations, it is NOT RECOMMENDED to use values < 40, or bad things may happen
 	#define CFG_KERNEL_STACK_FRAME_REGISTER_OFFSET -4  //Memory offset, from which General Purpose Registers are stored during stack initialization
-	#define CFG_KERNEL_STACK_FRAME_END_OFFSET 31
+	#define CFG_KERNEL_STACK_FRAME_END_OFFSET -31
+	#define CFG_TICKS_PER_TASK 5
 	
 	#define CFG_NO_INTERRUPTS_IN_CRITICAL_SECTIONS 1
-	
-//	#define MAX_LOCK_COUNT 4 //Total maximum amount of mutexes
+	#define CFG_ENABLE_MEMORY_PROTETCTION 0
 	
 	//Timer settings
 	#define CFG_MAX_TIMER_COUNT 3

@@ -9,6 +9,9 @@
 #ifndef UTILS_H_
 #define UTILS_H_
 
+#define UTIL_VER "0.0.1-bleeding"
+#define UTIL_TIMESTAMP __TIMESTAMP__
+
 #define utils_SET_BIT(x,y) x |= (1 << y)
 #define utils_CLEAR_BIT(x,y) x &= ~(1 << y)
 #define utils_CHECK_BIT(x,y) ((0u == (x & (1 << y))) ? 0u : 1u)

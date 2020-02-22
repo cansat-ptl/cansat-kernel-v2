@@ -14,7 +14,6 @@
 #endif
 
 #include <types.h>
-#include <types.h>
 #include <avr/io.h>
 #include <avr/iom128.h>
 #include <util/delay.h>

@@ -8,10 +8,6 @@
 #ifndef HAL_H_
 #define HAL_H_
 
-#ifndef F_CPU
-#define F_CPU 8000000L
-#endif
-
 #define HAL_MOD_VER "0.2.2-staging"
 #define HAL_MOD_TIMESTAMP __TIMESTAMP__
 
