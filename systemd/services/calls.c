@@ -7,20 +7,12 @@
 
 #include <systemd/systemd.h>
 
-static volatile uint8_t sdCallIndex = 0;
-static volatile sdService_t sdCallQueue[CFG_SYSTEMD_MAX_SERVICES];
+volatile uint8_t sdCallIndex = 0;
+volatile sdService_t sdCallQueue[CFG_SYSTEMD_MAX_SERVICES];
 
 void systemd_idle()
 {
 	return;
-}
-
-static inline void systemd_addCall_i(sdService_t t_ptr)
-{
-	if (sdCallIndex < CFG_SYSTEMD_MAX_SERVICES) {
-		sdCallQueue[sdCallIndex] = t_ptr;
-		sdCallIndex++;
-	}
 }
 
 uint8_t systemd_addCall(sdService_t t_ptr)

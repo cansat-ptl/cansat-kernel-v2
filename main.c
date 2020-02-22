@@ -8,6 +8,7 @@
 #include "config.h"
 #include <math.h>
 #include <avr/io.h>
+#include <systemd/systemd.h>
 
 uint8_t resourse = 1;
 
@@ -133,9 +134,16 @@ kTask simpleTask5()
 	}
 }
 
+void simpleService()
+{
+	debug_puts(L_NONE, PSTR("Example systemd service\r\n"));
+}
+
 int main()
 {
 	kernel_init();
+	systemd_init();
+	systemd_addService(SDSERVICE_REPEATED, simpleService, 100, SDSTATE_ACTIVE);
 	
 	mutex0 = threads_mutexInit();
 	semaphore0 = threads_semaphoreInit(2);
@@ -143,9 +151,7 @@ int main()
 	kernel_createTask(simpleTask, 250, 5, KTASK_USER);
 	kernel_createTask(simpleTask1, 250, 5, KTASK_USER);
 	kernel_createTask(simpleTask2, 250, 5, KTASK_USER);
-	kernel_createTask(simpleTask3, 150, 2, KTASK_USER);
-	kernel_createTask(simpleTask4, 150, 1, KTASK_USER);
-	kernel_createTask(simpleTask5, 250, 3, KTASK_USER);
+
 	kernel_startScheduler();
 	//kernel_createTask(simpleTask3, 64, KPRIO_HIGH, KTASK_DEFAULT, 200, "test3");
 	while (1);

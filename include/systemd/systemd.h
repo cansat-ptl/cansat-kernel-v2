@@ -28,4 +28,12 @@ uint8_t systemd_setServiceState(sdService_t t_pointer, uint8_t state);
 uint8_t systemd_addCall(sdService_t t_ptr);
 uint8_t systemd_removeCall();
 
+void systemd_clearServiceQueue();
+void systemd_clearCallQueue();
+
+void systemd_tick();
+void systemd_init();
+void systemd_main();
+void systemd_serviceManager();
+
 #endif /* SYSTEMD_H_ */
