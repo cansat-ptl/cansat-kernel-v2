@@ -81,8 +81,7 @@ struct kTimerStruct_t
 {
 	kTimerISR_t tsrPointer;
 	uint32_t period;
-	uint32_t savePeriod;
-	
+	uint32_t repeatPeriod;
 };
 
 struct kSystemTime_t 

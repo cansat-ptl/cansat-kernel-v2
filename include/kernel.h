@@ -20,6 +20,7 @@
 #include <threads/threads.h>
 #include <kernel/control.h>
 #include <kernel/tasks.h>
+#include <kernel/timers.h>
 #include <kernel/memory.h>
 #include <kernel/debug.h>
 #include <platform/platform.h>

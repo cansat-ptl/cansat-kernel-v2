@@ -25,8 +25,7 @@ void kernel_initScheduler(kTaskHandle_t taskList, uint8_t taskIndex)
 
 static inline void scheduler_stateSearching()
 {
-	uint8_t schedulingAmount = kSchedulingAmount;
-	for (int i = 0; i < schedulingAmount+1; i++) {
+	for (int i = 0; i < kSchedulingAmount+1; i++) {
 		if (kSchedulingList[i].state == KSTATE_READY) {
 			kSchedState = 2;
 			kNextTaskIdx = i;

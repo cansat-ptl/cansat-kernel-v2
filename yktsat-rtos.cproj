@@ -175,6 +175,9 @@
     <Compile Include="cubesat-rtos\kernel\stack.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="cubesat-rtos\kernel\timers.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="cubesat-rtos\platform\avr\stackframe.c">
       <SubType>compile</SubType>
     </Compile>
@@ -229,6 +232,9 @@
     <Compile Include="include\kernel\tasks.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="include\kernel\timers.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="include\platform\avr\avr.h">
       <SubType>compile</SubType>
     </Compile>
@@ -236,6 +242,15 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="include\platform\platform.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\systemd\systemd_config.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\systemd\systemd_types.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\systemd\systemd.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="include\threads\ipc.h">
@@ -274,6 +289,12 @@
     <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="systemd\services\calls.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="systemd\services\services.c">
+      <SubType>compile</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cubesat-rtos" />
@@ -290,10 +311,13 @@
     <Folder Include="include\hal" />
     <Folder Include="include\kernel" />
     <Folder Include="include\dev" />
+    <Folder Include="include\systemd" />
     <Folder Include="include\platform" />
     <Folder Include="include\platform\avr" />
     <Folder Include="include\utils" />
     <Folder Include="include\threads" />
+    <Folder Include="systemd" />
+    <Folder Include="systemd\services" />
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>

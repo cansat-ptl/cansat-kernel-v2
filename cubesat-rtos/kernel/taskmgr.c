@@ -16,6 +16,7 @@ volatile uint64_t __e_time = 0;
 extern volatile uint16_t _kflags;
 extern volatile uint8_t _kTaskMgrFlags;
 static volatile uint8_t kInterruptDepth = 0;
+static volatile uint8_t kTickRate = 0;
 volatile kTaskHandle_t kIdleTaskHandle;
 
 volatile uint16_t kTaskActiveTicks = 0;
@@ -109,13 +110,20 @@ void kernel_tick()
 	
 	hal_SET_BIT(_kflags, KFLAG_TIMER_ISR);
 	
-	if (kTaskActiveTicks != 0 && kCurrentTask -> priority != KPRIO_REALTIME  && kCurrentTask -> priority != KPRIO_IDLE)
-		kTaskActiveTicks--;
+	if (kTickRate == 0) {
+		if (kTaskActiveTicks != 0 && kCurrentTask -> priority != KPRIO_REALTIME  && kCurrentTask -> priority != KPRIO_IDLE)
+			kTaskActiveTicks--;
+		else
+			kernel_switchTask();
+		kTickRate = CFG_TICKRATE_MS;
+	}
 	else {
-		kernel_switchTask();
+		kTickRate--;
 	}
 	
-	__e_time += CFG_TICKRATE_MS;
+	kernel_timerService();
+	
+	__e_time++;
 	
 	hal_CLEAR_BIT(_kflags, KFLAG_TIMER_ISR);
 	kernel_restoreContext();
