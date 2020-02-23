@@ -10,7 +10,7 @@
 
 #include <stdint.h>
 
-typedef void (*kTask_t)(void);
+typedef void (*kTask_t)(void*);
 typedef void (*kTimerISR_t)(void);
 typedef volatile uint8_t *kStackPtr_t;
 typedef uint16_t kStackSize_t;
@@ -55,7 +55,6 @@ struct kFifo_t
 
 struct kEvent_t
 {
-	kTask_t eventHandler;
 	kEventState_t state;
 	uint16_t eventFlags;
 };
@@ -65,6 +64,7 @@ struct kTaskStruct_t
 	kStackPtr_t stackPtr;
 	kStackPtr_t stackBegin;
 	kTask_t taskPtr;
+	void* args;
 	kStackSize_t stackSize;
 	uint8_t priority;
 	kTaskState_t state;

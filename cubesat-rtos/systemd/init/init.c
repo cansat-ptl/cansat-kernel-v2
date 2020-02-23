@@ -23,7 +23,7 @@ void systemd_init()
 	debug_puts(L_NONE, PSTR("                    [OK]\r\n"));
 	debug_puts(L_NONE, PSTR("[init] systemd: Creating host task\r\n"));
 	
-	kernel_createTask(systemd_main, 100, CFG_SYSTEMD_TASK_PRIORITY, KTASK_SYSTEM);
+	kernel_createTask(systemd_main, NULL, 100, CFG_SYSTEMD_TASK_PRIORITY, KTASK_SYSTEM, "systemd");
 	
 	debug_puts(L_NONE, PSTR("[init] systemd: Startup complete\r\n"));
 }

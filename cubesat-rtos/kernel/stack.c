@@ -34,7 +34,7 @@ void kernel_prepareMemoryBarrier(kStackPtr_t sptr, uint8_t size, uint8_t filler)
 		sptr[i] = filler;
 }
 
-kStackPtr_t kernel_setupTaskStack(kTask_t startupPointer, kStackSize_t taskStackSize, kTaskType_t taskType)
+kStackPtr_t kernel_setupTaskStack(kTask_t startupPointer, kStackSize_t taskStackSize, kTaskType_t taskType, void* args)
 {
 	/* Preparing initial stack frame - DARK MAGIC, DO NOT TOUCH */
 	uint8_t sreg = threads_startAtomicOperation();
@@ -59,7 +59,7 @@ kStackPtr_t kernel_setupTaskStack(kTask_t startupPointer, kStackSize_t taskStack
 		kSystemStackUsage += taskStackSize + CFG_TASK_STACK_SAFETY_MARGIN;
 	}
 
-	platform_prepareStackFrame(stackPointer, startupPointer);
+	platform_prepareStackFrame(stackPointer, startupPointer, args);
 
 	threads_endAtomicOperation(sreg);
 	return stackPointer;

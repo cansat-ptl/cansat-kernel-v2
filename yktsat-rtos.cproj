@@ -163,6 +163,9 @@
     <Compile Include="cubesat-rtos\dev\basic\watchdog.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="cubesat-rtos\dev\uart\uart.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="cubesat-rtos\kernel\flags.c">
       <SubType>compile</SubType>
     </Compile>
@@ -307,6 +310,7 @@
     <Folder Include="cubesat-rtos\dev\basic" />
     <Folder Include="cubesat-rtos\dev" />
     <Folder Include="cubesat-rtos\debug" />
+    <Folder Include="cubesat-rtos\dev\uart" />
     <Folder Include="cubesat-rtos\platform" />
     <Folder Include="cubesat-rtos\platform\avr" />
     <Folder Include="cubesat-rtos\systemd\" />

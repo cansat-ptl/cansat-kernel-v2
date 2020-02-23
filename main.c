@@ -18,7 +18,7 @@ kTaskHandle_t t1, t2, t3;
 
 kFifo_t queue0;
 
-kTask simpleTask()
+kTask simpleTask(void* args)
 {
 	kernel_yield(1500);
 	debug_logMessage(PGM_ON, L_INFO, PSTR("task1: Job 1 starts, creating queue\r\n"));
@@ -53,7 +53,7 @@ kTask simpleTask()
 	}
 }
 
-kTask simpleTask1()
+kTask simpleTask1(void* args)
 {
 	kernel_yield(1500);
 	debug_logMessage(PGM_ON, L_INFO, PSTR("task2: Job 2 starts\r\n"));
@@ -73,11 +73,11 @@ kTask simpleTask1()
 	}
 }
 
-kTask simpleTask2()
+kTask simpleTask2(void* args)
 {
 	kernel_yield(1500);
 	debug_logMessage(PGM_ON, L_INFO, PSTR("task3: Job 3 starts\r\n"));
-	char hello1[] = "asdasd";
+	char* hello1 = (char*)args;
 	uint8_t hellosize = strlen(hello1);
 	while (1) {
 	//	debug_logMessage(PGM_ON, L_INFO, PSTR("task3: Job 3 runs, sending character to queue\r\n"));
@@ -96,7 +96,7 @@ kTask simpleTask2()
 		kernel_yield(200);
 	}
 }
-kTask simpleTask3()
+kTask simpleTask3(void* args)
 {
 	while (1) {
 		threads_semaphoreWait(&semaphore0);
@@ -107,7 +107,7 @@ kTask simpleTask3()
 		kernel_yield(200);
 	}
 }
-kTask simpleTask4()
+kTask simpleTask4(void* args)
 {
 	while (1) {
 		threads_semaphoreWait(&semaphore0);
@@ -120,7 +120,7 @@ kTask simpleTask4()
 		//while(1);
 	}
 }
-kTask simpleTask5()
+kTask simpleTask5(void* args)
 {
 	while (1) {
 		threads_semaphoreWait(&semaphore0);
@@ -141,6 +141,7 @@ void simpleService()
 
 int main()
 {
+	char test[] = "test arg string";
 	kernel_init();
 	systemd_init();
 	systemd_addService(SDSERVICE_REPEATED, simpleService, 100, SDSTATE_ACTIVE);
@@ -148,9 +149,9 @@ int main()
 	mutex0 = threads_mutexInit();
 	semaphore0 = threads_semaphoreInit(2);
 	
-	kernel_createTask(simpleTask, 250, 5, KTASK_USER);
-	kernel_createTask(simpleTask1, 250, 5, KTASK_USER);
-	kernel_createTask(simpleTask2, 250, 5, KTASK_USER);
+	kernel_createTask(simpleTask, NULL, 250, 5, KTASK_USER, "task1");
+	kernel_createTask(simpleTask1, NULL, 250, 5, KTASK_USER, "task2");
+	kernel_createTask(simpleTask2, (void*)test, 250, 5, KTASK_USER, "task3");
 
 	kernel_startScheduler();
 	//kernel_createTask(simpleTask3, 64, KPRIO_HIGH, KTASK_DEFAULT, 200, "test3");

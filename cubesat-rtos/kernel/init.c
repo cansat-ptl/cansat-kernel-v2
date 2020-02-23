@@ -43,7 +43,7 @@ uint8_t kernel_startScheduler()
 		debug_puts(L_NONE, PSTR("               [OK]\r\n"));
 	#endif
 	
-	kTaskHandle_t ct = kernel_createTask(kernel_idle, 64, KPRIO_IDLE, KTASK_SYSTEM);
+	kTaskHandle_t ct = kernel_createTask(kernel_idle, NULL, 64, KPRIO_IDLE, KTASK_SYSTEM, "idle");
 	if (ct == NULL) {
 		while(1);
 	}

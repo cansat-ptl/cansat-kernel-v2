@@ -59,7 +59,7 @@ void kernel_sortTaskList(kTaskHandle_t taskList, uint8_t amount) //Bubble sort
 	return;
 }
 
-kTaskHandle_t kernel_createTask(kTask_t startupPointer, kStackSize_t taskStackSize, uint8_t taskPriority, kTaskType_t taskType)
+kTaskHandle_t kernel_createTask(kTask_t startupPointer, void* args, kStackSize_t taskStackSize, uint8_t taskPriority, kTaskType_t taskType, char* name)
 {
 	#if CFG_LOGGING == 1
 		debug_logMessage(PGM_ON, L_NONE, PSTR("[init] taskmgr: Registering new task, PID=%d, StartPTR=0x%08X, Stack=%d, Prio=%d\r\n"), kGlobalPid, startupPointer, taskStackSize, taskPriority);
@@ -77,7 +77,7 @@ kTaskHandle_t kernel_createTask(kTask_t startupPointer, kStackSize_t taskStackSi
 		debug_puts(L_NONE, PSTR("[init] kernel: Allocating memory\r\n"));
 	#endif
 	
-	kStackPtr_t stackPointer = kernel_setupTaskStack(startupPointer, taskStackSize, taskType);
+	kStackPtr_t stackPointer = kernel_setupTaskStack(startupPointer, taskStackSize, taskType, args);
 	
 	if (stackPointer == NULL) {
 		#if CFG_LOGGING == 1
@@ -93,14 +93,16 @@ kTaskHandle_t kernel_createTask(kTask_t startupPointer, kStackSize_t taskStackSi
 	#endif
 	
 	kTaskList[kTaskIndex].stackPtr = stackPointer + (CFG_KERNEL_STACK_FRAME_REGISTER_OFFSET + CFG_KERNEL_STACK_FRAME_END_OFFSET);
-	kTaskList[kTaskIndex].stackSize = taskStackSize;
-	kTaskList[kTaskIndex].priority = taskPriority;
-	kTaskList[kTaskIndex].taskPtr = startupPointer;
 	kTaskList[kTaskIndex].stackBegin = stackPointer;
+	kTaskList[kTaskIndex].stackSize = taskStackSize;
+	kTaskList[kTaskIndex].taskPtr = startupPointer;
+	kTaskList[kTaskIndex].args = args;
+	kTaskList[kTaskIndex].priority = taskPriority;
 	kTaskList[kTaskIndex].lock = NULL;
 	kTaskList[kTaskIndex].state = KSTATE_READY;
 	kTaskList[kTaskIndex].type = taskType;
 	kTaskList[kTaskIndex].pid = kGlobalPid;
+	strcpy((char*)kTaskList[kTaskIndex].name, name);
 	
 	#if CFG_LOGGING == 1
 		debug_puts(L_NONE, PSTR("              [OK]\r\n"));

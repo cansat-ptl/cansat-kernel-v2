@@ -48,17 +48,6 @@ void kernel_setNextTask(kTaskHandle_t taskHandle)
 	kNextTask = taskHandle;
 }
 
-
-inline static void kernel_ISREnter()
-{
-	kInterruptDepth++;
-}
-
-inline static void kernel_ISRExit()
-{
-	if(kInterruptDepth) kInterruptDepth--;
-}
-
 uint8_t kernel_setTaskState(kTaskHandle_t t_handle, kTaskState_t t_state)
 {
 	if (t_handle == NULL) return ERR_NULLPTR;
