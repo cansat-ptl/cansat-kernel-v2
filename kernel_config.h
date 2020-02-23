@@ -22,9 +22,10 @@
 	#define CFG_KERNEL_TIMER_MODULE 0
 
 	//Task manager settings
-	#define CFG_TASK_STACK_SIZE 1500
+	#define CFG_TASK_STACK_SIZE 1400
 	#define CFG_TASK_STACK_SAFETY_MARGIN 16
 	#define CFG_KERNEL_STACK_SIZE 200
+	#define CFG_KERNEL_RESERVED_MEMORY 100
 	#define CFG_KERNEL_STACK_SAFETY_MARGIN 32
 	#define CFG_MAX_TASK_COUNT 10
 	#define CFG_MIN_STACK_SIZE 40 //Due to AVR platform limitations, it is NOT RECOMMENDED to use values < 40, or bad things may happen

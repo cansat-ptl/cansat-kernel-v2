@@ -30,6 +30,9 @@
 #include <kernel.h>
 #include <platform/avr/timers.h>
 
+#define lo8(x) ((x)&0xff)
+#define hi8(x) ((x)>>8)
+
 #define platform_DISABLE_INTERRUPTS() asm volatile ("cli"::)
 #define platform_ENABLE_INTERRUPTS() asm volatile ("sei"::)
 
@@ -42,12 +45,16 @@
 
 #define platform_RESTORE_CONTEXT() asm volatile ( \
 	";------Context-Restore------\n\t"\
+	"in r0, %[_SPL_]			\n\t" \
+	"sts kStackPointer, r0		\n\t" \
+	"in r0, %[_SPH_]			\n\t" \
+	"sts kStackPointer+1, r0	\n\t" \
 	"lds r26, kCurrentTask		\n\t" \
 	"lds r27, kCurrentTask+1	\n\t" \
 	"ld r0, X+					\n\t" \
-	"out %[_SPL_],r0			\n\t" \
+	"out %[_SPL_], r0			\n\t" \
 	"ld r0, X+					\n\t" \
-	"out %[_SPH_],r0			\n\t" \
+	"out %[_SPH_], r0			\n\t" \
 	"pop r31					\n\t" \
 	"pop r30					\n\t" \
 	"pop r29					\n\t" \
@@ -134,6 +141,10 @@
 	"st X+, r0					\n\t" \
 	"in r0, %[_SPH_]			\n\t" \
 	"st X+, r0					\n\t" \
+	"lds r0, kStackPointer		\n\t" \
+	"out %[_SPL_], r0			\n\t" \
+	"lds r0, kStackPointer+1	\n\t" \
+	"out %[_SPH_], r0			\n\t" \
 	";---------------------------\n\t" \
 	: \
 	:	[_SREG_] "i" _SFR_IO_ADDR(platform_STATUS_REG), \
