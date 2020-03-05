@@ -3,7 +3,7 @@
  *
  * Created: 03.11.2019 22:34:44
  *  Author: ThePetrovich
- */ 
+ */
 
 #include "config.h"
 #include <math.h>
@@ -22,18 +22,18 @@ kTask simpleTask(void* args)
 {
 	kernel_yield(1500);
 	debug_logMessage(PGM_ON, L_INFO, PSTR("task1: Job 1 starts, creating queue\r\n"));
-	
+
 	char buff[32];
 	char hello[] = "Hello from task1!";
 	uint8_t hellosize = strlen(hello);
 	queue0 = threads_fifoInit(buff, 32);
-	
+
 	kTaskHandle_t handle = kernel_getCurrentTaskHandle();
-	
+
 	while (1) {
 		uint16_t startTime = kernel_getUptime();
 		threads_mutexLock(&mutex0);
-		
+
 		//debug_logMessage(PGM_ON, L_INFO, PSTR("task1: Job 1 runs, sending character to queue\r\n"));
 		for (int i = 0; i < hellosize; i++) {
 			if (threads_fifoWrite(&queue0, hello[i])) {
@@ -46,7 +46,7 @@ kTask simpleTask(void* args)
 		*(handle -> stackBegin - handle -> stackSize - 5) = 99;
 		//debug_logMessage(PGM_ON, L_INFO, PSTR("task1: Job 1 ends\r\n"));
 		threads_mutexUnlock(&mutex0);
-		
+
 		uint16_t endTime = kernel_getUptime();
 		debug_logMessage(PGM_ON, L_INFO, PSTR("task1: Job 1 exec time: %d\r\n"), endTime-startTime);
 		kernel_yield(200);
@@ -66,7 +66,7 @@ kTask simpleTask1(void* args)
 			pos++;
 		}
 		debug_logMessage(PGM_ON, L_INFO, PSTR("task2: Fifo contents: %s\r\n"), hello1);
-		
+
 		//debug_logMessage(PGM_ON, L_INFO, PSTR("task2: Job 2 ends\r\n"));
 		threads_mutexUnlock(&mutex0);
 		kernel_yield(100);
@@ -90,10 +90,14 @@ kTask simpleTask2(void* args)
 				debug_logMessage(PGM_ON, L_INFO, PSTR("task3: Fifo write error\r\n"));
 			}
 		}
-		
+
 		//debug_logMessage(PGM_ON, L_INFO, PSTR("task3: Job 3 ends\r\n"));
 		threads_mutexUnlock(&mutex0);
-		kernel_yield(200);
+		platform_ENABLE_INTERRUPTS();
+		threads_exitCriticalSection();
+		_delay_ms(1000);
+		platform_ENABLE_INTERRUPTS();
+		threads_exitCriticalSection();
 	}
 }
 kTask simpleTask3(void* args)
@@ -145,13 +149,13 @@ int main()
 	kernel_init();
 	systemd_init();
 	systemd_addService(SDSERVICE_REPEATED, simpleService, 100, SDSTATE_ACTIVE);
-	
+
 	mutex0 = threads_mutexInit();
 	semaphore0 = threads_semaphoreInit(2);
-	
+
 	kernel_createTask(simpleTask, NULL, 250, 5, KTASK_USER, "task1");
-	kernel_createTask(simpleTask1, NULL, 250, 5, KTASK_USER, "task2");
-	kernel_createTask(simpleTask2, (void*)test, 250, 5, KTASK_USER, "task3");
+	kernel_createTask(simpleTask1, NULL, 250, 4, KTASK_USER, "task2");
+	kernel_createTask(simpleTask2, (void*)test, 250, 2, KTASK_USER, "task3");
 
 	kernel_startScheduler();
 	//kernel_createTask(simpleTask3, 64, KPRIO_HIGH, KTASK_DEFAULT, 200, "test3");
