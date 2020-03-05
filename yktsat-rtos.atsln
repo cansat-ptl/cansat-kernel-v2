@@ -7,6 +7,8 @@ Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "yktsat-rtos", "yktsat-rtos.
 EndProject
 Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "yktsat-rtos-test", "yktsat-rtos-test.cproj", "{F8C52241-ABC8-4796-BEE1-7BFA1DAA2E95}"
 EndProject
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "yktsat-boot", "yktsat-boot.cproj", "{6693A8D1-672F-4487-8E6A-036E80D4E981}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|AVR = Debug|AVR
@@ -21,9 +23,12 @@ Global
 		{F8C52241-ABC8-4796-BEE1-7BFA1DAA2E95}.Debug|AVR.Build.0 = Debug|AVR
 		{F8C52241-ABC8-4796-BEE1-7BFA1DAA2E95}.Release|AVR.ActiveCfg = Release|AVR
 		{F8C52241-ABC8-4796-BEE1-7BFA1DAA2E95}.Release|AVR.Build.0 = Release|AVR
+		{6693A8D1-672F-4487-8E6A-036E80D4E981}.Debug|AVR.ActiveCfg = Debug|AVR
+		{6693A8D1-672F-4487-8E6A-036E80D4E981}.Debug|AVR.Build.0 = Debug|AVR
+		{6693A8D1-672F-4487-8E6A-036E80D4E981}.Release|AVR.ActiveCfg = Release|AVR
+		{6693A8D1-672F-4487-8E6A-036E80D4E981}.Release|AVR.Build.0 = Release|AVR
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal
-

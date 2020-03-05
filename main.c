@@ -93,10 +93,7 @@ kTask simpleTask2(void* args)
 
 		//debug_logMessage(PGM_ON, L_INFO, PSTR("task3: Job 3 ends\r\n"));
 		threads_mutexUnlock(&mutex0);
-		platform_ENABLE_INTERRUPTS();
-		threads_exitCriticalSection();
-		_delay_ms(1000);
-		platform_ENABLE_INTERRUPTS();
+		kernel_yield(1000);
 		threads_exitCriticalSection();
 	}
 }
