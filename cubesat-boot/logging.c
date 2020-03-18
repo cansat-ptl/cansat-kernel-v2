@@ -9,8 +9,6 @@
 #include <dev/basic/uart.h>
 
 static char buffer[128];
-uint_farptr_t format_ptr = 0;
-uint_farptr_t fptr = 0;
 
 void boot_logMessage(uint8_t level, const char * format, ...)
 {

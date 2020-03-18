@@ -13,6 +13,9 @@
 #define F_CPU 8000000L						//CPU frequency
 #endif
 
+#define BOOT_VER "0.0.0-bleeding"
+#define BOOT_TIMESTAMP __TIMESTAMP__
+
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>
@@ -31,5 +34,8 @@
 
 void boot_logMessage(uint8_t level, const char * format, ...);
 void boot_logMessage_p(uint8_t level, uint_farptr_t format_p, ...);
+void boot_checkSignature(uint8_t s0, uint8_t s1, uint8_t s2);
+void boot_programPage(uint32_t page, uint8_t *buf);
+void boot_runStateMachine();
 
 #endif /* BOOT_H_ */

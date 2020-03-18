@@ -133,10 +133,19 @@
     <OutputType>Executable</OutputType>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="cubesat-boot\flash.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="cubesat-boot\logging.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="cubesat-boot\main.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="cubesat-boot\program.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="cubesat-boot\signatures.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="cubesat-boot\uart.c">

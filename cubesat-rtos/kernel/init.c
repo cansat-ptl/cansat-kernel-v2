@@ -19,6 +19,7 @@ void kernel_init()
 {
 	hal_UART_INIT(12);
 	#if CFG_LOGGING == 1
+		debug_puts(L_NONE, PSTR("\x0C"));
 		debug_puts(L_NONE, PSTR("[init] kernel: Initializing debug uart interface, baud=38400\r\n"));
 	#endif
 }
