@@ -9,6 +9,10 @@
 #ifndef BOOT_H_
 #define BOOT_H_
 
+#ifndef F_CPU
+#define F_CPU 8000000L						//CPU frequency
+#endif
+
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>
@@ -26,6 +30,6 @@
 #include <avr/wdt.h>
 
 void boot_logMessage(uint8_t level, const char * format, ...);
-void boot_logMessage_p(uint8_t level, const char * format, ...);
+void boot_logMessage_p(uint8_t level, uint_farptr_t format_p, ...);
 
 #endif /* BOOT_H_ */

@@ -9,7 +9,7 @@
 #include <platform/platform.h>
 #include <dev/basic/uart.h>
 
-void basicUart_init (uint16_t ubrr)
+void basicUart_init(uint16_t ubrr)
 {
 	UBRR0H = (ubrr >> 8);
 	UBRR0L = (ubrr & 0xFF);
