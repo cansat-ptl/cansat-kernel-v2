@@ -14,6 +14,8 @@ typedef void (*kTask_t)(void*);
 typedef void (*kTimerISR_t)(void);
 typedef volatile uint8_t *kStackPtr_t;
 typedef uint16_t kStackSize_t;
+typedef int16_t kIterator_t;
+typedef uint8_t kRegister_t;
 typedef void kTask;
 
 typedef uint8_t byte;
@@ -25,9 +27,14 @@ typedef enum {KTIMER_SINGLERUN, KTASK_REPEATED} kTimerType_t;
 typedef enum {KLOCK_SEMAPHORE, KLOCK_MUTEX, KLOCK_SEMAPHORE_RECURSIVE} kLockType_t;
 	
 typedef volatile struct kTaskStruct_t* kTaskHandle_t;
+
 typedef struct kLock_t kMutex_t;
+typedef kMutex_t* kMutexHandle_t;
 typedef struct kLock_t kSemaphore_t;
+typedef kSemaphore_t* kSemaphoreHandle_t;
 typedef uint8_t kSpinlock_t;
+typedef kSpinlock_t* kSpinlockHandle_t;
+
 typedef struct kLifo_t kLifo_t;
 typedef struct kFifo_t kFifo_t;
 
