@@ -14,6 +14,8 @@ extern volatile sdService_t sdCallQueue[CFG_SYSTEMD_MAX_SERVICES];
 
 kMutex_t sdQueueOpLock;
 
+void systemd_idle();
+
 static inline void systemd_resetServiceByPosition(uint8_t position)
 {
 	sdServiceQueue[position].pointer = systemd_idle;

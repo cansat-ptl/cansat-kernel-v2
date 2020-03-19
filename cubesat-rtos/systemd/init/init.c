@@ -7,6 +7,9 @@
 
 #include <systemd/systemd.h>
 
+void systemd_main();
+void systemd_tick();
+
 void systemd_init()
 {
 	debug_puts(L_NONE, PSTR("[init] systemd: Startup\r\n"));

@@ -7,6 +7,8 @@
 
 #include <systemd/systemd.h>
 
+void systemd_serviceManager();
+
 void systemd_main()
 {
 	while(1)
