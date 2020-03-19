@@ -3,7 +3,7 @@
  *
  * Created: 18.03.2020 21:07:18
  *  Author: Admin
- */ 
+ */
 
 #include <boot/boot.h>
 #include <avr/io.h>
@@ -18,13 +18,15 @@ volatile uint32_t bActivePage = 0;
 
 volatile uint8_t bCurState = 0;
 
-void boot_runStateMachine() 
+void boot_runStateMachine()
 {
 	while(1) {
 		switch (bCurState) {
 			case 3:
 				boot_programPage(bActivePage, (uint8_t*)bPageBuffer);
 				bCurState = 0;
+				bActivePage = 0;
+				bPageBufferIndex = 0;
 				break;
 		}
 	}
@@ -32,25 +34,36 @@ void boot_runStateMachine()
 
 void boot_setActivePage(unsigned char c)
 {
-	static uint8_t cnt = 0;
-	if (cnt < 3) {
-		bActivePage |= ((uint32_t)c << (8*cnt));
-		cnt++;
+	static uint8_t cnt = 8;
+	uint32_t tmp = boot_convertAsciiToNumeric(c);
+	if (cnt > 0) {
+		bActivePage |= ((uint32_t)tmp << (4*(cnt-1)));
+		cnt--;
 	}
 	else {
-		cnt = 0;
+		cnt = 8;
 		bCurState = 0;
 	}
 }
 
-void boot_fillPageBuffer(unsigned char c) 
+void boot_fillPageBuffer(unsigned char c)
 {
-	if (bPageBufferIndex < SPM_PAGESIZE) {
-		bPageBuffer[bPageBufferIndex] = (uint8_t)c;
-		bPageBufferIndex++;
+	static uint8_t cnt = 0;
+	uint8_t tmp = 0;
+	if (cnt == 0) {
+		tmp |= (boot_convertAsciiToNumeric(c) << 4);
+		cnt++;
 	}
 	else {
-		bCurState = 0;
+		tmp |= boot_convertAsciiToNumeric(c);
+		if (bPageBufferIndex < SPM_PAGESIZE) {
+			bPageBuffer[bPageBufferIndex] = (uint8_t)tmp;
+			bPageBufferIndex++;
+		}
+		else {
+			bCurState = 0;
+		}
+		cnt = 0;
 	}
 }
 
@@ -59,13 +72,14 @@ static inline void boot_processCommand(unsigned char c)
 	switch (bCurState) {
 		case 0:
 			switch (c) {
-				case 'a':
+				case 'p':
+					bActivePage = 0;
 					bCurState = 1;
 					break;
-				case 'b':
+				case 's':
 					bCurState = 2;
 					break;
-				case 'c':
+				case 'w':
 					bCurState = 3;
 					break;
 				default:
@@ -74,15 +88,15 @@ static inline void boot_processCommand(unsigned char c)
 			}
 			break;
 		case 1:
-			boot_setActivePage(c-'0');
+			boot_setActivePage(c);
 			break;
 		case 2:
-			boot_fillPageBuffer(c-'0');
+			boot_fillPageBuffer(c);
 			break;
 	}
 }
 
-ISR(USART0_RX_vect) 
+ISR(USART0_RX_vect)
 {
 	unsigned char c = UDR0;
 	boot_processCommand(c);

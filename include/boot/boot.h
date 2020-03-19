@@ -38,4 +38,6 @@ void boot_checkSignature(uint8_t s0, uint8_t s1, uint8_t s2);
 void boot_programPage(uint32_t page, uint8_t *buf);
 void boot_runStateMachine();
 
+uint8_t boot_convertAsciiToNumeric(unsigned char c);
+
 #endif /* BOOT_H_ */
