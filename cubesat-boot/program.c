@@ -18,6 +18,13 @@ volatile uint32_t bActivePage = 0;
 
 volatile uint8_t bCurState = 0;
 
+static volatile uint16_t cnt = 0;
+static volatile uint16_t tmp = 0;
+
+const char boot_msg_recv[] PROGMEM = "\r\nboot: Recv = %c\r\n";
+const char boot_msg_int[] PROGMEM = "\r\nboot: Interrupted\r\n";
+const char boot_msg_ok[] PROGMEM = "\r\nok\r\n";
+
 void boot_runStateMachine()
 {
 	while(1) {
@@ -27,6 +34,7 @@ void boot_runStateMachine()
 				bCurState = 0;
 				bActivePage = 0;
 				bPageBufferIndex = 0;
+				boot_logMessage_p(0, pgm_get_far_address(boot_msg_ok));
 				break;
 		}
 	}
@@ -34,36 +42,37 @@ void boot_runStateMachine()
 
 void boot_setActivePage(unsigned char c)
 {
-	static uint8_t cnt = 8;
-	uint32_t tmp = boot_convertAsciiToNumeric(c);
-	if (cnt > 0) {
-		bActivePage |= ((uint32_t)tmp << (4*(cnt-1)));
-		cnt--;
+	uint32_t stmp = boot_convertAsciiToNumeric(c);
+	if (cnt != 7) {
+		bActivePage |= ((uint32_t)stmp << (4*(7-cnt)));
+		cnt++;
 	}
 	else {
-		cnt = 8;
+		bActivePage |= (uint32_t)stmp;
+		cnt = 0;
 		bCurState = 0;
+		boot_logMessage_p(0, pgm_get_far_address(boot_msg_ok));
 	}
 }
 
 void boot_fillPageBuffer(unsigned char c)
 {
-	static uint8_t cnt = 0;
-	uint8_t tmp = 0;
 	if (cnt == 0) {
-		tmp |= (boot_convertAsciiToNumeric(c) << 4);
+		tmp |= ((uint8_t)boot_convertAsciiToNumeric(c) << 4);
 		cnt++;
 	}
 	else {
+		cnt = 0;
 		tmp |= boot_convertAsciiToNumeric(c);
-		if (bPageBufferIndex < SPM_PAGESIZE) {
-			bPageBuffer[bPageBufferIndex] = (uint8_t)tmp;
+		if (bPageBufferIndex < SPM_PAGESIZE-1) {
+			bPageBuffer[bPageBufferIndex] = tmp;
 			bPageBufferIndex++;
 		}
 		else {
+			bPageBuffer[SPM_PAGESIZE-1] = tmp;
 			bCurState = 0;
+			boot_logMessage_p(0, pgm_get_far_address(boot_msg_ok));
 		}
-		cnt = 0;
 	}
 }
 
@@ -75,12 +84,15 @@ static inline void boot_processCommand(unsigned char c)
 				case 'p':
 					bActivePage = 0;
 					bCurState = 1;
+					boot_logMessage_p(0, pgm_get_far_address(boot_msg_recv), c);
 					break;
 				case 's':
 					bCurState = 2;
+					boot_logMessage_p(0, pgm_get_far_address(boot_msg_recv), c);
 					break;
 				case 'w':
 					bCurState = 3;
+					boot_logMessage_p(0, pgm_get_far_address(boot_msg_recv), c);
 					break;
 				default:
 					bCurState = 0;
@@ -93,6 +105,12 @@ static inline void boot_processCommand(unsigned char c)
 		case 2:
 			boot_fillPageBuffer(c);
 			break;
+	}
+	if (c == 'r') {
+		bCurState = 0;
+		cnt = 0;
+		tmp = 0;
+		boot_logMessage_p(0, pgm_get_far_address(boot_msg_int));
 	}
 }
 

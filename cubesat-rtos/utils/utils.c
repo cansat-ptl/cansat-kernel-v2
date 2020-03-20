@@ -13,3 +13,17 @@ uint8_t util_strCompare(char * a, char * b, uint8_t len)
 	}
 	return 1;
 }
+
+uint8_t util_convertAsciiToNumeric(char c)
+{
+	if (c >= '0' && c <= '9') {
+		return (c - 0x30);
+	}
+	else if (c >= 'a' && c <= 'f') {
+		return (c - 87);
+	}
+	else if (c >= 'A' && c <= 'F') {
+		return (c - 55);
+	}
+	return 0xFF;
+}

@@ -100,5 +100,4 @@ struct kSystemTime_t
 	uint16_t milliseconds;
 };
 
-
 #endif /* TYPES_H_ */
