@@ -61,6 +61,8 @@ void kernel_sortTaskList(kTaskHandle_t taskList, uint8_t amount) //Bubble sort
 
 kTaskHandle_t kernel_createTask(kTask_t startupPointer, void* args, kStackSize_t taskStackSize, uint8_t taskPriority, kTaskType_t taskType, char* name)
 {
+	uint8_t sreg = threads_startAtomicOperation();
+	
 	#if CFG_LOGGING == 1
 		debug_logMessage(PGM_ON, L_NONE, PSTR("[init] taskmgr: Registering new task, PID=%d, StartPTR=0x%08X, Stack=%d, Prio=%d\r\n"), kGlobalPid, startupPointer, taskStackSize, taskPriority);
 	#endif
@@ -70,6 +72,7 @@ kTaskHandle_t kernel_createTask(kTask_t startupPointer, void* args, kStackSize_t
 			debug_puts(L_NONE, PSTR("[init] taskmgr: Task registration                            [ERR]\r\n"));
 			debug_puts(L_NONE, PSTR("[init] taskmgr: Task registration error: PTR=NULL\r\n"));
 		#endif
+		threads_endAtomicOperation(sreg);
 		return NULL;
 	}
 	
@@ -84,6 +87,7 @@ kTaskHandle_t kernel_createTask(kTask_t startupPointer, void* args, kStackSize_t
 			debug_puts(L_NONE, PSTR("[init] taskmgr: Task registration                            [ERR]\r\n"));
 			debug_puts(L_NONE, PSTR("[init] kernel: Failed to allocate memory\r\n"));
 		#endif
+		threads_endAtomicOperation(sreg);
 		return NULL;
 	}
 	
@@ -134,5 +138,26 @@ kTaskHandle_t kernel_createTask(kTask_t startupPointer, void* args, kStackSize_t
 		debug_puts(L_NONE, PSTR("[init] taskmgr: Task registration                            [OK]\r\n"));
 	#endif
 	
+	threads_endAtomicOperation(sreg);
 	return handle;
+}
+
+uint8_t kernel_removeTask(kTaskHandle_t handle)
+{
+	uint8_t sreg = threads_startAtomicOperation();
+	kTaskHandle_t taskList = kernel_getTaskListPtr();
+	uint8_t idx = utils_ARRAY_INDEX_FROM_ADDR(taskList, handle, struct kTaskStruct_t);
+	
+	if (handle != NULL) {
+		kernel_resetTask(taskList, idx);
+		kernel_sortTaskList(taskList, kTaskIndex);
+		kTaskIndex--;
+		
+		threads_endAtomicOperation(sreg);
+		return 0;
+	}
+	else {
+		threads_endAtomicOperation(sreg);
+		return 1;
+	}
 }
