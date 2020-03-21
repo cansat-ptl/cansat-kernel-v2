@@ -139,13 +139,25 @@ void simpleService()
 {
 	debug_puts(L_NONE, PSTR("Example systemd service\r\n"));
 }
+void simpleService1()
+{
+	debug_puts(L_NONE, PSTR("Example systemd service 1\r\n"));
+}
+
+void simpleService2()
+{
+	debug_puts(L_NONE, PSTR("Example systemd service 2\r\n"));
+}
+
 
 int main()
 {
 	char test[] = "test arg string";
 	kernel_init();
 	systemd_init();
-	systemd_addService(SDSERVICE_REPEATED, simpleService, 100, SDSTATE_ACTIVE);
+	systemd_addService(SDSERVICE_REPEATED, simpleService, 1000, SDSTATE_ACTIVE);
+	systemd_addService(SDSERVICE_REPEATED, simpleService1, 1000, SDSTATE_ACTIVE);
+	systemd_addService(SDSERVICE_REPEATED, simpleService2, 1000, SDSTATE_ACTIVE);
 
 	mutex0 = threads_mutexInit();
 	semaphore0 = threads_semaphoreInit(2);

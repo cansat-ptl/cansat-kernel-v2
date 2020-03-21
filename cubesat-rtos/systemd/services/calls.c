@@ -8,19 +8,19 @@
 #include <systemd/systemd.h>
 
 volatile uint8_t sdCallIndex = 0;
-volatile sdService_t sdCallQueue[CFG_SYSTEMD_MAX_SERVICES];
+volatile sdServiceHandle_t sdCallQueue[CFG_SYSTEMD_MAX_SERVICES*2];
 
 void systemd_idle()
 {
 	return;
 }
 
-uint8_t systemd_addCall(sdService_t t_ptr)
+uint8_t systemd_addCall(sdServiceHandle_t handle)
 {
 	uint8_t sreg = threads_startAtomicOperation();
 	
 	if (sdCallIndex < CFG_SYSTEMD_MAX_SERVICES) {
-		sdCallQueue[sdCallIndex] = t_ptr;
+		sdCallQueue[sdCallIndex] = handle;
 		sdCallIndex++;
 		
 		threads_endAtomicOperation(sreg);
@@ -40,10 +40,10 @@ uint8_t systemd_removeCall()
 		for (int i = 0; i < CFG_SYSTEMD_MAX_SERVICES-1; i++) {
 			sdCallQueue[i] = sdCallQueue[i+1];
 		}
-		sdCallQueue[CFG_SYSTEMD_MAX_SERVICES-1] = systemd_idle;
+		sdCallQueue[CFG_SYSTEMD_MAX_SERVICES-1] = NULL;
 	}
 	else {
-		sdCallQueue[0] = systemd_idle;
+		sdCallQueue[0] = NULL;
 	}
 	
 	threads_endAtomicOperation(sreg);
@@ -54,7 +54,7 @@ void systemd_clearCallQueue()
 {
 	uint8_t sreg = threads_startAtomicOperation();
 	for (int i = 0; i < CFG_SYSTEMD_MAX_SERVICES; i++) {
-		sdCallQueue[i] = systemd_idle;
+		sdCallQueue[i] = NULL;
 	}
 	sdCallIndex = 0;
 	threads_endAtomicOperation(sreg);
@@ -62,8 +62,8 @@ void systemd_clearCallQueue()
 
 void systemd_serviceManager()
 {
-	if(sdCallQueue[0] != systemd_idle){
-		(sdCallQueue[0])();
+	if(sdCallQueue[0] != NULL){
+		(sdCallQueue[0] -> pointer)();
 		systemd_removeCall();
 	}
 	systemd_idle();

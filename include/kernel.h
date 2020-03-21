@@ -23,6 +23,8 @@
 #include <kernel/timers.h>
 #include <kernel/memory.h>
 #include <kernel/debug.h>
+#include <utils/utils.h>
+#include <utils/time.h>
 #include <platform/platform.h>
 #include "../kernel_config.h"
 

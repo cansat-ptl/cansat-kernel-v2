@@ -10,21 +10,11 @@
 static volatile uint8_t sdServiceIndex = 0;
 static volatile struct sdServiceStruct_t sdServiceQueue[CFG_SYSTEMD_MAX_SERVICES];
 extern volatile uint8_t sdCallIndex;
-extern volatile sdService_t sdCallQueue[CFG_SYSTEMD_MAX_SERVICES];
+extern volatile sdServiceHandle_t sdCallQueue[CFG_SYSTEMD_MAX_SERVICES*2];
 
 kMutex_t sdQueueOpLock;
 
 void systemd_idle();
-
-sdServiceHandle_t systemd_getServiceHandleFromPtr(sdService_t t_ptr)
-{
-	for (int i = 0; i < sdServiceIndex; i++) {
-		if (sdServiceQueue[i].pointer == t_ptr) {
-			return &sdServiceQueue[i];
-		}
-	}
-	return NULL;
-}
 
 static inline void systemd_resetServiceByPosition(uint8_t position)
 {
@@ -81,17 +71,13 @@ uint8_t systemd_removeServiceByPosition(uint8_t position)
 	return 0;
 }
 
-uint8_t systemd_removeService(sdService_t t_pointer)
+uint8_t systemd_removeService(sdServiceHandle_t handle)
 {
 	uint8_t sreg = threads_startAtomicOperation();
 
-	uint8_t position;
+	uint8_t position = utils_ARRAY_INDEX_FROM_ADDR(sdServiceQueue, handle, struct sdServiceStruct_t);
 
 	sdServiceIndex--;
-	for (position = 0; position < CFG_SYSTEMD_MAX_SERVICES-1; position++) {
-		if (t_pointer == sdServiceQueue[position].pointer)
-			break;
-	}
 
 	if (position != CFG_SYSTEMD_MAX_SERVICES-1) {
 		systemd_resetServiceByPosition(position);
@@ -119,27 +105,19 @@ void systemd_clearServiceQueue()
 	threads_endAtomicOperation(sreg);
 }
 
-uint8_t systemd_setServiceState(sdService_t t_pointer, uint8_t state)
+void systemd_setServiceState(sdServiceHandle_t handle, uint8_t state)
 {
 	uint8_t sreg = threads_startAtomicOperation();
 
-	for (int i = 0; i < CFG_SYSTEMD_MAX_SERVICES-1; i++) {
-		if (sdServiceQueue[i].pointer == t_pointer) {
-			sdServiceQueue[i].state = state;
-
-			threads_endAtomicOperation(sreg);
-			return 0;
-		}
-	}
-
+	if (handle != NULL) handle -> state = state;
+	
 	threads_endAtomicOperation(sreg);
-	return 1;
 }
 
-static inline void systemd_addCall_i(sdService_t t_ptr)
+static inline void systemd_addCall_i(sdServiceHandle_t handle)
 {
 	if (sdCallIndex < CFG_SYSTEMD_MAX_SERVICES) {
-		sdCallQueue[sdCallIndex] = t_ptr;
+		sdCallQueue[sdCallIndex] = handle;
 		sdCallIndex++;
 	}
 }
@@ -153,7 +131,7 @@ void systemd_tick()
 			sdServiceQueue[i].delay--;
 			else {
 				if(sdServiceQueue[i].state == SDSTATE_ACTIVE){
-					systemd_addCall_i(sdServiceQueue[i].pointer);
+					systemd_addCall_i((sdServiceHandle_t)&sdServiceQueue[i]);
 					if(sdServiceQueue[i].repeatPeriod == 0)
 						sdServiceQueue[i].state = SDSTATE_SUSPENDED;
 					else

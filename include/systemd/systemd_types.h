@@ -18,6 +18,7 @@ struct sdServiceStruct_t
 	uint16_t delay;
 	uint16_t repeatPeriod;
 	uint8_t state;
+	uint8_t sid;
 };
 
 #endif /* SYSTEMD-TYPES_H_ */
