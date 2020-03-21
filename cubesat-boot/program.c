@@ -8,6 +8,7 @@
 #include <boot/boot.h>
 #include <avr/io.h>
 #include <avr/boot.h>
+#include <util/crc16.h>
 #include <dev/basic/uart.h>
 #include <dev/basic/gpio.h>
 
@@ -20,10 +21,19 @@ volatile uint8_t bCurState = 0;
 
 static volatile uint16_t cnt = 0;
 static volatile uint16_t tmp = 0;
+static volatile uint16_t crc16 = 0;
+static volatile uint16_t crc16_ext = 0;
 
 const char boot_msg_recv[] PROGMEM = "\r\nboot: Recv = %c\r\n";
 const char boot_msg_int[] PROGMEM = "\r\nboot: Interrupted\r\n";
+const char boot_msg_crc[] PROGMEM = "\r\nboot: CRC error, 0x%04X != 0x%04X\r\n";
 const char boot_msg_ok[] PROGMEM = "\r\nok\r\n";
+
+void boot_resetVariables() 
+{
+	cnt = 0;
+	tmp = 0;
+}
 
 void boot_runStateMachine()
 {
@@ -48,9 +58,9 @@ void boot_setActivePage(unsigned char c)
 		cnt++;
 	}
 	else {
+		boot_resetVariables();
 		bActivePage |= (uint32_t)stmp;
-		cnt = 0;
-		bCurState = 0;
+		bCurState = 4;
 		boot_logMessage_p(0, pgm_get_far_address(boot_msg_ok));
 	}
 }
@@ -69,10 +79,33 @@ void boot_fillPageBuffer(unsigned char c)
 			bPageBufferIndex++;
 		}
 		else {
+			boot_resetVariables();
 			bPageBuffer[SPM_PAGESIZE-1] = tmp;
-			bCurState = 0;
+			bCurState = 4;
 			boot_logMessage_p(0, pgm_get_far_address(boot_msg_ok));
 		}
+	}
+}
+
+void boot_readCRC16(unsigned char c)
+{
+	uint16_t stmp = boot_convertAsciiToNumeric(c);
+	if (cnt != 3) {
+		crc16_ext |= ((uint16_t)stmp << (4*(3-cnt)));
+		cnt++;
+	}
+	else {
+		crc16_ext |= (uint16_t)stmp;
+		if (crc16_ext != crc16) {
+			boot_logMessage_p(0, pgm_get_far_address(boot_msg_crc), crc16, crc16_ext);
+		}
+		else {
+			boot_logMessage_p(0, pgm_get_far_address(boot_msg_ok));
+		}
+		boot_resetVariables();
+		crc16 = 0;
+		crc16_ext = 0;
+		bCurState = 0;
 	}
 }
 
@@ -100,16 +133,20 @@ static inline void boot_processCommand(unsigned char c)
 			}
 			break;
 		case 1:
+			crc16 = _crc_xmodem_update(crc16, (uint8_t)c);
 			boot_setActivePage(c);
 			break;
 		case 2:
+			crc16 = _crc_xmodem_update(crc16, (uint8_t)c);
 			boot_fillPageBuffer(c);
+			break;
+		case 4:
+			boot_readCRC16(c);
 			break;
 	}
 	if (c == 'r') {
 		bCurState = 0;
-		cnt = 0;
-		tmp = 0;
+		boot_resetVariables();
 		boot_logMessage_p(0, pgm_get_far_address(boot_msg_int));
 	}
 }
