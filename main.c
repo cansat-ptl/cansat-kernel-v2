@@ -34,7 +34,7 @@ kTask simpleTask(void* args)
 		uint16_t startTime = kernel_getUptime();
 		threads_mutexLock(&mutex0);
 
-		//debug_logMessage(PGM_ON, L_INFO, PSTR("task1: Job 1 runs, sending character to queue\r\n"));
+		debug_logMessage(PGM_ON, L_INFO, PSTR("task1: Job 1 runs, sending character to queue\r\n"));
 		for (int i = 0; i < hellosize; i++) {
 			if (threads_fifoWrite(&queue0, hello[i])) {
 				//debug_logMessage(PGM_ON, L_INFO, PSTR("task1: Fifo write success, written character = %c\r\n"), hello[i]);
@@ -80,7 +80,7 @@ kTask simpleTask2(void* args)
 	char* hello1 = (char*)args;
 	uint8_t hellosize = strlen(hello1);
 	while (1) {
-	//	debug_logMessage(PGM_ON, L_INFO, PSTR("task3: Job 3 runs, sending character to queue\r\n"));
+		debug_logMessage(PGM_ON, L_INFO, PSTR("task3: Job 3 runs, sending character to queue\r\n"));
 		threads_mutexLock(&mutex0);
 		for (int i = 0; i < hellosize; i++) {
 			if (threads_fifoWrite(&queue0, hello1[i])) {
@@ -155,9 +155,9 @@ int main()
 	char test[] = "test arg string";
 	kernel_init();
 	systemd_init();
-	systemd_addService(SDSERVICE_REPEATED, simpleService, 1000, SDSTATE_ACTIVE);
-	systemd_addService(SDSERVICE_REPEATED, simpleService1, 1000, SDSTATE_ACTIVE);
-	systemd_addService(SDSERVICE_REPEATED, simpleService2, 1000, SDSTATE_ACTIVE);
+	systemd_addService(SDSERVICE_REPEATED, simpleService, 500, SDSTATE_ACTIVE);
+	systemd_addService(SDSERVICE_REPEATED, simpleService1, 200, SDSTATE_ACTIVE);
+	systemd_addService(SDSERVICE_REPEATED, simpleService2, 750, SDSTATE_ACTIVE);
 
 	mutex0 = threads_mutexInit();
 	semaphore0 = threads_semaphoreInit(2);

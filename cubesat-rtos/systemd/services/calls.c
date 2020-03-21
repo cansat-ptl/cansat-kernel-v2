@@ -62,7 +62,7 @@ void systemd_clearCallQueue()
 
 void systemd_serviceManager()
 {
-	if(sdCallQueue[0] != NULL){
+	while(sdCallQueue[0] != NULL){
 		(sdCallQueue[0] -> pointer)();
 		systemd_removeCall();
 	}
