@@ -50,6 +50,7 @@ kTask simpleTask(void* args)
 		uint16_t endTime = kernel_getUptime();
 		debug_logMessage(PGM_ON, L_INFO, PSTR("task1: Job 1 exec time: %d\r\n"), endTime-startTime);
 		kernel_yield(200);
+		break;
 	}
 }
 

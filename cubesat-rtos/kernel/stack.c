@@ -85,3 +85,29 @@ uint8_t kernel_checkStackProtectionRegion(kTaskHandle_t checkedTask)
 	threads_endAtomicOperation(sreg);
 	return 0;
 }
+
+void kernel_taskReturnHook()
+{
+	debug_puts(L_NONE, PSTR("kernel: Task return detected\r\n"));
+	debug_puts(L_NONE, PSTR("kernel: Executing task return hook\r\n"));
+	
+	uint8_t sreg = threads_startAtomicOperation();
+	
+	kTaskHandle_t handle = kernel_getCurrentTaskHandle();
+	kTaskHandle_t taskList = kernel_getTaskListPtr();
+	uint8_t taskIndex = kernel_getTaskListIndex();
+	
+	handle -> state = KSTATE_UNINIT;
+	for (int i = 0; i < taskIndex; i++) {
+		if (taskList[i].lock -> owner == handle) {
+			taskList[i].state = KSTATE_READY;
+			taskList[i].lock -> owner = NULL;
+			taskList[i].lock -> lockCount = 0;
+		}
+	}
+	
+	threads_endAtomicOperation(sreg);
+	kernel_yield(0);
+	
+	while(1);
+}
