@@ -13,6 +13,7 @@
 #include "../kernel_config.h"
 
 void kernel_taskReturnHook();
+void kernel_stackCorruptionHook();
 
 //TODO: return codes
 uint8_t platform_prepareStackFrame(kStackPtr_t stackPointer, kTask_t taskPointer, void* args)
@@ -36,32 +37,10 @@ uint8_t platform_prepareStackFrame(kStackPtr_t stackPointer, kTask_t taskPointer
 	return 0;
 }
 
-void platform_stackCorruptionHook()
-{
-	uint8_t sreg = threads_startAtomicOperation();
-	
-	kTaskHandle_t handle = kernel_getCurrentTaskHandle();
-	kTaskHandle_t taskList = kernel_getTaskListPtr();
-	uint8_t taskIndex = kernel_getTaskListIndex();
-	
-	handle -> state = KSTATE_UNINIT;
-	debug_puts(L_NONE, PSTR("kernel: Executing task corruption hook\r\n")); //TODO: debug information
-	for (int i = 0; i < taskIndex; i++) {
-		if (taskList[i].lock -> owner == handle) {
-			taskList[i].state = KSTATE_READY;
-			taskList[i].lock -> owner = NULL;
-			taskList[i].lock -> lockCount = 0;
-		}
-	}
-	threads_endAtomicOperation(sreg);
-	kernel_yield(0);
-	while(1);
-}
-
 void platform_handleStackCorruption()
 {
 	kTaskHandle_t handle = kernel_getCurrentTaskHandle();
 	kStackPtr_t stackPointer = handle -> stackBegin;
-	platform_prepareStackFrame(stackPointer, platform_stackCorruptionHook, NULL);
+	platform_prepareStackFrame(stackPointer, kernel_stackCorruptionHook, NULL);
 	handle -> stackPtr = stackPointer + (CFG_KERNEL_STACK_FRAME_REGISTER_OFFSET+CFG_KERNEL_STACK_FRAME_END_OFFSET);
 }

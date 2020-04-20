@@ -69,7 +69,6 @@ kTaskHandle_t kernel_createTask(kTask_t startupPointer, void* args, kStackSize_t
 	
 	if (startupPointer == NULL) {
 		#if CFG_LOGGING == 1
-			debug_puts(L_NONE, PSTR("[init] taskmgr: Task registration                            [ERR]\r\n"));
 			debug_puts(L_NONE, PSTR("[init] taskmgr: Task registration error: PTR=NULL\r\n"));
 		#endif
 		threads_endAtomicOperation(sreg);
@@ -77,23 +76,21 @@ kTaskHandle_t kernel_createTask(kTask_t startupPointer, void* args, kStackSize_t
 	}
 	
 	#if CFG_LOGGING == 1
-		debug_puts(L_NONE, PSTR("[init] kernel: Allocating memory\r\n"));
+		debug_puts(L_NONE, PSTR("[init] kernel: Memory allocation"));
 	#endif
 	
 	kStackPtr_t stackPointer = kernel_setupTaskStack(startupPointer, taskStackSize, taskType, args);
 	
 	if (stackPointer == NULL) {
 		#if CFG_LOGGING == 1
-			debug_puts(L_NONE, PSTR("[init] taskmgr: Task registration                            [ERR]\r\n"));
-			debug_puts(L_NONE, PSTR("[init] kernel: Failed to allocate memory\r\n"));
+			debug_puts(L_NONE, PSTR("                             [ERR]\r\n"));
 		#endif
 		threads_endAtomicOperation(sreg);
 		return NULL;
 	}
 	
 	#if CFG_LOGGING == 1
-		debug_puts(L_NONE, PSTR("[init] kernel: Memory allocation                             [OK]\r\n"));
-		debug_puts(L_NONE, PSTR("[init] taskmgr: Preparing task structure fields"));
+		debug_puts(L_NONE, PSTR("                             [OK]\r\n"));
 	#endif
 	
 	kTaskList[kTaskIndex].stackPtr = stackPointer + (CFG_KERNEL_STACK_FRAME_REGISTER_OFFSET + CFG_KERNEL_STACK_FRAME_END_OFFSET);
@@ -108,17 +105,9 @@ kTaskHandle_t kernel_createTask(kTask_t startupPointer, void* args, kStackSize_t
 	kTaskList[kTaskIndex].pid = kGlobalPid;
 	strcpy((char*)kTaskList[kTaskIndex].name, name);
 	
-	#if CFG_LOGGING == 1
-		debug_puts(L_NONE, PSTR("              [OK]\r\n"));
-	#endif
-	
 	kernel_sortTaskList(kTaskList, kTaskIndex); //Bruh
 	
 	kTaskHandle_t handle = NULL;
-	
-	#if CFG_LOGGING == 1
-		debug_puts(L_NONE, PSTR("[init] taskmgr: Assigning task handle"));
-	#endif
 	
 	for (int i = 0; i < kTaskIndex+1; i++) {
 		if (kTaskList[i].pid == kGlobalPid) {
@@ -126,10 +115,6 @@ kTaskHandle_t kernel_createTask(kTask_t startupPointer, void* args, kStackSize_t
 			break;
 		}
 	}
-	
-	#if CFG_LOGGING == 1
-		debug_puts(L_NONE, PSTR("                        [OK]\r\n"));
-	#endif
 	
 	kGlobalPid++;
 	kTaskIndex++;

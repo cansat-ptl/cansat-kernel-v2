@@ -4,18 +4,22 @@
  * Created: 13.02.2020 22:38:32
  *  Author: Admin
  */ 
-#include <kernel.h>
+#include <initd/initd.h>
 
 extern volatile kTaskHandle_t kIdleTaskHandle;
 
 void kernel_initScheduler(kTaskHandle_t taskList, uint8_t taskIndex);
+
+void user_preinit();
+void user_init();
+void user_postinit();
 
 void kernel_idle()
 {
 	while(1) platform_NOP();
 }
 
-void kernel_init()
+void kernel_preinit()
 {
 	hal_UART_INIT(12);
 	#if CFG_LOGGING == 1
@@ -83,4 +87,20 @@ uint8_t kernel_startScheduler()
 	threads_exitCriticalSection();
 
 	return 0;
+}
+
+void initd_startup()
+{
+	kernel_preinit();
+	debug_puts(L_NONE, PSTR("[init] initd: Pre-init phase\r\n"));
+	user_preinit();
+	
+	debug_puts(L_NONE, PSTR("[init] initd: Init phase\r\n"));
+	user_init();
+	
+	debug_puts(L_NONE, PSTR("[init] initd: Post-init phase\r\n"));
+	user_postinit();
+	
+	debug_puts(L_NONE, PSTR("[init] initd: Init complete, starting scheduler\r\n"));
+	kernel_startScheduler();
 }

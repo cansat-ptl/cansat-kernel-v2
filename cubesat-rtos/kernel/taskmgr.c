@@ -26,7 +26,6 @@ volatile uint16_t kTaskActiveTicks = 0;
 
 static inline void kernel_switchTask();
 void kernel_schedule();
-void kernel_switchTo(kTaskHandle_t handle) __attribute__ (( naked, noinline ));
 
 kTaskHandle_t kernel_getCurrentTaskHandle()
 {
@@ -92,6 +91,22 @@ void kernel_yield(uint16_t sleep)
 	}
 	
 	kernel_switchTask();
+	kernel_restoreContext();
+	platform_RET();
+}
+
+void kernel_switchTo(kTaskHandle_t task)
+{
+	kernel_saveContext();
+	
+	if (task == NULL) {
+		kernel_restoreContext();
+		platform_RET();
+	}
+		
+	kNextTask = task;
+	if (kNextTask != kCurrentTask) kernel_switchContext();
+	
 	kernel_restoreContext();
 	platform_RET();
 }

@@ -109,6 +109,15 @@ void boot_readCRC16(unsigned char c)
 	}
 }
 
+void boot_exit()
+{
+	/* Enable change of interrupt vectors */
+	MCUCR = (1 << IVCE);
+	/* Move interrupts to boot flash section */
+	MCUCR = (0 << IVSEL);
+	((void(*)(void))0)();
+}
+
 static inline void boot_processCommand(unsigned char c)
 {
 	switch (bCurState) {
@@ -126,6 +135,9 @@ static inline void boot_processCommand(unsigned char c)
 				case 'w':
 					bCurState = 3;
 					boot_logMessage_p(0, pgm_get_far_address(boot_msg_recv), c);
+					break;
+				case 'x':
+					boot_exit();
 					break;
 				default:
 					bCurState = 0;

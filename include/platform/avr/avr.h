@@ -38,7 +38,7 @@
 
 #define platform_STATUS_REG SREG
 #define platform_NOP() asm volatile ("nop"::)
-#define platform_DELAY_MS(x) _delay_ms(x);
+#define platform_DELAY_MS(x) _delay_ms(x)
 
 #define platform_RET() asm volatile ("ret \n\t" ::)
 #define platform_RETI() asm volatile ("reti \n\t" ::)

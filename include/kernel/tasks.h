@@ -3,7 +3,7 @@
  *
  * Created: 14.02.2020 20:50:36
  *  Author: Admin
- */ 
+ */
 
 
 #ifndef TASKMGR_H_
@@ -32,6 +32,7 @@ void kernel_setNextTask(kTaskHandle_t taskHandle);
 
 void kernel_tick()  __attribute__ ( ( naked, noinline ));
 void kernel_yield(uint16_t sleep) __attribute__ (( naked, noinline ));
+void kernel_switchTo(kTaskHandle_t handle) __attribute__ (( naked, noinline ));
 void kernel_stopTask(kTaskState_t exitState);
 
 #endif /* TASKMGR_H_ */
