@@ -161,12 +161,20 @@
     <OutputFileName>yktsat-rtos</OutputFileName>
     <OutputFileExtension>.elf</OutputFileExtension>
     <OutputType>Executable</OutputType>
+    <UsesExternalMakeFile>False</UsesExternalMakeFile>
+    <OutputDirectory>$(MSBuildProjectDirectory)\$(Configuration)</OutputDirectory>
+    <BuildTarget>all</BuildTarget>
+    <CleanTarget>clean</CleanTarget>
+    <ExternalMakeFilePath>C:\Users\Admin\Documents\Atmel Studio\yktcansat-staging\cansat-kernel-v2\Debug\Makefile</ExternalMakeFilePath>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="config.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="cubesat-rtos\debug\debug.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="cubesat-rtos\debug\stdio.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="cubesat-rtos\dev\basic\gpio.c">
@@ -184,7 +192,7 @@
     <Compile Include="cubesat-rtos\initd\init.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="cubesat-rtos\kernel\flags.c">
+    <Compile Include="cubesat-rtos\kernel\control.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="cubesat-rtos\kernel\scheduler.c">

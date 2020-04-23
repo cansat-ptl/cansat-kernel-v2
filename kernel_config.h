@@ -49,7 +49,7 @@
 	//Debug logging options
 	#define CFG_LOGGING 1
 	#define CFG_VERBOSE 0
-	#define CFG_PROFILING 0
+	#define CFG_PROFILING 1
 
 	//CLI options
 	#define CFG_RX0_BUFFER_SIZE 64

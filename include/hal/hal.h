@@ -58,4 +58,16 @@
 	#define hal_UART_DISABLE_RX_INT(s) basicUart_disableInterruptsRX()
 #endif
 
+#ifndef hal_READ_BYTE_FROM_FLASH
+	#define hal_READ_BYTE_FROM_FLASH(x) pgm_read_byte(x)
+#endif
+
+#ifndef hal_READ_WORD_FROM_FLASH
+	#define hal_READ_WORD_FROM_FLASH(x) pgm_read_word(x)
+#endif
+
+#ifndef hal_READ_DWORD_FROM_FLASH
+	#define hal_READ_DWORD_FROM_FLASH(x) pgm_read_dword(x)
+#endif
+
 #endif /* HAL_H_ */

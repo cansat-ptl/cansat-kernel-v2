@@ -25,16 +25,8 @@
 #define L_FATAL 4
 
 void debug_puts(uint8_t level, const char * message); //Only for PROGMEM strings
-void debug_putsSD(uint8_t level, const char * message);
 void debug_logMessage(uint8_t pgm, uint8_t level, const char * format, ...);
-
-#ifdef KERNEL_SD_MODULE
-	void sd_puts(char * data);
-	void sd_flush();
-	void sd_readPtr();
-	void sd_init();
-#endif
-
+void debug_init();
 
 
 #endif /* DEBUG_H_ */

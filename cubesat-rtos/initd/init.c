@@ -3,7 +3,7 @@
  *
  * Created: 13.02.2020 22:38:32
  *  Author: Admin
- */ 
+ */
 #include <initd/initd.h>
 
 extern volatile kTaskHandle_t kIdleTaskHandle;
@@ -22,67 +22,69 @@ void kernel_idle()
 void kernel_preinit()
 {
 	hal_UART_INIT(12);
+	debug_init();
 	#if CFG_LOGGING == 1
-		debug_puts(L_NONE, PSTR("\x0C"));
-		debug_puts(L_NONE, PSTR("[init] kernel: Initializing debug uart interface, baud=38400\r\n"));
+		//debug_puts(L_INFO, PSTR("\x0C"));
+		debug_puts(L_INFO, PSTR("kernel: Initializing debug uart interface, baud=38400\r\n"));
+		debug_puts(L_INFO, PSTR("kernel: Firing up RTOS\r\n"));
 	#endif
 }
 
 uint8_t kernel_startScheduler()
 {
 	#if CFG_LOGGING == 1
-		debug_puts(L_NONE, PSTR("[init] kernel: Starting up task manager"));
+		debug_puts(L_INFO, PSTR("kernel: Starting up task manager"));
 	#endif
-	//debug_puts(L_NONE, PSTR("[init] kernel: Starting up task manager                      [OK]\r\n"));
+	//debug_puts(L_INFO, PSTR(" kernel: Starting up task manager                      [OK]\r\n"));
 	//.................................................................
 	kernel_initScheduler(kernel_getTaskListPtr(), kernel_getTaskListIndex());
-	
+
 	#if CFG_LOGGING == 1
 		debug_puts(L_NONE, PSTR("                      [OK]\r\n"));
-		debug_puts(L_NONE, PSTR("[init] kernel: Preparing safety memory barrier"));
+		debug_puts(L_INFO, PSTR("kernel: Preparing safety memory barrier"));
 	#endif
-	
+
 	kernel_prepareMemoryBarrier(kernel_getStackPtr() + (CFG_TASK_STACK_SIZE + CFG_KERNEL_STACK_SAFETY_MARGIN)-1, CFG_KERNEL_STACK_SAFETY_MARGIN, 0xFE);
-	
+
 	#if CFG_LOGGING == 1
 		debug_puts(L_NONE, PSTR("               [OK]\r\n"));
 	#endif
-	
+
 	kTaskHandle_t ct = kernel_createTask(kernel_idle, NULL, 64, KPRIO_IDLE, KTASK_SYSTEM, "idle");
 	if (ct == NULL) {
 		while(1);
 	}
 	ct -> pid = 0;
-	
+
 	#if CFG_LOGGING == 1
-		debug_puts(L_NONE, PSTR("[init] kernel: Starting up first task"));
+		debug_puts(L_INFO, PSTR("kernel: Starting up first task"));
 	#endif
-	
+
 	kIdleTaskHandle = ct;
 	kernel_setCurrentTask(ct);
-	
+
 	#if CFG_LOGGING == 1
 		debug_puts(L_NONE, PSTR("                        [OK]\r\n"));
-		debug_puts(L_NONE, PSTR("[init] kernel: Setting up system timer"));
+		debug_puts(L_INFO, PSTR("kernel: Setting up system timer"));
 	#endif
-	
+
 	platform_setupSystemTimer();
 	#if CFG_LOGGING == 1
 		debug_puts(L_NONE, PSTR("                       [OK]\r\n"));
-		debug_puts(L_NONE, PSTR("[init] kernel: Starting up system timer"));
+		debug_puts(L_INFO, PSTR("kernel: Starting up system timer"));
 	#endif
-	
+
 	platform_startSystemTimer();
-	
+
 	#if CFG_LOGGING == 1
 		debug_puts(L_NONE, PSTR("                      [OK]\r\n"));
-		debug_puts(L_NONE, PSTR("[init] kernel: System startup complete\r\n"));
+		debug_puts(L_INFO, PSTR("kernel: System startup complete\r\n"));
 	#endif
-	
+
 	platform_DELAY_MS(1000);
-	
-	debug_puts(L_NONE, PSTR("\x0C"));
-	
+
+	debug_puts(L_INFO, PSTR("\x0C"));
+
 	platform_ENABLE_INTERRUPTS();
 	threads_exitCriticalSection();
 
@@ -92,15 +94,16 @@ uint8_t kernel_startScheduler()
 void initd_startup()
 {
 	kernel_preinit();
-	debug_puts(L_NONE, PSTR("[init] initd: Pre-init phase\r\n"));
+	debug_puts(L_INFO, PSTR("initd: Pre-init phase\r\n"));
 	user_preinit();
-	
-	debug_puts(L_NONE, PSTR("[init] initd: Init phase\r\n"));
+
+	debug_puts(L_INFO, PSTR("initd: Init phase\r\n"));
 	user_init();
-	
-	debug_puts(L_NONE, PSTR("[init] initd: Post-init phase\r\n"));
+
+	debug_puts(L_INFO, PSTR("initd: Post-init phase\r\n"));
 	user_postinit();
-	
-	debug_puts(L_NONE, PSTR("[init] initd: Init complete, starting scheduler\r\n"));
+
+	debug_puts(L_INFO, PSTR("initd: Init complete, starting scheduler\r\n"));
+	kernel_setSystemStatus(KOSSTATUS_RUNNING);
 	kernel_startScheduler();
 }

@@ -30,7 +30,7 @@ uint8_t systemd_addService(uint8_t taskType, sdService_t t_ptr, uint16_t t_delay
 	if (t_delay == 0) t_delay = 1;
 
 	debug_logMessage(PGM_ON, L_INFO, PSTR("systemd: Registering new service, t_ptr=0x%08X, type=%d, period=%d\r\n"), t_ptr, taskType, t_delay);
-	
+
 	for (int i = 0; i <= sdServiceIndex; i++) {
 		if (sdServiceQueue[i].pointer == t_ptr) {
 			sdServiceQueue[i].repeatPeriod = t_delay - 1;
@@ -115,7 +115,7 @@ void systemd_setServiceState(sdServiceHandle_t handle, uint8_t state)
 	uint8_t sreg = threads_startAtomicOperation();
 
 	if (handle != NULL) handle -> state = state;
-	
+
 	threads_endAtomicOperation(sreg);
 }
 

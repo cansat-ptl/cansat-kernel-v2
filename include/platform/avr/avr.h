@@ -215,11 +215,11 @@
 	:[_SREG_] "i" _SFR_IO_ADDR(platform_STATUS_REG), \
 	[_SPL_] "i" _SFR_IO_ADDR(SPL), \
 	[_SPH_] "i" _SFR_IO_ADDR(SPH), \
-	[_EIND_] "i" _SFR_IO_ADDR(platform_STATUS_REG), \
-	[_RAMPX_] "i" _SFR_IO_ADDR(platform_STATUS_REG), \
-	[_RAMPY_] "i" _SFR_IO_ADDR(platform_STATUS_REG), \
-	[_RAMPZ_] "i" _SFR_IO_ADDR(platform_STATUS_REG), \
-	[_RAMPD_] "i" _SFR_IO_ADDR(platform_STATUS_REG)
+	[_EIND_] "i" _SFR_IO_ADDR(EIND), \
+	[_RAMPX_] "i" _SFR_IO_ADDR(RAMPX), \
+	[_RAMPY_] "i" _SFR_IO_ADDR(RAMPY), \
+	[_RAMPZ_] "i" _SFR_IO_ADDR(RAMPZ), \
+	[_RAMPD_] "i" _SFR_IO_ADDR(RAMPD)
 )
 
 #define platform_SAVE_CONTEXT() asm volatile ( \

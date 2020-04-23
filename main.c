@@ -104,9 +104,9 @@ kTask simpleTask3(void* args)
 {
 	while (1) {
 		threads_semaphoreWait(&semaphore0);
-		debug_puts(L_NONE, PSTR("Job 4 starts, waiting for semaphore\r\n"));
+		debug_puts(L_INFO, PSTR("Job 4 starts, waiting for semaphore\r\n"));
 		kernel_yield(200);
-		debug_puts(L_NONE, PSTR("Job 4 ends, signaling semaphore\r\n"));
+		debug_puts(L_INFO, PSTR("Job 4 ends, signaling semaphore\r\n"));
 		threads_semaphoreSignal(&semaphore0);
 		kernel_yield(200);
 	}
@@ -115,9 +115,9 @@ kTask simpleTask4(void* args)
 {
 	while (1) {
 		threads_semaphoreWait(&semaphore0);
-		debug_puts(L_NONE, PSTR("Job 5 starts, waiting for semaphore\r\n"));
+		debug_puts(L_INFO, PSTR("Job 5 starts, waiting for semaphore\r\n"));
 		kernel_yield(200);
-		debug_puts(L_NONE, PSTR("Job 5 ends, signaling semaphore\r\n"));
+		debug_puts(L_INFO, PSTR("Job 5 ends, signaling semaphore\r\n"));
 		threads_semaphoreSignal(&semaphore0);
 		kernel_yield(200);
 		//kernel_setTaskState(kernel_getCurrentTaskHandle(), KSTATE_SUSPENDED);
@@ -128,9 +128,9 @@ kTask simpleTask5(void* args)
 {
 	while (1) {
 		threads_semaphoreWait(&semaphore0);
-		debug_puts(L_NONE, PSTR("Job 6 starts, waiting for semaphore\r\n"));
+		debug_puts(L_INFO, PSTR("Job 6 starts, waiting for semaphore\r\n"));
 		kernel_yield(200);
-		debug_puts(L_NONE, PSTR("Job 6 ends, signaling semaphore\r\n"));
+		debug_puts(L_INFO, PSTR("Job 6 ends, signaling semaphore\r\n"));
 		threads_semaphoreSignal(&semaphore0);
 		kernel_yield(200);
 		//kernel_setTaskState(kernel_getCurrentTaskHandle(), KSTATE_SUSPENDED);
@@ -152,13 +152,14 @@ void simpleService2()
 	debug_logMessage(PGM_ON, L_INFO, PSTR("Example systemd service 2\r\n"));
 }
 
-void user_preinit() 
+void user_preinit()
 {
 	return;
 }
 
 void user_init()
 {
+	debug_puts(L_INFO, PSTR("kernel: Starting systemd process\r\n"));
 	systemd_init();
 	static char test[] = "test arg string";
 	systemd_addService(SDSERVICE_REPEATED, simpleService, 500, SDSTATE_ACTIVE);

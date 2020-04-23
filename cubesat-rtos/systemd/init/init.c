@@ -12,21 +12,21 @@ void systemd_tick();
 
 void systemd_init()
 {
-	debug_puts(L_NONE, PSTR("[init] systemd: Startup\r\n"));
-	debug_puts(L_NONE, PSTR("[init] systemd: Preparing service lists"));
+	debug_puts(L_INFO, PSTR("systemd: Startup\r\n"));
+	debug_puts(L_INFO, PSTR("systemd: Preparing service lists"));
 	
 	systemd_clearServiceQueue();
 	systemd_clearCallQueue();
 	
 	debug_puts(L_NONE, PSTR("                      [OK]\r\n"));
-	debug_puts(L_NONE, PSTR("[init] systemd: Setting up software timer"));
+	debug_puts(L_INFO, PSTR("systemd: Setting up software timer"));
 	
 	kernel_setTimer(systemd_tick, CFG_SYSTEMD_TIMER_TICKS);
 	
 	debug_puts(L_NONE, PSTR("                    [OK]\r\n"));
-	debug_puts(L_NONE, PSTR("[init] systemd: Creating host task\r\n"));
+	debug_puts(L_INFO, PSTR("systemd: Creating host task\r\n"));
 	
 	kernel_createTask(systemd_main, NULL, 100, CFG_SYSTEMD_TASK_PRIORITY, KTASK_SYSTEM, "systemd");
 	
-	debug_puts(L_NONE, PSTR("[init] systemd: Startup complete\r\n"));
+	debug_puts(L_INFO, PSTR("systemd: Startup complete\r\n"));
 }

@@ -30,7 +30,7 @@ uint8_t threads_notificationSend(kTaskHandle_t taskToNotify, uint16_t flags)
 {
 	uint8_t sreg = threads_startAtomicOperation();
 	
-	//debug_puts(L_NONE, PSTR("threads: unlocking mutex\r\n"));
+	//debug_puts(L_INFO, PSTR("threads: unlocking mutex\r\n"));
 	if (taskToNotify == NULL) return 1;
 	
 	taskToNotify -> state = KSTATE_READY;

@@ -36,9 +36,17 @@
 #define KFLAG_LOG_UART 14
 #define KFLAG_DEBUG 15
 
+#define KOSSTATUS_INIT 0
+#define KOSSTATUS_RUNNING 1
+#define KOSSTATUS_HALTED 2
+#define KOSSTATUS_ERRORED 3
+
 void kernel_setFlag(uint8_t flag, uint8_t value);
 uint8_t kernel_checkFlag(uint8_t flag);
 uint64_t kernel_getUptime();
 void kernel_checkMCUCSR();
+
+uint8_t kernel_getSystemStatus();
+void kernel_setSystemStatus(uint8_t status);
 
 #endif /* CONTROL_H_ */

@@ -64,19 +64,19 @@ kTaskHandle_t kernel_createTask(kTask_t startupPointer, void* args, kStackSize_t
 	uint8_t sreg = threads_startAtomicOperation();
 	
 	#if CFG_LOGGING == 1
-		debug_logMessage(PGM_ON, L_NONE, PSTR("[init] taskmgr: Registering new task, PID=%d, StartPTR=0x%08X, Stack=%d, Prio=%d\r\n"), kGlobalPid, startupPointer, taskStackSize, taskPriority);
+		debug_logMessage(PGM_ON, L_INFO, PSTR("taskmgr: Registering new task, PID=%d, StartPTR=0x%08X, Stack=%d, Prio=%d\r\n"), kGlobalPid, startupPointer, taskStackSize, taskPriority);
 	#endif
 	
 	if (startupPointer == NULL) {
 		#if CFG_LOGGING == 1
-			debug_puts(L_NONE, PSTR("[init] taskmgr: Task registration error: PTR=NULL\r\n"));
+			debug_puts(L_INFO, PSTR("taskmgr: Task registration error: PTR=NULL\r\n"));
 		#endif
 		threads_endAtomicOperation(sreg);
 		return NULL;
 	}
 	
 	#if CFG_LOGGING == 1
-		debug_puts(L_NONE, PSTR("[init] kernel: Memory allocation"));
+		debug_puts(L_INFO, PSTR("kernel: Memory allocation"));
 	#endif
 	
 	kStackPtr_t stackPointer = kernel_setupTaskStack(startupPointer, taskStackSize, taskType, args);
@@ -120,7 +120,7 @@ kTaskHandle_t kernel_createTask(kTask_t startupPointer, void* args, kStackSize_t
 	kTaskIndex++;
 	
 	#if CFG_LOGGING == 1
-		debug_puts(L_NONE, PSTR("[init] taskmgr: Task registration                            [OK]\r\n"));
+		debug_puts(L_INFO, PSTR("taskmgr: Task registration                            [OK]\r\n"));
 	#endif
 	
 	threads_endAtomicOperation(sreg);

@@ -24,18 +24,18 @@ uint8_t threads_mutexLock(struct kLock_t* mutex)
 		uint8_t sreg = threads_startAtomicOperation();
 		kTaskHandle_t runningTask = kernel_getCurrentTaskHandle();
 		
-		//debug_puts(L_NONE, PSTR("threads: attempting to lock mutex..."));
+		//debug_puts(L_INFO, PSTR("threads: attempting to lock mutex..."));
 		
 		if (mutex -> lockCount == 0 || mutex -> owner == NULL || mutex -> owner -> state == KSTATE_UNINIT) {
 			mutex -> lockCount = 1;
 			mutex -> owner = runningTask;
-			//debug_puts(L_NONE, PSTR("success!\r\n"));
+			//debug_puts(L_INFO, PSTR("success!\r\n"));
 			threads_endAtomicOperation(sreg);
 			return 0;
 		}
 		else {
 			runningTask -> lock = mutex;
-			//debug_puts(L_NONE, PSTR("error: locked\r\n"));
+			//debug_puts(L_INFO, PSTR("error: locked\r\n"));
 			kernel_setTaskState(kernel_getCurrentTaskHandle(), KSTATE_BLOCKED);
 			threads_endAtomicOperation(sreg);
 			kernel_yield(0);
@@ -47,7 +47,7 @@ uint8_t threads_mutexUnlock(struct kLock_t* mutex)
 {
 	uint8_t sreg = threads_startAtomicOperation();
 	
-	//debug_puts(L_NONE, PSTR("threads: unlocking mutex\r\n"));
+	//debug_puts(L_INFO, PSTR("threads: unlocking mutex\r\n"));
 	if (mutex == NULL) return 1;
 		
 	mutex -> lockCount = 0;
@@ -58,7 +58,7 @@ uint8_t threads_mutexUnlock(struct kLock_t* mutex)
 
 	for (int i = 0; i < taskIndex; i++) {
 		if (taskList[i].lock == mutex) {
-			//debug_puts(L_NONE, PSTR("threads: unlocking waiting tasks\r\n"));
+			//debug_puts(L_INFO, PSTR("threads: unlocking waiting tasks\r\n"));
 			taskList[i].lock = NULL;
 			kernel_setTaskState(&taskList[i], KSTATE_READY);
 		}

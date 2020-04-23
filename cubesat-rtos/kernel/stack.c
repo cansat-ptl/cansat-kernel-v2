@@ -40,7 +40,7 @@ kStackPtr_t kernel_setupTaskStack(kTask_t startupPointer, kStackSize_t taskStack
 	uint8_t sreg = threads_startAtomicOperation();
 	kStackPtr_t stackPointer = NULL;
 
-	if (taskType != KTASK_SYSTEM) {
+	if (taskType != KTASK_SYSTEM) { //Checking task type to choose memory region
 		if (kUserTaskStackUsage + taskStackSize + CFG_TASK_STACK_SAFETY_MARGIN >= CFG_TASK_STACK_SIZE) {
 			threads_endAtomicOperation(sreg);
 			return NULL;
@@ -50,7 +50,7 @@ kStackPtr_t kernel_setupTaskStack(kTask_t startupPointer, kStackSize_t taskStack
 
 		kernel_prepareMemoryBarrier((stackPointer - taskStackSize), CFG_TASK_STACK_SAFETY_MARGIN, 0xFE);
 	}
-	else {
+	else { //if task type is KTASK_SYSTEM, memory will be allocated in separate space
 		if (kSystemStackUsage + taskStackSize + CFG_TASK_STACK_SAFETY_MARGIN >= CFG_KERNEL_STACK_SIZE) {
 			threads_endAtomicOperation(sreg);
 			return NULL;
@@ -76,7 +76,7 @@ uint8_t kernel_checkStackProtectionRegion(kTaskHandle_t checkedTask)
 
 		for (int16_t i = 1; i < CFG_TASK_STACK_SAFETY_MARGIN+1; i++) {
 			if (stackEnd[i] != 0xFE) {
-				debug_puts(L_NONE, PSTR("kernel: Stack corruption detected\r\n"));
+				debug_puts(L_INFO, PSTR("kernel: Stack corruption detected\r\n"));
 				platform_handleStackCorruption();
 			}
 		}
@@ -121,7 +121,7 @@ void kernel_stackCorruptionHook()
 	uint8_t taskIndex = kernel_getTaskListIndex();
 
 	handle -> state = KSTATE_UNINIT;
-	debug_puts(L_NONE, PSTR("kernel: Executing task corruption hook\r\n")); //TODO: debug information
+	debug_puts(L_INFO, PSTR("kernel: Executing task corruption hook\r\n")); //TODO: debug information
 	for (int i = 0; i < taskIndex; i++) {
 		if (taskList[i].lock -> owner == handle) {
 			taskList[i].state = KSTATE_READY;
