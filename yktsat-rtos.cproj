@@ -201,7 +201,7 @@
     <Compile Include="cubesat-rtos\kernel\stack.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="cubesat-rtos\kernel\timers.c">
+    <Compile Include="cubesat-rtos\kernel\softtimers.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="cubesat-rtos\platform\avr\stackframe.c">
@@ -276,7 +276,7 @@
     <Compile Include="include\kernel\tasks.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="include\kernel\timers.h">
+    <Compile Include="include\kernel\softtimers.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="include\platform\avr\avr.h">

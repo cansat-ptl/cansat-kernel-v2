@@ -3,7 +3,7 @@
  *
  * Created: 13.02.2020 19:34:12
  *  Author: Admin
- */ 
+ */
 #include <platform/platform.h>
 #include <kernel.h>
 
@@ -42,7 +42,7 @@ void platform_setupTimer0(uint8_t prescaler)
 	platform_DISABLE_INTERRUPTS();
 	TCCR0 |= (prescaler << CS00); // prescaler 64 cs11 & cs10 = 1
 	TCNT0 = 0;
-	OCR0 = 125;
+	OCR0 = 100; //Corrected accordingly to ISR execution time
 	platform_ENABLE_INTERRUPTS();
 	platform_STATUS_REG = sreg;
 }
@@ -65,7 +65,7 @@ void platform_stopTimer0()
 	platform_STATUS_REG = sreg;
 }
 
-ISR(TIMER0_COMP_vect, ISR_NAKED) 
+ISR(TIMER0_COMP_vect, ISR_NAKED)
 {
 	kernel_tick();
 	platform_RETI();

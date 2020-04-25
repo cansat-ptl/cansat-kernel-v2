@@ -98,6 +98,7 @@ void kernel_taskReturnHook()
 	uint8_t taskIndex = kernel_getTaskListIndex();
 
 	handle -> state = KSTATE_UNINIT;
+	
 	for (int i = 0; i < taskIndex; i++) {
 		if (taskList[i].lock -> owner == handle) {
 			taskList[i].state = KSTATE_READY;
@@ -121,7 +122,9 @@ void kernel_stackCorruptionHook()
 	uint8_t taskIndex = kernel_getTaskListIndex();
 
 	handle -> state = KSTATE_UNINIT;
+	
 	debug_puts(L_INFO, PSTR("kernel: Executing task corruption hook\r\n")); //TODO: debug information
+	
 	for (int i = 0; i < taskIndex; i++) {
 		if (taskList[i].lock -> owner == handle) {
 			taskList[i].state = KSTATE_READY;
@@ -129,6 +132,7 @@ void kernel_stackCorruptionHook()
 			taskList[i].lock -> lockCount = 0;
 		}
 	}
+	
 	threads_endAtomicOperation(sreg);
 	kernel_yield(0);
 	while(1);

@@ -28,6 +28,7 @@ typedef enum {KTIMER_SINGLERUN, KTASK_REPEATED} kTimerType_t;
 typedef enum {KLOCK_SEMAPHORE, KLOCK_MUTEX, KLOCK_SEMAPHORE_RECURSIVE} kLockType_t;
 
 typedef volatile struct kTaskStruct_t* kTaskHandle_t;
+typedef volatile struct kTimerStruct_t* kTimerHandle_t;
 
 typedef struct kLock_t kMutex_t;
 typedef kMutex_t* kMutexHandle_t;

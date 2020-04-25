@@ -20,7 +20,7 @@
 #define SDSTATE_ACTIVE 1
 #define SDSTATE_SUSPENDED 0
 
-uint8_t systemd_addService(uint8_t taskType, sdService_t t_ptr, uint16_t t_delay, uint8_t startupState);
+sdServiceHandle_t systemd_addService(uint8_t taskType, sdService_t t_ptr, uint16_t t_delay, uint8_t startupState);
 uint8_t systemd_removeService(sdServiceHandle_t handle);
 void systemd_setServiceState(sdServiceHandle_t handle, uint8_t state);
 uint8_t systemd_addCall(sdServiceHandle_t handle);

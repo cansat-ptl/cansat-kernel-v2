@@ -20,7 +20,7 @@
 #include <threads/threads.h>
 #include <kernel/control.h>
 #include <kernel/tasks.h>
-#include <kernel/timers.h>
+#include <kernel/softtimers.h>
 #include <kernel/memory.h>
 #include <kernel/debug.h>
 #include <utils/utils.h>
@@ -30,10 +30,5 @@
 
 uint8_t kernel_startScheduler();
 void kernel_preinit();
-
-uint8_t kernel_setTimer(kTimerISR_t t_pointer, uint32_t t_period);
-uint8_t kernel_removeTimer(kTimerISR_t t_pointer);
-void kernel_timerService();
-
 
 #endif /* KERNEL_H_ */

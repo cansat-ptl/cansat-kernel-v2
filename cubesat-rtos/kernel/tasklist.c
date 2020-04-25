@@ -129,6 +129,7 @@ kTaskHandle_t kernel_createTask(kTask_t startupPointer, void* args, kStackSize_t
 
 uint8_t kernel_removeTask(kTaskHandle_t handle)
 {
+	uint8_t exitcode = 1;
 	uint8_t sreg = threads_startAtomicOperation();
 	kTaskHandle_t taskList = kernel_getTaskListPtr();
 	uint8_t idx = utils_ARRAY_INDEX_FROM_ADDR(taskList, handle, struct kTaskStruct_t);
@@ -138,11 +139,9 @@ uint8_t kernel_removeTask(kTaskHandle_t handle)
 		kernel_sortTaskList(taskList, kTaskIndex);
 		kTaskIndex--;
 		
-		threads_endAtomicOperation(sreg);
-		return 0;
+		exitcode = 0;
 	}
-	else {
-		threads_endAtomicOperation(sreg);
-		return 1;
-	}
+	
+	threads_endAtomicOperation(sreg);
+	return exitcode;
 }
