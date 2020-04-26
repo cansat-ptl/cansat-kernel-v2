@@ -18,69 +18,61 @@ kLifo_t threads_lifoInit(char* pointer, uint8_t size)
 
 uint8_t threads_lifoAvailable(kLifo_t* lifo) 
 {
-	if (lifo == NULL) return 0;
-	
-	uint8_t sreg = threads_startAtomicOperation();
-	if (lifo -> currentPosition != 0) {
+	uint8_t exitcode = 0;
+	if (lifo != NULL) {
+		uint8_t sreg = threads_startAtomicOperation();
+		
+		if (lifo -> currentPosition != 0) exitcode = 1;
+		
 		threads_endAtomicOperation(sreg);
-		return 1;
 	}
-	else {
-		threads_endAtomicOperation(sreg);
-		return 0;
-	}
-	
+	return exitcode;
 }
 
 uint8_t threads_lifoWrite(kLifo_t* lifo, char data)
 {
-	if (lifo == NULL) return 0;
-	
-	uint8_t sreg = threads_startAtomicOperation();
+	uint8_t exitcode = 0;
+	if (lifo != NULL) {
+		uint8_t sreg = threads_startAtomicOperation();
 		
-	if (lifo -> currentPosition < lifo -> size) {
-		lifo -> currentPosition++;
-		lifo -> pointer[lifo -> currentPosition] = data;
+		if (lifo -> currentPosition < lifo -> size) {
+			lifo -> currentPosition++;
+			lifo -> pointer[lifo -> currentPosition] = data;
+			exitcode = 1;
+		}
+		
 		threads_endAtomicOperation(sreg);
-		return 1;
 	}
-	else {
-		threads_endAtomicOperation(sreg);
-		return 0;
-	}
+	return exitcode;
 }
 
 char threads_lifoRead(kLifo_t* lifo)
 {
-	if (lifo == NULL) return 0;
-	
-	uint8_t sreg = threads_startAtomicOperation();
-	
-	if (lifo -> currentPosition != 0) {
-		char data = lifo -> pointer[lifo -> currentPosition];
-		lifo -> currentPosition--;
+	char data = 0;
+	if (lifo != NULL) {
+		uint8_t sreg = threads_startAtomicOperation();
+		
+		if (lifo -> currentPosition != 0) {
+			data = lifo -> pointer[lifo -> currentPosition];
+			lifo -> currentPosition--;
+		}
+		
 		threads_endAtomicOperation(sreg);
-		return data;
 	}
-	else {
-		threads_endAtomicOperation(sreg);
-		return 0;
-	}
+	return data;
 }
 
 char threads_lifoPeek(kLifo_t* lifo)
 {
-	if (lifo == NULL) return 0;
-	
-	uint8_t sreg = threads_startAtomicOperation();
-	
-	if (lifo -> currentPosition != 0) {
-		char data = lifo -> pointer[lifo -> currentPosition];
+	char data = 0;
+	if (lifo != NULL) {
+		uint8_t sreg = threads_startAtomicOperation();
+		
+		if (lifo -> currentPosition != 0) {
+			data = lifo -> pointer[lifo -> currentPosition];
+		}
+		
 		threads_endAtomicOperation(sreg);
-		return data;
 	}
-	else {
-		threads_endAtomicOperation(sreg);
-		return 0;
-	}
+	return data;
 }
