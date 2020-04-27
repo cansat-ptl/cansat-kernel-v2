@@ -116,10 +116,11 @@ kTask simpleTask4(void* args)
 	while (1) {
 		threads_semaphoreWait(&semaphore0);
 		debug_puts(L_INFO, PSTR("Job 5 starts, waiting for semaphore\r\n"));
-		kernel_yield(200);
+		//kernel_yield(200);
 		debug_puts(L_INFO, PSTR("Job 5 ends, signaling semaphore\r\n"));
 		threads_semaphoreSignal(&semaphore0);
-		kernel_yield(200);
+		_delay_ms(123);
+		//kernel_yield(200);
 		//kernel_setTaskState(kernel_getCurrentTaskHandle(), KSTATE_SUSPENDED);
 		//while(1);
 	}
@@ -129,10 +130,41 @@ kTask simpleTask5(void* args)
 	while (1) {
 		threads_semaphoreWait(&semaphore0);
 		debug_puts(L_INFO, PSTR("Job 6 starts, waiting for semaphore\r\n"));
-		kernel_yield(200);
+		//kernel_yield(200);
 		debug_puts(L_INFO, PSTR("Job 6 ends, signaling semaphore\r\n"));
 		threads_semaphoreSignal(&semaphore0);
-		kernel_yield(200);
+		_delay_ms(123);
+		//kernel_yield(200);
+		//kernel_setTaskState(kernel_getCurrentTaskHandle(), KSTATE_SUSPENDED);
+		//while(1);
+	}
+}
+
+kTask simpleTask6(void* args)
+{
+	while (1) {
+		threads_semaphoreWait(&semaphore0);
+		debug_puts(L_INFO, PSTR("Job 7 starts, waiting for semaphore\r\n"));
+		//kernel_yield(200);
+		debug_puts(L_INFO, PSTR("Job 7 ends, signaling semaphore\r\n"));
+		threads_semaphoreSignal(&semaphore0);
+		_delay_ms(123);
+		//kernel_yield(200);
+		//kernel_setTaskState(kernel_getCurrentTaskHandle(), KSTATE_SUSPENDED);
+		//while(1);
+	}
+}
+
+kTask simpleTask7(void* args)
+{
+	while (1) {
+		threads_semaphoreWait(&semaphore0);
+		debug_puts(L_INFO, PSTR("Job 8 starts, waiting for semaphore\r\n"));
+		//kernel_yield(200);
+		debug_puts(L_INFO, PSTR("Job 8 ends, signaling semaphore\r\n"));
+		threads_semaphoreSignal(&semaphore0);
+		_delay_ms(123);
+		//kernel_yield(200);
 		//kernel_setTaskState(kernel_getCurrentTaskHandle(), KSTATE_SUSPENDED);
 		//while(1);
 	}
@@ -160,18 +192,23 @@ void user_preinit()
 void user_init()
 {
 	debug_puts(L_INFO, PSTR("kernel: Starting systemd process\r\n"));
-	systemd_init();
+	//systemd_init();
 	static char test[] = "test arg string";
-	systemd_addService(SDSERVICE_REPEATED, simpleService, 500, SDSTATE_ACTIVE);
-	systemd_addService(SDSERVICE_REPEATED, simpleService1, 200, SDSTATE_ACTIVE);
-	systemd_addService(SDSERVICE_REPEATED, simpleService2, 750, SDSTATE_ACTIVE);
+	//systemd_addService(SDSERVICE_REPEATED, simpleService, 500, SDSTATE_ACTIVE);
+	//systemd_addService(SDSERVICE_REPEATED, simpleService1, 200, SDSTATE_ACTIVE);
+	//systemd_addService(SDSERVICE_REPEATED, simpleService2, 750, SDSTATE_ACTIVE);
 
 	mutex0 = threads_mutexInit();
 	semaphore0 = threads_semaphoreInit(2);
 
-	kernel_createTask(simpleTask, NULL, 250, 5, KTASK_USER, "task1");
-	kernel_createTask(simpleTask1, NULL, 250, 4, KTASK_USER, "task2");
-	kernel_createTask(simpleTask2, (void*)test, 250, 2, KTASK_USER, "task3");
+	//kernel_createTask(simpleTask, NULL, 250, 5, KTASK_USER, "task1");
+	//kernel_createTask(simpleTask1, NULL, 250, 4, KTASK_USER, "task2");
+	//kernel_createTask(simpleTask2, (void*)test, 250, 2, KTASK_USER, "task3");
+	kernel_createTask(simpleTask3, NULL, 250, 5, KTASK_USER, "task1");
+	kernel_createTask(simpleTask4, NULL, 250, 4, KTASK_USER, "task2");
+	kernel_createTask(simpleTask5, NULL, 250, 4, KTASK_USER, "task1");
+	kernel_createTask(simpleTask6, NULL, 250, 4, KTASK_USER, "task2");
+	kernel_createTask(simpleTask7, NULL, 250, 4, KTASK_USER, "task1");
 	return;
 }
 

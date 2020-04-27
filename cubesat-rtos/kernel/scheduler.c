@@ -21,20 +21,29 @@ void kernel_initScheduler(kTaskHandle_t taskList, uint8_t taskIndex)
 {
 	kSchedulingList = taskList;
 	kSchedulingAmount = taskIndex;
+	kCurrentTaskIdx = taskIndex;
 }
 
 static inline void scheduler_stateSearching()
 {
 	for (int i = 0; i < kSchedulingAmount+1; i++) {
 		if (kSchedulingList[i].state == KSTATE_READY) {
-			kSchedState = 2;
-			kNextTaskIdx = i;
-			if (kCurrentTaskIdx >= kNextTaskIdx) {
-				if (kSchedulingList[kNextTaskIdx].priority >= kSchedulingList[kCurrentTaskIdx].priority) return;
-				else {
-					kSchedState = 1;
+			if (kSchedulingList[i].priority > kSchedulingList[kCurrentTaskIdx].priority) {
+				kNextTaskIdx = i;
+				kSchedState = 2;
+				return;
+			}
+			else if (kSchedulingList[i].priority == kSchedulingList[kCurrentTaskIdx].priority) {
+				if (i > kCurrentTaskIdx) {
 					kNextTaskIdx = i;
+					kSchedState = 2;
+					return;
 				}
+			}
+			else {
+				kNextTaskIdx = i;
+				kSchedState = 2;
+				return;
 			}
 		}
 		else if (kSchedulingList[i].state == KSTATE_SLEEPING) {
