@@ -49,7 +49,7 @@
 	//Debug logging options
 	#define CFG_LOGGING 1
 	#define CFG_VERBOSE 0
-	#define CFG_PROFILING 1
+	#define CFG_PROFILING 0
 	#define CFG_DEBUG_PRINT_STAGES 1
 	#define CFG_DEBUG_PRINT_LEVELS 1
 
