@@ -36,20 +36,17 @@ static inline void scheduler_search()
 		if (kSchedulingList[i].state == KSTATE_READY) {
 			if (kSchedulingList[i].priority > kSchedulingList[kCurrentTaskIdx].priority) {
 				kNextTaskIdx = i;
-				scheduler_assign();
-				return;
+				break;
 			}
 			else if (kSchedulingList[i].priority == kSchedulingList[kCurrentTaskIdx].priority) {
 				if (i > kCurrentTaskIdx) {
 					kNextTaskIdx = i;
-					scheduler_assign();
-					return;
+					break;
 				}
 			}
 			else {
 				kNextTaskIdx = i;
-				scheduler_assign();
-				return;
+				break;
 			}
 		}
 		else if (kSchedulingList[i].state == KSTATE_SLEEPING) {
@@ -57,6 +54,8 @@ static inline void scheduler_search()
 			else kSchedulingList[i].state = KSTATE_READY;
 		}
 	}
+	scheduler_assign();
+	return;
 }
 
 void kernel_schedule() 
