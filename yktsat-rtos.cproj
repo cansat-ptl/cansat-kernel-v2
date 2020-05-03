@@ -15,7 +15,7 @@
     <AssemblyName>GccApplication1</AssemblyName>
     <Name>yktsat-rtos</Name>
     <RootNamespace>GccApplication1</RootNamespace>
-    <ToolchainFlavour>Native</ToolchainFlavour>
+    <ToolchainFlavour>avrgcc-920</ToolchainFlavour>
     <KeepTimersRunning>true</KeepTimersRunning>
     <OverrideVtor>false</OverrideVtor>
     <CacheFlash>true</CacheFlash>
@@ -162,11 +162,15 @@
     <OutputFileName>yktsat-rtos</OutputFileName>
     <OutputFileExtension>.elf</OutputFileExtension>
     <OutputType>Executable</OutputType>
-    <UsesExternalMakeFile>False</UsesExternalMakeFile>
-    <OutputDirectory>$(MSBuildProjectDirectory)\$(Configuration)</OutputDirectory>
+    <UsesExternalMakeFile>True</UsesExternalMakeFile>
+    <OutputDirectory>C:\Users\Admin\Documents\Atmel Studio\yktcansat-staging\cansat-kernel-v2\Debug</OutputDirectory>
     <BuildTarget>all</BuildTarget>
     <CleanTarget>clean</CleanTarget>
-    <ExternalMakeFilePath>C:\Users\Admin\Documents\Atmel Studio\yktcansat-staging\cansat-kernel-v2\Debug\Makefile</ExternalMakeFilePath>
+    <ExternalMakeFilePath>C:\Users\Admin\Documents\Atmel Studio\yktcansat-staging\cansat-kernel-v2\Debug\Make-rtos</ExternalMakeFilePath>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="config.h">
