@@ -3,11 +3,14 @@
  *
  * Created: 22.02.2020 19:47:26
  *  Author: Admin
- */ 
+ */
 
 
 #ifndef SYSTEMD_H_
 #define SYSTEMD_H_
+
+#define SYSTEMD_VER "0.1.0-bleeding"
+#define SYSTEMD_TIMESTAMP __TIMESTAMP__
 
 #include <kernel/kernel.h>
 #include <systemd/systemd_types.h>

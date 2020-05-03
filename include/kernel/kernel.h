@@ -3,12 +3,12 @@
  *
  * Created: 11.05.2019 21:15:24
  *  Author: ThePetrovich
- */ 
+ */
 
 #ifndef KERNEL_H_
 #define KERNEL_H_
 
-#define KERNEL_VER "0.0.2-bleeding"
+#define KERNEL_VER "0.1.0-bleeding"
 #define KERNEL_TIMESTAMP __TIMESTAMP__
 
 #include <stdint.h>

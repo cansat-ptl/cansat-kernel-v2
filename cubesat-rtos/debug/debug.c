@@ -10,8 +10,10 @@
 #include <kernel/utils/time.h>
 #include <stdio.h>
 
-#define DBG_MOD_VER "0.7.0-bleeding"
+#define DBG_MOD_VER "0.7.1-bleeding"
 #define DBG_MOD_TIMESTAMP __TIMESTAMP__
+
+#define debug_GET_STATUS() kernel_getSystemStatus()
 
 #if CFG_DEBUG_PRINT_LEVELS == 1
 const char log_nolevel[] PROGMEM = "";
@@ -56,7 +58,7 @@ void debug_printLevel(uint8_t level)
 #if CFG_DEBUG_PRINT_STAGES == 1
 void debug_printStage()
 {
-	uint8_t stage = kernel_getSystemStatus();
+	uint8_t stage = debug_GET_STATUS();
 	char * stageptr = (char*)hal_READ_WORD_FROM_FLASH(&(stages[stage]));
 
 	while(hal_READ_BYTE_FROM_FLASH(stageptr) != 0x00)
@@ -73,7 +75,7 @@ inline void debug_sendMessage(uint8_t level, const char * format, va_list args)
 		#else
 			printf_P(PSTR("[%8ld]"), (int32_t)kernel_getUptime());
 		#endif
-		
+
 		#if CFG_DEBUG_PRINT_STAGES == 1
 			debug_printStage();
 		#endif
@@ -94,7 +96,7 @@ inline void debug_sendMessage_p(uint8_t level, const char * format, va_list args
 		#else
 			printf_P(PSTR("[%8ld]"), (int32_t)kernel_getUptime());
 		#endif
-		
+
 		#if CFG_DEBUG_PRINT_STAGES == 1
 			debug_printStage();
 		#endif

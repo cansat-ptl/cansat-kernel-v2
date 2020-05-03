@@ -353,7 +353,6 @@
     <Folder Include="cubesat-rtos\kernel\sysio\" />
     <Folder Include="cubesat-rtos\kernel\threads\" />
     <Folder Include="cubesat-rtos\kernel\utils\" />
-    <Folder Include="cubesat-rtos\sysio" />
     <Folder Include="cubesat-rtos\platform" />
     <Folder Include="cubesat-rtos\platform\avr" />
     <Folder Include="cubesat-rtos\systemd\" />

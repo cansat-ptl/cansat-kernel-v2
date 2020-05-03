@@ -3,12 +3,12 @@
  *
  * Created: 13.02.2020 19:37:27
  *  Author: Admin
- */ 
+ */
 
 #ifndef THREADS_H_
 #define THREADS_H_
 
-#define THREADS_VER "0.0.1-bleeding"
+#define THREADS_VER "0.1.0-bleeding"
 #define THREADS_TIMESTAMP __TIMESTAMP__
 
 #include <stdint.h>

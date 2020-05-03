@@ -13,7 +13,7 @@
 #define F_CPU 8000000L						//CPU frequency
 #endif
 
-#define AVRDEF_VER "0.0.1-bleeding"
+#define AVRDEF_VER "0.1.0-bleeding"
 #define AVRDEF_TIMESTAMP __TIMESTAMP__
 
 #include <kernel/types.h>
