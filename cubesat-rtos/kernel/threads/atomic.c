@@ -5,7 +5,7 @@
  *  Author: Admin
  */ 
 
-#include <threads/threads.h>
+#include <kernel/threads/threads.h>
 
 uint8_t threads_startAtomicOperation()
 {

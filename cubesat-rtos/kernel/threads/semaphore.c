@@ -5,7 +5,7 @@
  *  Author: Admin
  */ 
 
-#include <threads/threads.h>
+#include <kernel/threads/threads.h>
 
 struct kLock_t threads_semaphoreInit(uint8_t resourceAmount)  //TODO: this function is a stub. You can help by improving it
 {

@@ -4,7 +4,7 @@
  * Created: 22.02.2020 20:51:53
  *  Author: Admin
  */ 
-#include <kernel.h>
+#include <kernel/kernel.h>
 
 static volatile struct kTimerStruct_t kTimerList[CFG_MAX_TIMER_COUNT];
 static volatile uint8_t kTimerIndex = 0;

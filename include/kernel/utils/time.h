@@ -9,7 +9,7 @@
 #ifndef TIME_H_
 #define TIME_H_
 
-#include <types.h>
+#include <kernel/types.h>
 
 void time_updateSystemTime();
 uint16_t time_getMilliseconds();

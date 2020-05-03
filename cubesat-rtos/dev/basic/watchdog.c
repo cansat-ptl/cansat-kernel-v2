@@ -4,7 +4,7 @@
  * Created: 19.01.2020 16:55:00
  *  Author: ThePetrovich
  */ 
-#include <platform/platform.h>
+#include <kernel/platform/platform.h>
 
 uint8_t mcucsr_mirror __attribute__ ((section (".noinit")));
 

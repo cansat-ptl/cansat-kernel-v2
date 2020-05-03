@@ -11,10 +11,10 @@
 #define HAL_MOD_VER "0.2.2-staging"
 #define HAL_MOD_TIMESTAMP __TIMESTAMP__
 
-#include <types.h>
+#include <kernel/types.h>
 #include <dev/basic/uart.h>
 #include <dev/basic/gpio.h>
-#include <platform/platform.h>
+#include <kernel/platform/platform.h>
 
 #include "../kernel_config.h"
 #include "../hal_pins.h"

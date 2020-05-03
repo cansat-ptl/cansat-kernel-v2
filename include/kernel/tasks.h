@@ -12,8 +12,8 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>
-#include <types.h>
-#include <hal/hal.h>
+#include <kernel/types.h>
+#include <kernel/hal/hal.h>
 
 #define KPRIO_IDLE 0
 #define KPRIO_REALTIME 255

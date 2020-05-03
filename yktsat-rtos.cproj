@@ -104,60 +104,60 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <ToolchainSettings>
       <AvrGcc>
-  <avrgcc.common.Device>-mmcu=atmega128</avrgcc.common.Device>
-  <avrgcc.common.optimization.RelaxBranches>True</avrgcc.common.optimization.RelaxBranches>
-  <avrgcc.common.ExternalRamMemOvflw>True</avrgcc.common.ExternalRamMemOvflw>
-  <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
-  <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
-  <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
-  <avrgcc.common.outputfiles.srec>True</avrgcc.common.outputfiles.srec>
-  <avrgcc.common.outputfiles.usersignatures>False</avrgcc.common.outputfiles.usersignatures>
-  <avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>
-  <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
-  <avrgcc.compiler.symbols.DefSymbols>
-    <ListValues>
-      <Value>DEBUG</Value>
-    </ListValues>
-  </avrgcc.compiler.symbols.DefSymbols>
-  <avrgcc.compiler.directories.IncludePaths>
-    <ListValues>
-      <Value>../include</Value>
-      <Value>%24(PackRepoDir)\Atmel\ATmega_DFP\1.4.346\include</Value>
-    </ListValues>
-  </avrgcc.compiler.directories.IncludePaths>
-  <avrgcc.compiler.optimization.level>Optimize more (-O2)</avrgcc.compiler.optimization.level>
-  <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
-  <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
-  <avrgcc.compiler.optimization.DebugLevel>Maximum (-g3)</avrgcc.compiler.optimization.DebugLevel>
-  <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
-  <avrgcc.compiler.warnings.ExtraWarnings>True</avrgcc.compiler.warnings.ExtraWarnings>
-  <avrgcc.compiler.warnings.Pedantic>True</avrgcc.compiler.warnings.Pedantic>
-  <avrgcc.compiler.miscellaneous.Verbose>True</avrgcc.compiler.miscellaneous.Verbose>
-  <avrgcc.linker.general.NoSharedLibraries>True</avrgcc.linker.general.NoSharedLibraries>
-  <avrgcc.linker.general.UseVprintfLibrary>True</avrgcc.linker.general.UseVprintfLibrary>
-  <avrgcc.linker.libraries.Libraries>
-    <ListValues>
-      <Value>libm</Value>
-    </ListValues>
-  </avrgcc.linker.libraries.Libraries>
-  <avrgcc.linker.libraries.LibrarySearchPaths>
-    <ListValues>
-      <Value>C:\Users\Admin\Documents\Atmel Studio\yktcansat-staging\cansat-kernel-v2\Debug</Value>
-    </ListValues>
-  </avrgcc.linker.libraries.LibrarySearchPaths>
-  <avrgcc.linker.memorysettings.Flash>
-    <ListValues>
-      <Value>.bootloader=0x1E000</Value>
-    </ListValues>
-  </avrgcc.linker.memorysettings.Flash>
-  <avrgcc.linker.miscellaneous.LinkerFlags>-Wl,-u,vfprintf -lprintf_flt -lm</avrgcc.linker.miscellaneous.LinkerFlags>
-  <avrgcc.assembler.general.IncludePaths>
-    <ListValues>
-      <Value>%24(PackRepoDir)\Atmel\ATmega_DFP\1.4.346\include</Value>
-    </ListValues>
-  </avrgcc.assembler.general.IncludePaths>
-  <avrgcc.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcc.assembler.debugging.DebugLevel>
-</AvrGcc>
+        <avrgcc.common.Device>-mmcu=atmega128</avrgcc.common.Device>
+        <avrgcc.common.optimization.RelaxBranches>True</avrgcc.common.optimization.RelaxBranches>
+        <avrgcc.common.ExternalRamMemOvflw>True</avrgcc.common.ExternalRamMemOvflw>
+        <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
+        <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
+        <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
+        <avrgcc.common.outputfiles.srec>True</avrgcc.common.outputfiles.srec>
+        <avrgcc.common.outputfiles.usersignatures>False</avrgcc.common.outputfiles.usersignatures>
+        <avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>
+        <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
+        <avrgcc.compiler.symbols.DefSymbols>
+          <ListValues>
+            <Value>DEBUG</Value>
+          </ListValues>
+        </avrgcc.compiler.symbols.DefSymbols>
+        <avrgcc.compiler.directories.IncludePaths>
+          <ListValues>
+            <Value>../include</Value>
+            <Value>%24(PackRepoDir)\Atmel\ATmega_DFP\1.4.346\include</Value>
+          </ListValues>
+        </avrgcc.compiler.directories.IncludePaths>
+        <avrgcc.compiler.optimization.level>Optimize more (-O2)</avrgcc.compiler.optimization.level>
+        <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
+        <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
+        <avrgcc.compiler.optimization.DebugLevel>Maximum (-g3)</avrgcc.compiler.optimization.DebugLevel>
+        <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
+        <avrgcc.compiler.warnings.ExtraWarnings>True</avrgcc.compiler.warnings.ExtraWarnings>
+        <avrgcc.compiler.warnings.Pedantic>True</avrgcc.compiler.warnings.Pedantic>
+        <avrgcc.compiler.miscellaneous.Verbose>True</avrgcc.compiler.miscellaneous.Verbose>
+        <avrgcc.linker.general.NoSharedLibraries>True</avrgcc.linker.general.NoSharedLibraries>
+        <avrgcc.linker.general.UseVprintfLibrary>True</avrgcc.linker.general.UseVprintfLibrary>
+        <avrgcc.linker.libraries.Libraries>
+          <ListValues>
+            <Value>libm</Value>
+          </ListValues>
+        </avrgcc.linker.libraries.Libraries>
+        <avrgcc.linker.libraries.LibrarySearchPaths>
+          <ListValues>
+            <Value>C:\Users\Admin\Documents\Atmel Studio\yktcansat-staging\cansat-kernel-v2\Debug</Value>
+          </ListValues>
+        </avrgcc.linker.libraries.LibrarySearchPaths>
+        <avrgcc.linker.memorysettings.Flash>
+          <ListValues>
+            <Value>.bootloader=0x1E000</Value>
+          </ListValues>
+        </avrgcc.linker.memorysettings.Flash>
+        <avrgcc.linker.miscellaneous.LinkerFlags>-Wl,-u,vfprintf -lprintf_flt -lm</avrgcc.linker.miscellaneous.LinkerFlags>
+        <avrgcc.assembler.general.IncludePaths>
+          <ListValues>
+            <Value>%24(PackRepoDir)\Atmel\ATmega_DFP\1.4.346\include</Value>
+          </ListValues>
+        </avrgcc.assembler.general.IncludePaths>
+        <avrgcc.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcc.assembler.debugging.DebugLevel>
+      </AvrGcc>
     </ToolchainSettings>
     <OutputFileName>yktsat-rtos</OutputFileName>
     <OutputFileExtension>.elf</OutputFileExtension>
@@ -196,6 +196,12 @@
     <Compile Include="cubesat-rtos\kernel\control.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="cubesat-rtos\kernel\platform\avr\stackframe.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="cubesat-rtos\kernel\platform\avr\timers.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="cubesat-rtos\kernel\scheduler.c">
       <SubType>compile</SubType>
     </Compile>
@@ -205,43 +211,46 @@
     <Compile Include="cubesat-rtos\kernel\softtimers.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="cubesat-rtos\platform\avr\stackframe.c">
+    <Compile Include="cubesat-rtos\kernel\sysio\sysio.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="cubesat-rtos\platform\avr\timers.c">
+    <Compile Include="cubesat-rtos\kernel\threads\atomic.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="cubesat-rtos\systemd\init\init.c">
+    <Compile Include="cubesat-rtos\kernel\threads\fifo.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="cubesat-rtos\systemd\init\systemd.c">
+    <Compile Include="cubesat-rtos\kernel\threads\lifo.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="cubesat-rtos\systemd\services\calls.c">
+    <Compile Include="cubesat-rtos\kernel\threads\mutex.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="cubesat-rtos\systemd\services\services.c">
+    <Compile Include="cubesat-rtos\kernel\threads\notifications.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="cubesat-rtos\threads\atomic.c">
+    <Compile Include="cubesat-rtos\kernel\threads\semaphore.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="cubesat-rtos\threads\notifications.c">
+    <Compile Include="cubesat-rtos\kernel\threads\spinlock.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="cubesat-rtos\threads\fifo.c">
+    <Compile Include="cubesat-rtos\kernel\utils\time.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="cubesat-rtos\threads\mutex.c">
+    <Compile Include="cubesat-rtos\kernel\utils\utils.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="cubesat-rtos\threads\lifo.c">
+    <Compile Include="cubesat-rtos\systemd\calls.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="cubesat-rtos\threads\semaphore.c">
+    <Compile Include="cubesat-rtos\systemd\init.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="cubesat-rtos\threads\spinlock.c">
+    <Compile Include="cubesat-rtos\systemd\services.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="cubesat-rtos\systemd\systemd.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="hal_pins.h">
@@ -256,13 +265,7 @@
     <Compile Include="include\dev\basic\uart.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="include\hal\hal.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="include\initd\initd.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\kernel.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="include\kernel\control.h">
@@ -271,7 +274,25 @@
     <Compile Include="include\kernel\debug.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="include\kernel\hal\hal.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\kernel\kernel.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="include\kernel\memory.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\kernel\platform\avr\avr.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\kernel\platform\avr\timers.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\kernel\platform\platform.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\kernel\sysio\sysio.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="include\kernel\tasks.h">
@@ -280,13 +301,22 @@
     <Compile Include="include\kernel\softtimers.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="include\platform\avr\avr.h">
+    <Compile Include="include\kernel\threads\ipc.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="include\platform\avr\timers.h">
+    <Compile Include="include\kernel\threads\primitives.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="include\platform\platform.h">
+    <Compile Include="include\kernel\threads\threads.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\kernel\types.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\kernel\utils\time.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\kernel\utils\utils.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="include\systemd\systemd_config.h">
@@ -298,34 +328,10 @@
     <Compile Include="include\systemd\systemd.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="include\threads\ipc.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\threads\primitives.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\threads\threads.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\types.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="cubesat-rtos\kernel\taskmgr.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="cubesat-rtos\kernel\tasklist.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="cubesat-rtos\utils\time.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="cubesat-rtos\utils\utils.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\utils\time.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\utils\utils.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="kernel_config.h">
@@ -342,26 +348,31 @@
     <Folder Include="cubesat-rtos\debug" />
     <Folder Include="cubesat-rtos\dev\uart" />
     <Folder Include="cubesat-rtos\initd" />
+    <Folder Include="cubesat-rtos\kernel\platform\" />
+    <Folder Include="cubesat-rtos\kernel\platform\avr\" />
+    <Folder Include="cubesat-rtos\kernel\sysio\" />
+    <Folder Include="cubesat-rtos\kernel\threads\" />
+    <Folder Include="cubesat-rtos\kernel\utils\" />
+    <Folder Include="cubesat-rtos\sysio" />
     <Folder Include="cubesat-rtos\platform" />
     <Folder Include="cubesat-rtos\platform\avr" />
     <Folder Include="cubesat-rtos\systemd\" />
-    <Folder Include="cubesat-rtos\systemd\init\" />
-    <Folder Include="cubesat-rtos\systemd\services\" />
     <Folder Include="cubesat-rtos\threads\" />
     <Folder Include="include" />
     <Folder Include="cubesat-rtos\utils" />
     <Folder Include="cubesat-rtos\kernel" />
     <Folder Include="include\dev\basic" />
-    <Folder Include="include\hal" />
     <Folder Include="include\kernel" />
     <Folder Include="include\dev" />
     <Folder Include="include\boot" />
     <Folder Include="include\initd" />
+    <Folder Include="include\kernel\hal\" />
+    <Folder Include="include\kernel\platform\" />
+    <Folder Include="include\kernel\platform\avr\" />
+    <Folder Include="include\kernel\sysio\" />
+    <Folder Include="include\kernel\threads\" />
+    <Folder Include="include\kernel\utils\" />
     <Folder Include="include\systemd" />
-    <Folder Include="include\platform" />
-    <Folder Include="include\platform\avr" />
-    <Folder Include="include\utils" />
-    <Folder Include="include\threads" />
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>

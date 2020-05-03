@@ -5,11 +5,11 @@
  *  Author: Admin
  */ 
 
-#include <kernel.h>
-#include <hal/hal.h>
+#include <kernel/kernel.h>
+#include <kernel/hal/hal.h>
 #include <kernel/debug.h>
-#include <platform/platform.h>
-#include <types.h>
+#include <kernel/platform/platform.h>
+#include <kernel/types.h>
 #include "../kernel_config.h"
 
 void kernel_taskReturnHook();

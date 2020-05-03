@@ -5,7 +5,7 @@
  *  Author: Admin
  */ 
 
-#include <threads/threads.h>
+#include <kernel/threads/threads.h>
 
 void threads_spinlockAcquire(kSpinlock_t* spinlock) 
 {

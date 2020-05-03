@@ -16,7 +16,7 @@
 #define AVRDEF_VER "0.0.1-bleeding"
 #define AVRDEF_TIMESTAMP __TIMESTAMP__
 
-#include <types.h>
+#include <kernel/types.h>
 #include <avr/io.h>
 #include <avr/iom128.h>
 #include <util/delay.h>
@@ -27,8 +27,8 @@
 #include <avr/interrupt.h>
 #include <avr/wdt.h>
 
-#include <kernel.h>
-#include <platform/avr/timers.h>
+#include <kernel/kernel.h>
+#include <kernel/platform/avr/timers.h>
 
 #define lo8(x) ((x)&0xff)
 #define hi8(x) ((x)>>8)

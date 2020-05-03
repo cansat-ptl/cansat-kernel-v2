@@ -12,7 +12,7 @@
  *  Author: Admin
  */ 
 
-#include <threads/threads.h>
+#include <kernel/threads/threads.h>
 
 kFifo_t threads_fifoInit(char* pointer, uint8_t size)
 {

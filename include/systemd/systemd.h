@@ -9,7 +9,7 @@
 #ifndef SYSTEMD_H_
 #define SYSTEMD_H_
 
-#include <kernel.h>
+#include <kernel/kernel.h>
 #include <systemd/systemd_types.h>
 
 #include "systemd_config.h"

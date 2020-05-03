@@ -15,17 +15,17 @@
 #include <string.h>
 #include <stdio.h>
 
-#include <types.h>
-#include <hal/hal.h>
-#include <threads/threads.h>
+#include <kernel/types.h>
+#include <kernel/hal/hal.h>
+#include <kernel/threads/threads.h>
 #include <kernel/control.h>
 #include <kernel/tasks.h>
 #include <kernel/softtimers.h>
 #include <kernel/memory.h>
 #include <kernel/debug.h>
-#include <utils/utils.h>
-#include <utils/time.h>
-#include <platform/platform.h>
+#include <kernel/utils/utils.h>
+#include <kernel/utils/time.h>
+#include <kernel/platform/platform.h>
 #include "../kernel_config.h"
 
 uint8_t kernel_startScheduler();

@@ -9,7 +9,7 @@
 #ifndef PLATFORM_H_
 #define PLATFORM_H_
 
-#include <platform/avr/avr.h>
-#include <platform/avr/timers.h>
+#include <kernel/platform/avr/avr.h>
+#include <kernel/platform/avr/timers.h>
 
 #endif /* PLATFORM_H_ */

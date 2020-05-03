@@ -9,7 +9,7 @@
 #ifndef IPC_H_
 #define IPC_H_
 
-#include <types.h>
+#include <kernel/types.h>
 
 kLifo_t threads_lifoInit(char* pointer, uint8_t size);
 uint8_t threads_lifoAvailable(kLifo_t* lifo);

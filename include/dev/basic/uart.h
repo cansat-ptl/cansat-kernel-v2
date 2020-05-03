@@ -13,7 +13,7 @@
 #define F_CPU 8000000L						//CPU frequency
 #endif
 
-#include <types.h>
+#include <kernel/types.h>
 #include <avr/io.h>
 #include <avr/iom128.h>
 #include <util/delay.h>

@@ -9,7 +9,7 @@
 #ifndef INITD_H_
 #define INITD_H_
 
-#include <kernel.h>
+#include <kernel/kernel.h>
 
 void initd_startup();
 

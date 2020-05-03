@@ -4,7 +4,7 @@
  * Created: 16.02.2020 0:24:01
  *  Author: Admin
  */
-#include <kernel.h>
+#include <kernel/kernel.h>
 
 #define kernel_DISABLE_CONTEXT_SWITCH() hal_CLEAR_BIT(_kflags, KFLAG_CSW_ALLOWED)
 #define kernel_ENABLE_CONTEXT_SWITCH() hal_SET_BIT(_kflags, KFLAG_CSW_ALLOWED)

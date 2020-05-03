@@ -12,8 +12,8 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>
-#include <types.h>
-#include <hal/hal.h>
+#include <kernel/types.h>
+#include <kernel/hal/hal.h>
 
 kTimerHandle_t kernel_setTimer(kTimerISR_t t_pointer, uint32_t t_period);
 void kernel_removeTimer(kTimerHandle_t handle);

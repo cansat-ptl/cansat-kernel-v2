@@ -12,8 +12,8 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>
-#include <types.h>
-#include <hal/hal.h>
+#include <kernel/types.h>
+#include <kernel/hal/hal.h>
 
 #define ERR_KRN_STACK_OVERFLOW 1
 #define ERR_NULLPTR 2

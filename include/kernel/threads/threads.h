@@ -14,9 +14,9 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>
-#include <types.h>
-#include <hal/hal.h>
-#include <threads/primitives.h>
-#include <threads/ipc.h>
+#include <kernel/types.h>
+#include <kernel/hal/hal.h>
+#include <kernel/threads/primitives.h>
+#include <kernel/threads/ipc.h>
 
 #endif /* THREADS_H_ */

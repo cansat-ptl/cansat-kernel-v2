@@ -5,7 +5,7 @@
  *  Author: ThePetrovich
  */ 
 
-#include <kernel.h>
+#include <kernel/kernel.h>
 
 static volatile struct kTaskStruct_t kTaskList[CFG_MAX_TASK_COUNT];
 static volatile uint8_t kGlobalPid = 1;

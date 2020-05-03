@@ -9,7 +9,7 @@
 #ifndef PRIMITIVES_H_
 #define PRIMITIVES_H_
 
-#include <types.h>
+#include <kernel/types.h>
 
 void threads_exitCriticalSection();
 void threads_enterCriticalSection();

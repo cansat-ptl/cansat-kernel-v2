@@ -6,7 +6,7 @@
  */ 
 
 #include <boot/boot.h>
-#include <platform/platform.h>
+#include <kernel/platform/platform.h>
 #include <dev/basic/uart.h>
 
 void basicUart_init(uint16_t ubrr)

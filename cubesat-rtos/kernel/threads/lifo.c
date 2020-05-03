@@ -5,7 +5,7 @@
  *  Author: Admin
  */ 
 
-#include <threads/threads.h>
+#include <kernel/threads/threads.h>
 
 kLifo_t threads_lifoInit(char* pointer, uint8_t size)
 {

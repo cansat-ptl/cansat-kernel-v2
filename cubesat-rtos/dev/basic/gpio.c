@@ -5,7 +5,7 @@
  *  Author: Admin
  */ 
 #include <dev/basic/gpio.h>
-#include <hal/hal.h>
+#include <kernel/hal/hal.h>
 
 //0 - OUTPUT, 1 - INPUT, 2 - INPUT_PULLUP
 void gpio_pinMode(uint8_t pin, uint8_t value)

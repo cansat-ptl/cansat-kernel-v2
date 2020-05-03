@@ -5,7 +5,7 @@
  *  Author: Admin
  */ 
 
-#include <kernel.h>
+#include <kernel/kernel.h>
 
 static volatile kTaskHandle_t kSchedulingList;
 static volatile uint8_t kSchedulingAmount;

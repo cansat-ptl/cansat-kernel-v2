@@ -5,7 +5,7 @@
  *  Author: Admin
  */
 
-#include <kernel.h>
+#include <kernel/kernel.h>
 
 static volatile uint8_t kernelMemory[CFG_TASK_STACK_SIZE + CFG_KERNEL_STACK_SIZE + CFG_KERNEL_STACK_SAFETY_MARGIN];
 static volatile kStackSize_t kUserTaskStackUsage = 0;

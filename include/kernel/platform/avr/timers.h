@@ -9,8 +9,8 @@
 #ifndef TIMERS_H_
 #define TIMERS_H_
 
-#include <types.h>
-#include <platform/avr/avr.h>
+#include <kernel/types.h>
+#include <kernel/platform/avr/avr.h>
 
 void platform_stopTimer1A();
 void platform_startTimer1A();

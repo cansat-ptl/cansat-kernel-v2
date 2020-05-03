@@ -5,8 +5,8 @@
  *  Author: Admin
  */
 
-#include <kernel.h>
-#include <hal/hal.h>
+#include <kernel/kernel.h>
+#include <kernel/hal/hal.h>
 #include <stdio.h>
 
 static int _uart_putc(char c, FILE *stream);

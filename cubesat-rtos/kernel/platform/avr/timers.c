@@ -4,8 +4,8 @@
  * Created: 13.02.2020 19:34:12
  *  Author: Admin
  */
-#include <platform/platform.h>
-#include <kernel.h>
+#include <kernel/platform/platform.h>
+#include <kernel/kernel.h>
 
 void platform_setupTimer1A(uint8_t prescaler)
 {

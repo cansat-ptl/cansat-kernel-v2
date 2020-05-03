@@ -5,9 +5,9 @@
  *  Author: ThePetrovich
  */ 
 
-#include <platform/platform.h>
-#include <kernel.h>
-#include <hal/hal.h>
+#include <kernel/platform/platform.h>
+#include <kernel/kernel.h>
+#include <kernel/hal/hal.h>
 #include "../kernel_config.h"
 
 static volatile struct kTaskStruct_t *kCurrentTask;

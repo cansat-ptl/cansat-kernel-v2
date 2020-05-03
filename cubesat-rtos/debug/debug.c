@@ -5,9 +5,9 @@
  *  Author: ThePetrovich
  */
 
-#include <kernel.h>
-#include <hal/hal.h>
-#include <utils/time.h>
+#include <kernel/kernel.h>
+#include <kernel/hal/hal.h>
+#include <kernel/utils/time.h>
 #include <stdio.h>
 
 #define DBG_MOD_VER "0.7.0-bleeding"
