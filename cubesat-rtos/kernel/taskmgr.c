@@ -17,7 +17,6 @@ extern volatile uint16_t _kflags;
 extern volatile uint8_t _kTaskMgrFlags;
 static volatile uint8_t kInterruptDepth = 0;
 static volatile uint8_t kTickRate = 0;
-volatile kTaskHandle_t kIdleTaskHandle;
 
 static volatile uint8_t kReservedMemory[CFG_KERNEL_RESERVED_MEMORY];
 static volatile kStackPtr_t kStackPointer = &kReservedMemory[CFG_KERNEL_RESERVED_MEMORY-1];

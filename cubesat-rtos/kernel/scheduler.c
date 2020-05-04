@@ -3,7 +3,7 @@
  *
  * Created: 16.02.2020 18:09:53
  *  Author: Admin
- */ 
+ */
 
 #include <kernel/kernel.h>
 
@@ -26,7 +26,7 @@ static inline void scheduler_assign()
 	kernel_setNextTask(&kSchedulingList[kNextTaskIdx]);
 	kCurrentTaskIdx = kNextTaskIdx;
 	kTaskActiveTicks = CFG_TICKS_PER_TASK;
-	kNextTaskIdx = 0;
+	kNextTaskIdx = kSchedulingAmount;
 	return;
 }
 
@@ -58,7 +58,7 @@ static inline void scheduler_search()
 	return;
 }
 
-void kernel_schedule() 
+void kernel_schedule()
 {
 	scheduler_search();
 	return;

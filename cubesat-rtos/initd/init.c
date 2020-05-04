@@ -6,17 +6,18 @@
  */
 #include <initd/initd.h>
 
-extern volatile kTaskHandle_t kIdleTaskHandle;
-
 void kernel_initScheduler(kTaskHandle_t taskList, uint8_t taskIndex);
 
 void user_preinit();
 void user_init();
 void user_postinit();
 
-void kernel_idle()
+kTask kernel_idle1(void* args)
 {
-	while(1) platform_NOP();
+	while(1) {
+		platform_NOP();
+		debug_logMessage(PGM_PUTS, L_INFO, PSTR("idle: idle task debugg output\r\n"));
+	}
 }
 
 void kernel_preinit()
@@ -50,8 +51,9 @@ uint8_t kernel_startScheduler()
 		debug_puts(L_NONE, PSTR("               [OK]\r\n"));
 	#endif
 
-	kTaskHandle_t ct = kernel_createTask(kernel_idle, NULL, 64, KPRIO_IDLE, KTASK_SYSTEM, "idle");
+	kTaskHandle_t ct = kernel_createTask(kernel_idle1, NULL, 64, KPRIO_IDLE, KTASK_SYSTEM, "idle");
 	if (ct == NULL) {
+		debug_puts(L_ERROR, PSTR("kernel: Failed to create idle task"));
 		while(1);
 	}
 	ct -> pid = 0;
@@ -60,7 +62,6 @@ uint8_t kernel_startScheduler()
 		debug_puts(L_INFO, PSTR("kernel: Starting up first task"));
 	#endif
 
-	kIdleTaskHandle = ct;
 	kernel_setCurrentTask(ct);
 
 	#if CFG_LOGGING == 1
