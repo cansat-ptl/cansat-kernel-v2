@@ -61,7 +61,7 @@ void kernel_sortTaskList(kTaskHandle_t taskList, uint8_t amount) //Bubble sort
 
 kTaskHandle_t kernel_createTask(kTask_t startupPointer, void* args, kStackSize_t taskStackSize, uint8_t taskPriority, kTaskType_t taskType, char* name)
 {
-	uint8_t sreg = threads_startAtomicOperation();
+	kStatusRegister_t sreg = threads_startAtomicOperation();
 	
 	#if CFG_LOGGING == 1
 		debug_logMessage(PGM_ON, L_INFO, PSTR("taskmgr: Registering new task, PID=%d, StartPTR=0x%08X, Stack=%d, Prio=%d\r\n"), kGlobalPid, startupPointer, taskStackSize, taskPriority);
@@ -130,7 +130,7 @@ kTaskHandle_t kernel_createTask(kTask_t startupPointer, void* args, kStackSize_t
 uint8_t kernel_removeTask(kTaskHandle_t handle)
 {
 	uint8_t exitcode = 1;
-	uint8_t sreg = threads_startAtomicOperation();
+	kStatusRegister_t sreg = threads_startAtomicOperation();
 	kTaskHandle_t taskList = kernel_getTaskListPtr();
 	uint8_t idx = utils_ARRAY_INDEX_FROM_ADDR(taskList, handle, struct kTaskStruct_t);
 	

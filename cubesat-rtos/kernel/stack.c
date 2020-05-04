@@ -37,7 +37,7 @@ void kernel_prepareMemoryBarrier(kStackPtr_t sptr, uint8_t size, uint8_t filler)
 kStackPtr_t kernel_setupTaskStack(kTask_t startupPointer, kStackSize_t taskStackSize, kTaskType_t taskType, void* args)
 {
 	/* Preparing initial stack frame - DARK MAGIC, DO NOT TOUCH */
-	uint8_t sreg = threads_startAtomicOperation();
+	kStatusRegister_t sreg = threads_startAtomicOperation();
 	kStackPtr_t stackPointer = NULL;
 
 	if (taskType != KTASK_SYSTEM) { //Checking task type to choose memory region
@@ -69,7 +69,7 @@ uint8_t kernel_checkStackProtectionRegion(kTaskHandle_t checkedTask)
 {
 	if (checkedTask == NULL) return 1;
 
-	uint8_t sreg = threads_startAtomicOperation();
+	kStatusRegister_t sreg = threads_startAtomicOperation();
 
 	if (checkedTask -> type != KTASK_SYSTEM) {
 		kStackPtr_t stackEnd = checkedTask -> stackBegin - checkedTask -> stackSize - CFG_TASK_STACK_SAFETY_MARGIN;
@@ -91,7 +91,7 @@ void kernel_taskReturnHook()
 	debug_logMessage(PGM_ON, L_FATAL, PSTR("kernel: Task return detected\r\n"));
 	debug_logMessage(PGM_ON, L_FATAL, PSTR("kernel: Executing task return hook\r\n"));
 
-	uint8_t sreg = threads_startAtomicOperation();
+	kStatusRegister_t sreg = threads_startAtomicOperation();
 
 	kTaskHandle_t handle = kernel_getCurrentTaskHandle();
 	kTaskHandle_t taskList = kernel_getTaskListPtr();
@@ -115,7 +115,7 @@ void kernel_taskReturnHook()
 
 void kernel_stackCorruptionHook()
 {
-	uint8_t sreg = threads_startAtomicOperation();
+	kStatusRegister_t sreg = threads_startAtomicOperation();
 
 	kTaskHandle_t handle = kernel_getCurrentTaskHandle();
 	kTaskHandle_t taskList = kernel_getTaskListPtr();

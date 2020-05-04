@@ -21,7 +21,7 @@ uint8_t threads_mutexLock(struct kLock_t* mutex)
 	uint8_t exitcode = 1;
 	if (mutex != NULL) {
 		while (1) {
-			uint8_t sreg = threads_startAtomicOperation();
+			kStatusRegister_t sreg = threads_startAtomicOperation();
 			kTaskHandle_t runningTask = kernel_getCurrentTaskHandle();
 		
 			//debug_puts(L_INFO, PSTR("threads: attempting to lock mutex..."));
@@ -52,7 +52,7 @@ uint8_t threads_mutexUnlock(struct kLock_t* mutex)
 	
 	//debug_puts(L_INFO, PSTR("threads: unlocking mutex\r\n"));
 	if (mutex != NULL) {
-		uint8_t sreg = threads_startAtomicOperation();
+		kStatusRegister_t sreg = threads_startAtomicOperation();
 		
 		mutex -> lockCount = 0;
 		mutex -> owner = NULL;

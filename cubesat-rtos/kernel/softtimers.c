@@ -12,7 +12,7 @@ static volatile uint8_t kTimerIndex = 0;
 kTimerHandle_t kernel_setTimer(kTimerISR_t t_pointer, uint32_t t_period)
 {
 	kTimerHandle_t dummyHandle = NULL;
-	uint8_t sreg = threads_startAtomicOperation();
+	kStatusRegister_t sreg = threads_startAtomicOperation();
 
 	for (int i = 0; i < CFG_MAX_TIMER_COUNT; i++) {
 		if (kTimerList[i].tsrPointer == t_pointer || kTimerList[i].tsrPointer == NULL) {
@@ -31,7 +31,7 @@ kTimerHandle_t kernel_setTimer(kTimerISR_t t_pointer, uint32_t t_period)
 
 void kernel_removeTimer(kTimerHandle_t handle)
 {
-	uint8_t sreg = threads_startAtomicOperation();
+	kStatusRegister_t sreg = threads_startAtomicOperation();
 	
 	if (handle != NULL) handle -> tsrPointer = NULL;
 	

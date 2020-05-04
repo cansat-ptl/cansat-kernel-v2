@@ -9,6 +9,7 @@
 #define TYPES_H_
 
 #include <stdint.h>
+#include <stddef.h>
 
 typedef void (*kTask_t)(void*);
 typedef void (*kTimerISR_t)(void);
@@ -16,6 +17,7 @@ typedef volatile uint8_t *kStackPtr_t;
 typedef uint16_t kStackSize_t;
 typedef int16_t kIterator_t;
 typedef uint8_t kRegister_t;
+typedef uint8_t kStatusRegister_t;
 typedef uint32_t kPointerValue_t;
 typedef void kTask;
 
@@ -31,14 +33,20 @@ typedef volatile struct kTaskStruct_t* kTaskHandle_t;
 typedef volatile struct kTimerStruct_t* kTimerHandle_t;
 
 typedef struct kLock_t kMutex_t;
-typedef kMutex_t* kMutexHandle_t;
 typedef struct kLock_t kSemaphore_t;
-typedef kSemaphore_t* kSemaphoreHandle_t;
 typedef uint8_t kSpinlock_t;
+
+typedef kMutex_t* kMutexHandle_t;
+typedef kSemaphore_t* kSemaphoreHandle_t;
 typedef kSpinlock_t* kSpinlockHandle_t;
 
-typedef struct kLifo_t kLifo_t;
-typedef struct kFifo_t kFifo_t;
+typedef struct kSystemIO_t kLifo_t;
+typedef struct kSystemIO_t kFifo_t;
+
+typedef struct kSystemIO_t* kLifoHandle_t;
+typedef struct kSystemIO_t* kFifoHandle_t;
+typedef struct kSystemIO_t* kSystemIOHandle_t;
+
 
 struct kLock_t
 {
@@ -47,19 +55,14 @@ struct kLock_t
 	kLockType_t type;
 };
 
-struct kLifo_t
+struct kSystemIO_t
 {
 	char* pointer;
-	uint8_t size;
-	uint8_t currentPosition;
-};
-
-struct kFifo_t
-{
-	char* pointer;
-	uint8_t size;
-	uint8_t inputPosition;
-	uint8_t outputPosition;
+	size_t itemSize;
+	size_t size;
+	uint16_t inputPosition;
+	uint16_t outputPosition;
+	uint16_t currentPosition;
 };
 
 struct kEvent_t

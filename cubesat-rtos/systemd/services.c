@@ -28,7 +28,7 @@ sdServiceHandle_t systemd_addService(uint8_t taskType, sdService_t t_ptr, uint16
 {
 	struct sdServiceStruct_t dummyService;
 	sdServiceHandle_t handle = NULL;
-	uint8_t sreg = threads_startAtomicOperation();
+	kStatusRegister_t sreg = threads_startAtomicOperation();
 	
 	if (t_delay == 0) t_delay = 1;
 
@@ -54,7 +54,7 @@ sdServiceHandle_t systemd_addService(uint8_t taskType, sdService_t t_ptr, uint16
 
 uint8_t systemd_removeServiceByPosition(uint8_t position)
 {
-	uint8_t sreg = threads_startAtomicOperation();
+	kStatusRegister_t sreg = threads_startAtomicOperation();
 	sdServiceIndex--;
 	systemd_resetServiceByPosition(position);
 	for (int j = position; j < CFG_SYSTEMD_MAX_SERVICES-1; j++) {
@@ -69,7 +69,7 @@ uint8_t systemd_removeServiceByPosition(uint8_t position)
 uint8_t systemd_removeService(sdServiceHandle_t handle)
 {
 	uint8_t exitcode = 1;
-	uint8_t sreg = threads_startAtomicOperation();
+	kStatusRegister_t sreg = threads_startAtomicOperation();
 
 	uint8_t position = utils_ARRAY_INDEX_FROM_ADDR(sdServiceList, handle, struct sdServiceStruct_t);
 
@@ -90,7 +90,7 @@ uint8_t systemd_removeService(sdServiceHandle_t handle)
 
 void systemd_clearServiceQueue()
 {
-	uint8_t sreg = threads_startAtomicOperation();
+	kStatusRegister_t sreg = threads_startAtomicOperation();
 	for (int i = 0; i < CFG_SYSTEMD_MAX_SERVICES; i++) {
 		systemd_resetServiceByPosition(i);
 	}
@@ -100,7 +100,7 @@ void systemd_clearServiceQueue()
 
 void systemd_setServiceState(sdServiceHandle_t handle, uint8_t state)
 {
-	uint8_t sreg = threads_startAtomicOperation();
+	kStatusRegister_t sreg = threads_startAtomicOperation();
 
 	if (handle != NULL) handle -> state = state;
 

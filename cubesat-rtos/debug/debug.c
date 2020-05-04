@@ -10,9 +10,6 @@
 #include <kernel/utils/time.h>
 #include <stdio.h>
 
-#define DBG_MOD_VER "0.7.1-bleeding"
-#define DBG_MOD_TIMESTAMP __TIMESTAMP__
-
 #define debug_GET_STATUS() kernel_getSystemStatus()
 
 #if CFG_DEBUG_PRINT_LEVELS == 1

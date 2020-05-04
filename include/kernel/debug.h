@@ -3,11 +3,14 @@
  *
  * Created: 14.02.2020 20:50:18
  *  Author: Admin
- */ 
+ */
 
 
 #ifndef DEBUG_H_
 #define DEBUG_H_
+
+#define DBG_MOD_VER "0.7.1-bleeding"
+#define DBG_MOD_TIMESTAMP __TIMESTAMP__
 
 #include <stdint.h>
 #include <string.h>

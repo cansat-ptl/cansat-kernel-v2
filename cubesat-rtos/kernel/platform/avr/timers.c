@@ -9,7 +9,7 @@
 
 void platform_setupTimer1A(uint8_t prescaler)
 {
-	uint8_t sreg = platform_STATUS_REG;
+	kStatusRegister_t sreg = platform_STATUS_REG;
 	platform_DISABLE_INTERRUPTS();
 	TCCR1B |= (1 << WGM12)|(prescaler << CS10); // prescaler 64 cs11 & cs10 = 1
 	TCNT1 = 0;
@@ -20,7 +20,7 @@ void platform_setupTimer1A(uint8_t prescaler)
 
 void platform_startTimer1A()
 {
-	uint8_t sreg = platform_STATUS_REG;
+	kStatusRegister_t sreg = platform_STATUS_REG;
 	platform_DISABLE_INTERRUPTS();
 	TIMSK |= (1 << OCIE1A);
 	platform_ENABLE_INTERRUPTS();
@@ -29,7 +29,7 @@ void platform_startTimer1A()
 
 void platform_stopTimer1A()
 {
-	uint8_t sreg = platform_STATUS_REG;
+	kStatusRegister_t sreg = platform_STATUS_REG;
 	platform_DISABLE_INTERRUPTS();
 	TIMSK &= ~(1 << OCIE1A);
 	platform_ENABLE_INTERRUPTS();
@@ -38,7 +38,7 @@ void platform_stopTimer1A()
 
 void platform_setupTimer0(uint8_t prescaler)
 {
-	uint8_t sreg = platform_STATUS_REG;
+	kStatusRegister_t sreg = platform_STATUS_REG;
 	platform_DISABLE_INTERRUPTS();
 	TCCR0 |= (prescaler << CS00); // prescaler 64 cs11 & cs10 = 1
 	TCNT0 = 0;
@@ -49,7 +49,7 @@ void platform_setupTimer0(uint8_t prescaler)
 
 void platform_startTimer0()
 {
-	uint8_t sreg = platform_STATUS_REG;
+	kStatusRegister_t sreg = platform_STATUS_REG;
 	platform_DISABLE_INTERRUPTS();
 	TIMSK |= (1 << OCIE0);
 	platform_ENABLE_INTERRUPTS();
@@ -58,7 +58,7 @@ void platform_startTimer0()
 
 void platform_stopTimer0()
 {
-	uint8_t sreg = platform_STATUS_REG;
+	kStatusRegister_t sreg = platform_STATUS_REG;
 	platform_DISABLE_INTERRUPTS();
 	TIMSK &= ~(1 << OCIE0);
 	platform_ENABLE_INTERRUPTS();

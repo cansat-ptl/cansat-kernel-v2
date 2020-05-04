@@ -20,7 +20,7 @@ uint8_t threads_lifoAvailable(kLifo_t* lifo)
 {
 	uint8_t exitcode = 0;
 	if (lifo != NULL) {
-		uint8_t sreg = threads_startAtomicOperation();
+		kStatusRegister_t sreg = threads_startAtomicOperation();
 		
 		if (lifo -> currentPosition != 0) exitcode = 1;
 		
@@ -33,7 +33,7 @@ uint8_t threads_lifoWrite(kLifo_t* lifo, char data)
 {
 	uint8_t exitcode = 0;
 	if (lifo != NULL) {
-		uint8_t sreg = threads_startAtomicOperation();
+		kStatusRegister_t sreg = threads_startAtomicOperation();
 		
 		if (lifo -> currentPosition < lifo -> size) {
 			lifo -> currentPosition++;
@@ -50,7 +50,7 @@ char threads_lifoRead(kLifo_t* lifo)
 {
 	char data = 0;
 	if (lifo != NULL) {
-		uint8_t sreg = threads_startAtomicOperation();
+		kStatusRegister_t sreg = threads_startAtomicOperation();
 		
 		if (lifo -> currentPosition != 0) {
 			data = lifo -> pointer[lifo -> currentPosition];
@@ -66,7 +66,7 @@ char threads_lifoPeek(kLifo_t* lifo)
 {
 	char data = 0;
 	if (lifo != NULL) {
-		uint8_t sreg = threads_startAtomicOperation();
+		kStatusRegister_t sreg = threads_startAtomicOperation();
 		
 		if (lifo -> currentPosition != 0) {
 			data = lifo -> pointer[lifo -> currentPosition];

@@ -28,7 +28,7 @@ uint8_t threads_fifoAvailable(kFifo_t* fifo)
 {
 	uint8_t exitcode = 1;
 	if (fifo != NULL) {
-		uint8_t sreg = threads_startAtomicOperation();
+		kStatusRegister_t sreg = threads_startAtomicOperation();
 		if(fifo -> inputPosition == fifo -> outputPosition) {
 			exitcode = 0;
 		}
@@ -41,7 +41,7 @@ uint8_t threads_fifoWrite(kFifo_t* fifo, char data)
 {
 	uint8_t exitcode = 1;
 	if (fifo != NULL) {
-		uint8_t sreg = threads_startAtomicOperation();
+		kStatusRegister_t sreg = threads_startAtomicOperation();
 		
 		if (fifo -> inputPosition == ((fifo -> outputPosition - 1 + fifo -> size) % fifo -> size)) {
 			exitcode = 0;
@@ -59,7 +59,7 @@ char threads_fifoRead(kFifo_t* fifo)
 {
 	char data = 0;
 	if (fifo != NULL) {
-		uint8_t sreg = threads_startAtomicOperation();
+		kStatusRegister_t sreg = threads_startAtomicOperation();
 		
 		if(!(fifo -> inputPosition == fifo -> outputPosition)) {
 			data = fifo -> pointer[fifo -> outputPosition];
@@ -75,7 +75,7 @@ char threads_fifoPeek(kFifo_t* fifo)
 {
 	char data = 0;
 	if (fifo != NULL) {
-		uint8_t sreg = threads_startAtomicOperation();
+		kStatusRegister_t sreg = threads_startAtomicOperation();
 		
 		if(!(fifo -> inputPosition == fifo -> outputPosition)) data = fifo -> pointer[fifo -> outputPosition];
 		

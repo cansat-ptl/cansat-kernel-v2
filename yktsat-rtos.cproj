@@ -361,9 +361,7 @@
     <Folder Include="cubesat-rtos\platform" />
     <Folder Include="cubesat-rtos\platform\avr" />
     <Folder Include="cubesat-rtos\systemd\" />
-    <Folder Include="cubesat-rtos\threads\" />
     <Folder Include="include" />
-    <Folder Include="cubesat-rtos\utils" />
     <Folder Include="cubesat-rtos\kernel" />
     <Folder Include="include\dev\basic" />
     <Folder Include="include\kernel" />

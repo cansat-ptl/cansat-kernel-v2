@@ -10,7 +10,7 @@
 void threads_spinlockAcquire(kSpinlock_t* spinlock) 
 {
 	while(1) {
-		uint8_t sreg = threads_startAtomicOperation();
+		kStatusRegister_t sreg = threads_startAtomicOperation();
 		if(*spinlock == 0) {
 			if(*spinlock == 0) {
 				*spinlock = 1;
@@ -24,7 +24,7 @@ void threads_spinlockAcquire(kSpinlock_t* spinlock)
 
 void threads_spinlockRelease(kSpinlock_t* spinlock)
 {
-	uint8_t sreg = threads_startAtomicOperation();
+	kStatusRegister_t sreg = threads_startAtomicOperation();
 	*spinlock = 0;
 	threads_endAtomicOperation(sreg);
 }

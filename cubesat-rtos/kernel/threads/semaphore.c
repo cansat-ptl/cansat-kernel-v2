@@ -21,7 +21,7 @@ uint8_t threads_semaphoreWait(struct kLock_t* semaphore)
 	uint8_t exitcode = 1;
 	if (semaphore != NULL) {
 		while (1) {
-			uint8_t sreg = threads_startAtomicOperation();
+			kStatusRegister_t sreg = threads_startAtomicOperation();
 			kTaskHandle_t runningTask = kernel_getCurrentTaskHandle();
 		
 			//debug_puts(L_INFO, PSTR("threads: attempting to lock acquire semaphore..."));
@@ -49,7 +49,7 @@ uint8_t threads_semaphoreSignal(struct kLock_t* semaphore)
 {
 	uint8_t exitcode = 1;
 	if (semaphore != NULL) {
-		uint8_t sreg = threads_startAtomicOperation();
+		kStatusRegister_t sreg = threads_startAtomicOperation();
 	
 		//debug_puts(L_INFO, PSTR("threads: signaling semaphore\r\n"));
 		semaphore -> lockCount++;

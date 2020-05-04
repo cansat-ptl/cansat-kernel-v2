@@ -14,7 +14,7 @@
 void threads_exitCriticalSection();
 void threads_enterCriticalSection();
 uint8_t threads_startAtomicOperation();
-void threads_endAtomicOperation(uint8_t sreg);
+void threads_endAtomicOperation(kStatusRegister_t sreg);
 
 void threads_notificationWait();
 uint8_t threads_notificationSend(kTaskHandle_t taskToNotify, uint16_t flags);
