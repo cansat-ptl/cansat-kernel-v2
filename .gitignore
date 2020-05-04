@@ -4,3 +4,11 @@ yktcansat-staging_6_0.cproj
 .vs/
 *.o
 *.d
+*.lss
+*.elf
+*.eep
+*.map
+*.srec
+*.hex
+*.usersignatures
+*.hex.asm

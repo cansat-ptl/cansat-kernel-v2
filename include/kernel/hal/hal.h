@@ -16,8 +16,8 @@
 #include <dev/basic/gpio.h>
 #include <kernel/platform/platform.h>
 
-#include "../kernel_config.h"
 #include "../hal_pins.h"
+#include "../kernel_config.h"
 
 #ifdef HAL_USE_TIMER0
 	#define HAL_TIMER_INTERRUPT_vect TIMER0_COMP_vect

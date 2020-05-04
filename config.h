@@ -13,7 +13,6 @@
 //------------------------Project-settings------------------------
 #include <string.h>
 #include <stdio.h>
-#include <kernel/kernel.h>
 //----------------------------------------------------------------
 
 #endif /* CONFIG_H_ */

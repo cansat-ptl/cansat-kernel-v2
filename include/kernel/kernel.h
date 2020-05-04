@@ -14,6 +14,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>
+#include "../kernel_config.h"
 
 #include <kernel/types.h>
 #include <kernel/hal/hal.h>
@@ -26,7 +27,6 @@
 #include <kernel/utils/utils.h>
 #include <kernel/utils/time.h>
 #include <kernel/platform/platform.h>
-#include "../kernel_config.h"
 
 uint8_t kernel_startScheduler();
 void kernel_preinit();

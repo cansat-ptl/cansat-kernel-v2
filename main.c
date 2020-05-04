@@ -7,10 +7,10 @@
 
 #include "config.h"
 #include <math.h>
+#include <kernel/kernel.h>
 #include <avr/io.h>
 #include <systemd/systemd.h>
 #include <initd/initd.h>
-
 uint8_t resourse = 1;
 
 kMutex_t mutex0, mutex1;
