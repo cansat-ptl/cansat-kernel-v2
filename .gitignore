@@ -12,6 +12,7 @@ yktcansat-staging_6_0.cproj
 *.hex
 *.usersignatures
 *.hex.asm
+*.elf.asm
 *.atsln
 *.cproj
 *.componentinfo.xml
