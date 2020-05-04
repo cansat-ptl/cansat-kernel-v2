@@ -41,23 +41,38 @@ inline void kernel_swapTasks(volatile struct kTaskStruct_t * taskA, volatile str
 	*taskB = taskTemp;
 }
 
-void kernel_sortTaskList(kTaskHandle_t taskList, uint8_t amount) //Bubble sort
+void kernel_sortTaskList(kTaskHandle_t taskList, uint8_t amount) //Heap sort
 {
-	uint8_t swapFlag = 0;
-	
-	for (int i = 0; i < amount; i++) {
-		swapFlag = 0;
-		for (int j = 0; j < amount-i; j++) {
-			if (taskList[j].priority < taskList[j+1].priority) {
-				swapFlag = 1;
-				kernel_swapTasks(&taskList[j], &taskList[j+1]); //Bruh
-			}
-		}
-		if (!swapFlag) break;
-	}
-	
-	return;
+	heapSort(taskList, amount); 
 }
+
+void heapify(kTaskHandle_t arr[], int n, int i) 
+{ 
+	int smallest = i; // Initialize smallest as root 
+	int l = 2*i + 1; // left = 2*i + 1 
+	int r = 2*i + 2; // right = 2*i + 2 
+	if (l < n && arr[l].priority < arr[smallest].priority) // If left child is larger than root 
+		smallest = l; 
+	if (r < n && arr[r].priority < arr[smallest].priority) // If right child is larger than smallest so far 
+		smallest = r; 
+	if (smallest != i) // If smallest is not root 
+	{ 
+		kernel_swapTasks(&arr[i], &arr[smallest]); 
+		heapify(arr, n, smallest); // Recursively heapify the affected sub-tree 
+	} 
+} 
+
+
+void heapSort(kTaskHandle_t arr[], int n) 
+{ 
+	for (int i = n / 2 - 1; i >= 0; i--) 
+		heapify(arr, n, i); 
+	for (int i=n-1; i>0; i--) 
+	{ 
+		kernel_swapTasks(&arr[0], &arr[i]);
+		heapify(arr, i, 0); 
+	} 
+} 
 
 kTaskHandle_t kernel_createTask(kTask_t startupPointer, void* args, kStackSize_t taskStackSize, uint8_t taskPriority, kTaskType_t taskType, char* name)
 {
