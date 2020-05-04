@@ -48,17 +48,17 @@ void kernel_sortTaskList(kTaskHandle_t taskList, uint8_t amount) //Heap sort
 
 void heapify(kTaskHandle_t arr[], int n, int i) 
 { 
-	int smallest = i; // Initialize smallest as root 
-	int l = 2*i + 1; // left = 2*i + 1 
-	int r = 2*i + 2; // right = 2*i + 2 
-	if (l < n && arr[l].priority < arr[smallest].priority) // If left child is larger than root 
+	int smallest = i; 
+	int l = 2*i + 1; 
+	int r = 2*i + 2; 
+	if (l < n && arr[l].priority < arr[smallest].priority) 
 		smallest = l; 
-	if (r < n && arr[r].priority < arr[smallest].priority) // If right child is larger than smallest so far 
+	if (r < n && arr[r].priority < arr[smallest].priority) 
 		smallest = r; 
-	if (smallest != i) // If smallest is not root 
+	if (smallest != i)
 	{ 
 		kernel_swapTasks(&arr[i], &arr[smallest]); 
-		heapify(arr, n, smallest); // Recursively heapify the affected sub-tree 
+		heapify(arr, n, smallest); 
 	} 
 } 
 
