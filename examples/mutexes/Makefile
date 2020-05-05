@@ -4,7 +4,7 @@ rwildcard=$(wildcard $(addsuffix $2, $1)) $(foreach d,$(wildcard $(addsuffix *, 
 # How to recursively find all files that match a pattern
 #ALL_C_FILES := $(call rwildcard,$(SRCDIR)/,*.c)
 
-TARG = example-tasks
+TARG = example-mutexes
  
 CC = "D:\BuildTools\avr-gcc-9.2.0-x64-mingw\bin\avr-gcc.exe"
 OBJCOPY = "D:\BuildTools\avr-gcc-9.2.0-x64-mingw\bin\avr-objcopy.exe"
@@ -15,7 +15,7 @@ AVR_SIZE_CMD = "D:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-
  
 RTOS_INC = -I"../../include"
 RTOS_SRCDIR = ../../cubesat-rtos
-SRCS = $(call rwildcard, $(RTOS_SRCDIR)/,*.c) ./basic_tasks.c
+SRCS = $(call rwildcard, $(RTOS_SRCDIR)/,*.c) ./mutexes.c
  
 OBJS = $(SRCS:.c=.o)
 
