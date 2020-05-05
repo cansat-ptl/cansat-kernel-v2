@@ -86,7 +86,7 @@ struct kTaskStruct_t
 	kTaskType_t type;
 	uint8_t pid;
 	uint8_t flags;
-	char name[9];
+	char* name;
 };
 
 struct kTimerStruct_t
