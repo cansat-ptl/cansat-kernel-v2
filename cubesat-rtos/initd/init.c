@@ -28,6 +28,7 @@ void kernel_preinit()
 		//debug_puts(L_INFO, PSTR("\x0C"));
 		debug_puts(L_INFO, PSTR("kernel: Initializing debug uart interface, baud=38400\r\n"));
 		debug_puts(L_INFO, PSTR("kernel: Firing up RTOS\r\n"));
+		kernel_heapInit();
 	#endif
 }
 
@@ -45,7 +46,7 @@ uint8_t kernel_startScheduler()
 		debug_puts(L_INFO, PSTR("kernel: Preparing safety memory barrier"));
 	#endif
 
-	kernel_prepareMemoryBarrier(kernel_getStackPtr() + (CFG_TASK_STACK_SIZE + CFG_KERNEL_STACK_SAFETY_MARGIN)-1, CFG_KERNEL_STACK_SAFETY_MARGIN, 0xFE);
+	//kernel_prepareMemoryBarrier(kernel_getStackPtr() + (CFG_TASK_STACK_SIZE + CFG_KERNEL_STACK_SAFETY_MARGIN)-1, CFG_KERNEL_STACK_SAFETY_MARGIN, 0xFE);
 
 	#if CFG_LOGGING == 1
 		debug_puts(L_NONE, PSTR("               [OK]\r\n"));

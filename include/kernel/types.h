@@ -89,6 +89,13 @@ struct kTaskStruct_t
 	char* name;
 };
 
+struct kMemoryBlock_t
+{
+	struct kMemoryBlock_t* next;
+	size_t blockSize;
+	uint8_t state;
+};
+
 struct kTimerStruct_t
 {
 	kTimerISR_t tsrPointer;

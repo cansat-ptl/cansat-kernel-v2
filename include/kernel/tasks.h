@@ -18,7 +18,10 @@
 #define KPRIO_IDLE 0
 #define KPRIO_REALTIME 255
 
-kTaskHandle_t kernel_createTask(kTask_t startupPointer, void* args, kStackSize_t taskStackSize, uint8_t taskPriority, kTaskType_t taskType, char* name);
+uint8_t kernel_createTaskStatic(kTaskHandle_t taskStruct, kStackPtr_t stack, kTask_t entry, void* args, kStackSize_t stackSize, uint8_t priority, kTaskType_t type, char* name);
+uint8_t kernel_createTaskDynamic(kTaskHandle_t* handle, kTask_t entry, void* args, kStackSize_t stackSize, uint8_t priority, kTaskType_t type, char* name);
+kTaskHandle_t kernel_createTask(kTask_t entry, void* args, kStackSize_t stackSize, uint8_t priority, kTaskType_t type, char* name);
+
 uint8_t kernel_setTaskState(kTaskHandle_t t_handle, kTaskState_t t_state);
 uint8_t kernel_removeTask(kTaskHandle_t handle);
 
