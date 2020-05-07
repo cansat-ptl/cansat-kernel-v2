@@ -9,7 +9,7 @@
 #include <kernel/kernel.h>
 #include <kernel/types.h>
 
-#define CFG_HEAP_SIZE 1000 //TODO: move to config
+#define CFG_HEAP_SIZE 2000 //TODO: move to config
 #define CFG_PLATFORM_BYTE_ALIGNMENT 1
 #define CFG_PLATFORM_BYTE_ALIGNMENT_MASK 1
 #define CFG_MIN_BLOCK_SIZE 4

@@ -27,7 +27,7 @@ uint8_t kernel_removeTask(kTaskHandle_t handle);
 
 kTaskHandle_t kernel_getCurrentTaskHandle();
 kTaskHandle_t kernel_getNextTaskHandle();
-kTaskHandle_t kernel_getTaskListPtr();
+kTaskHandle_t* kernel_getTaskListPtr();
 uint8_t kernel_getTaskListIndex();
 void kernel_setCurrentTask(kTaskHandle_t taskHandle);
 void kernel_setNextTask(kTaskHandle_t taskHandle);

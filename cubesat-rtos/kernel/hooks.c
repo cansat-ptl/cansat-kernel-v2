@@ -15,16 +15,16 @@ void kernel_taskReturnHook()
 	kStatusRegister_t sreg = threads_startAtomicOperation();
 
 	kTaskHandle_t handle = kernel_getCurrentTaskHandle();
-	kTaskHandle_t taskList = kernel_getTaskListPtr();
+	kTaskHandle_t* taskList = kernel_getTaskListPtr();
 	uint8_t taskIndex = kernel_getTaskListIndex();
 
 	handle -> state = KSTATE_UNINIT;
 	
 	for (int i = 0; i < taskIndex; i++) {
-		if (taskList[i].lock -> owner == handle) {
-			taskList[i].state = KSTATE_READY;
-			taskList[i].lock -> owner = NULL;
-			taskList[i].lock -> lockCount = 0;
+		if (taskList[i] -> lock -> owner == handle) {
+			taskList[i] -> state = KSTATE_READY;
+			taskList[i] -> lock -> owner = NULL;
+			taskList[i] -> lock -> lockCount = 0;
 		}
 	}
 
@@ -39,7 +39,7 @@ void kernel_stackCorruptionHook()
 	kStatusRegister_t sreg = threads_startAtomicOperation();
 
 	kTaskHandle_t handle = kernel_getCurrentTaskHandle();
-	kTaskHandle_t taskList = kernel_getTaskListPtr();
+	kTaskHandle_t* taskList = kernel_getTaskListPtr();
 	uint8_t taskIndex = kernel_getTaskListIndex();
 
 	handle -> state = KSTATE_UNINIT;
@@ -47,10 +47,10 @@ void kernel_stackCorruptionHook()
 	debug_puts(L_INFO, PSTR("kernel: Executing task corruption hook\r\n")); //TODO: debug information
 	
 	for (int i = 0; i < taskIndex; i++) {
-		if (taskList[i].lock -> owner == handle) {
-			taskList[i].state = KSTATE_READY;
-			taskList[i].lock -> owner = NULL;
-			taskList[i].lock -> lockCount = 0;
+		if (taskList[i] -> lock -> owner == handle) {
+			taskList[i] -> state = KSTATE_READY;
+			taskList[i] -> lock -> owner = NULL;
+			taskList[i] -> lock -> lockCount = 0;
 		}
 	}
 	

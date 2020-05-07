@@ -6,7 +6,7 @@
  */
 #include <initd/initd.h>
 
-void kernel_initScheduler(kTaskHandle_t taskList, uint8_t taskIndex);
+void kernel_initScheduler(kTaskHandle_t* taskQueue, uint8_t taskIndex);
 
 void user_preinit();
 void user_init();
