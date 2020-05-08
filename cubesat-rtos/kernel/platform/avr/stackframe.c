@@ -39,7 +39,7 @@ uint8_t platform_prepareStackFrame(kStackPtr_t stackPointer, kTask_t taskPointer
 
 void platform_handleStackCorruption()
 {
-	kTaskHandle_t handle = kernel_getCurrentTaskHandle();
+	kTaskHandle_t handle = taskmgr_getCurrentTaskHandle();
 	kStackPtr_t stackPointer = handle -> stackBegin;
 	platform_prepareStackFrame(stackPointer, kernel_stackCorruptionHook, NULL);
 	handle -> stackPtr = stackPointer + (CFG_KERNEL_STACK_FRAME_REGISTER_OFFSET+CFG_KERNEL_STACK_FRAME_END_OFFSET);

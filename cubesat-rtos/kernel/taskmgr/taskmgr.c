@@ -23,37 +23,8 @@ static volatile kStackPtr_t kStackPointer = &kReservedMemory[CFG_KERNEL_RESERVED
 
 volatile uint16_t kTaskActiveTicks = 0;
 
-static inline void kernel_switchTask();
-void kernel_schedule();
-
-kTaskHandle_t kernel_getCurrentTaskHandle()
-{
-	return kCurrentTask;
-}
-
-kTaskHandle_t kernel_getNextTaskHandle()
-{
-	return kNextTask;
-}
-
-void kernel_setCurrentTask(kTaskHandle_t taskHandle) 
-{
-	kCurrentTask = taskHandle;
-}
-
-void kernel_setNextTask(kTaskHandle_t taskHandle)
-{
-	kNextTask = taskHandle;
-}
-
-uint8_t kernel_setTaskState(kTaskHandle_t t_handle, kTaskState_t t_state)
-{
-	if (t_handle == NULL) return ERR_NULLPTR;
-	
-	t_handle -> state = t_state;
-	
-	return 0;
-}
+static inline void taskmgr_switchTask();
+void taskmgr_schedule();
 
 inline void kernel_saveContext()
 {
@@ -68,19 +39,39 @@ inline void kernel_restoreContext()
 static inline void kernel_switchContext()
 {
 	#if CFG_ENABLE_MEMORY_PROTETCTION == 1
-		kernel_checkStackProtectionRegion(kernel_getCurrentTaskHandle());
+		kernel_checkStackProtectionRegion(taskmgr_getCurrentTaskHandle());
 	#endif
 	kCurrentTask = kNextTask;
 }
 
-static inline void kernel_switchTask()
+kTaskHandle_t taskmgr_getCurrentTaskHandle()
+{
+	return kCurrentTask;
+}
+
+kTaskHandle_t taskmgr_getNextTaskHandle()
+{
+	return kNextTask;
+}
+
+void taskmgr_setCurrentTask(kTaskHandle_t taskHandle) 
+{
+	kCurrentTask = taskHandle;
+}
+
+void taskmgr_setNextTask(kTaskHandle_t taskHandle)
+{
+	kNextTask = taskHandle;
+}
+
+static inline void taskmgr_switchTask()
 {	
 	if (hal_CHECK_BIT(_kflags, KFLAG_CSW_ALLOWED))
-		kernel_schedule();
+		taskmgr_schedule();
 	if (kNextTask != kCurrentTask) kernel_switchContext();
 }
 
-void kernel_yield(uint16_t sleep) 
+void taskmgr_yield(uint16_t sleep) 
 {
 	kernel_saveContext();
 	
@@ -89,12 +80,12 @@ void kernel_yield(uint16_t sleep)
 		kCurrentTask -> sleepTime = sleep;
 	}
 	
-	kernel_switchTask();
+	taskmgr_switchTask();
 	kernel_restoreContext();
 	platform_RET();
 }
 
-void kernel_switchTo(kTaskHandle_t task)
+void taskmgr_switchTo(kTaskHandle_t task)
 {
 	kernel_saveContext();
 	
@@ -110,7 +101,7 @@ void kernel_switchTo(kTaskHandle_t task)
 	platform_RET();
 }
 
-void kernel_tick()
+void taskmgr_tick()
 {
 	kernel_saveContext();
 	
@@ -120,7 +111,7 @@ void kernel_tick()
 		if (kTaskActiveTicks != 0 && kCurrentTask -> priority != KPRIO_REALTIME  && kCurrentTask -> priority != KPRIO_IDLE)
 			kTaskActiveTicks--;
 		else
-			kernel_switchTask();
+			taskmgr_switchTask();
 		kTickRate = CFG_TICKRATE_MS;
 	}
 	else {

@@ -7,7 +7,7 @@
 
 #include <kernel/threads/threads.h>
 
-struct kLock_t threads_mutexInit()  //TODO: this function is a stub. You can help by improving it
+struct kLock_t threads_mutexInit()
 {
 	struct kLock_t mutex;
 	mutex.type = KLOCK_MUTEX;
@@ -22,7 +22,7 @@ uint8_t threads_mutexLock(struct kLock_t* mutex)
 	if (mutex != NULL) {
 		while (1) {
 			kStatusRegister_t sreg = threads_startAtomicOperation();
-			kTaskHandle_t runningTask = kernel_getCurrentTaskHandle();
+			kTaskHandle_t runningTask = taskmgr_getCurrentTaskHandle();
 		
 			//debug_puts(L_INFO, PSTR("threads: attempting to lock mutex..."));
 		
@@ -37,9 +37,9 @@ uint8_t threads_mutexLock(struct kLock_t* mutex)
 			else {
 				runningTask -> lock = mutex;
 				//debug_puts(L_INFO, PSTR("error: locked\r\n"));
-				kernel_setTaskState(kernel_getCurrentTaskHandle(), KSTATE_BLOCKED);
+				taskmgr_setTaskState(runningTask, KSTATE_BLOCKED);
 				threads_endAtomicOperation(sreg);
-				kernel_yield(0);
+				taskmgr_yield(0);
 			}
 		}
 	}
@@ -57,14 +57,14 @@ uint8_t threads_mutexUnlock(struct kLock_t* mutex)
 		mutex -> lockCount = 0;
 		mutex -> owner = NULL;
 	
-		kTaskHandle_t* taskList = kernel_getTaskListPtr();
-		uint8_t taskIndex = kernel_getTaskListIndex();
+		kTaskHandle_t* taskList = taskmgr_getTaskListPtr();
+		uint8_t taskIndex = taskmgr_getTaskListIndex();
 
 		for (int i = 0; i < taskIndex; i++) {
 			if (taskList[i] -> lock == mutex) {
 				//debug_puts(L_INFO, PSTR("threads: unlocking waiting tasks\r\n"));
 				taskList[i] -> lock = NULL;
-				kernel_setTaskState(taskList[i], KSTATE_READY);
+				taskmgr_setTaskState(taskList[i], KSTATE_READY);
 			}
 		}
 		exitcode = 0;

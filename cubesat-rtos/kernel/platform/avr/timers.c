@@ -67,6 +67,6 @@ void platform_stopTimer0()
 
 ISR(TIMER0_COMP_vect, ISR_NAKED)
 {
-	kernel_tick();
+	taskmgr_tick();
 	platform_RETI();
 }

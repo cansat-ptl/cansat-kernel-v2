@@ -6,7 +6,7 @@
  */
 #include <initd/initd.h>
 
-void kernel_initScheduler(kTaskHandle_t* taskQueue, uint8_t taskIndex);
+void taskmgr_init(kTaskHandle_t* taskQueue, uint8_t taskIndex);
 
 void user_preinit();
 void user_init();
@@ -16,7 +16,7 @@ kTask kernel_idle1(void* args)
 {
 	while(1) {
 		platform_NOP();
-		debug_logMessage(PGM_PUTS, L_INFO, PSTR("idle: idle task debugg output\r\n"));
+		debug_logMessage(PGM_PUTS, L_INFO, PSTR("idle: idle task debug output\r\n"));
 	}
 }
 
@@ -39,7 +39,7 @@ uint8_t kernel_startScheduler()
 	#endif
 	//debug_puts(L_INFO, PSTR(" kernel: Starting up task manager                      [OK]\r\n"));
 	//.................................................................
-	kernel_initScheduler(kernel_getTaskListPtr(), kernel_getTaskListIndex());
+	taskmgr_init(taskmgr_getTaskListPtr(), taskmgr_getTaskListIndex());
 
 	#if CFG_LOGGING == 1
 		debug_puts(L_NONE, PSTR("                      [OK]\r\n"));
@@ -52,7 +52,7 @@ uint8_t kernel_startScheduler()
 		debug_puts(L_NONE, PSTR("               [OK]\r\n"));
 	#endif
 
-	kTaskHandle_t ct = kernel_createTask(kernel_idle1, NULL, 64, KPRIO_IDLE, KTASK_SYSTEM, "idle");
+	kTaskHandle_t ct = taskmgr_createTask(kernel_idle1, NULL, 64, KPRIO_IDLE, KTASK_SYSTEM, "idle");
 	if (ct == NULL) {
 		debug_puts(L_ERROR, PSTR("kernel: Failed to create idle task"));
 		while(1);
@@ -63,7 +63,7 @@ uint8_t kernel_startScheduler()
 		debug_puts(L_INFO, PSTR("kernel: Starting up first task"));
 	#endif
 
-	kernel_setCurrentTask(ct);
+	taskmgr_setCurrentTask(ct);
 
 	#if CFG_LOGGING == 1
 		debug_puts(L_NONE, PSTR("                        [OK]\r\n"));

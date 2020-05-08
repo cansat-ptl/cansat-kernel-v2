@@ -22,7 +22,7 @@ uint8_t threads_semaphoreWait(struct kLock_t* semaphore)
 	if (semaphore != NULL) {
 		while (1) {
 			kStatusRegister_t sreg = threads_startAtomicOperation();
-			kTaskHandle_t runningTask = kernel_getCurrentTaskHandle();
+			kTaskHandle_t runningTask = taskmgr_getCurrentTaskHandle();
 		
 			//debug_puts(L_INFO, PSTR("threads: attempting to lock acquire semaphore..."));
 		
@@ -36,9 +36,9 @@ uint8_t threads_semaphoreWait(struct kLock_t* semaphore)
 			else {
 				runningTask -> lock = semaphore;
 				//debug_puts(L_INFO, PSTR("error: occupied\r\n"));
-				kernel_setTaskState(kernel_getCurrentTaskHandle(), KSTATE_SEMAPHORE);
+				taskmgr_setTaskState(taskmgr_getCurrentTaskHandle(), KSTATE_SEMAPHORE);
 				threads_endAtomicOperation(sreg);
-				kernel_yield(0);
+				taskmgr_yield(0);
 			}
 		}
 	}
@@ -54,14 +54,14 @@ uint8_t threads_semaphoreSignal(struct kLock_t* semaphore)
 		//debug_puts(L_INFO, PSTR("threads: signaling semaphore\r\n"));
 		semaphore -> lockCount++;
 	
-		kTaskHandle_t* taskList = kernel_getTaskListPtr();
-		uint8_t taskIndex = kernel_getTaskListIndex();
+		kTaskHandle_t* taskList = taskmgr_getTaskListPtr();
+		uint8_t taskIndex = taskmgr_getTaskListIndex();
 
 		for (int i = 0; i < taskIndex; i++) {
 			if (taskList[i] -> lock == semaphore) {
 				//debug_puts(L_INFO, PSTR("threads: unlocking waiting tasks\r\n"));
 				taskList[i] -> lock = NULL;
-				kernel_setTaskState(taskList[i], KSTATE_READY);
+				taskmgr_setTaskState(taskList[i], KSTATE_READY);
 			}
 		}
 		

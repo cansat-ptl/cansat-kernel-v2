@@ -14,9 +14,9 @@ void kernel_taskReturnHook()
 
 	kStatusRegister_t sreg = threads_startAtomicOperation();
 
-	kTaskHandle_t handle = kernel_getCurrentTaskHandle();
-	kTaskHandle_t* taskList = kernel_getTaskListPtr();
-	uint8_t taskIndex = kernel_getTaskListIndex();
+	kTaskHandle_t handle = taskmgr_getCurrentTaskHandle();
+	kTaskHandle_t* taskList = taskmgr_getTaskListPtr();
+	uint8_t taskIndex = taskmgr_getTaskListIndex();
 
 	handle -> state = KSTATE_UNINIT;
 	
@@ -29,7 +29,7 @@ void kernel_taskReturnHook()
 	}
 
 	threads_endAtomicOperation(sreg);
-	kernel_yield(0);
+	taskmgr_yield(0);
 
 	while(1);
 }
@@ -38,9 +38,9 @@ void kernel_stackCorruptionHook()
 {
 	kStatusRegister_t sreg = threads_startAtomicOperation();
 
-	kTaskHandle_t handle = kernel_getCurrentTaskHandle();
-	kTaskHandle_t* taskList = kernel_getTaskListPtr();
-	uint8_t taskIndex = kernel_getTaskListIndex();
+	kTaskHandle_t handle = taskmgr_getCurrentTaskHandle();
+	kTaskHandle_t* taskList = taskmgr_getTaskListPtr();
+	uint8_t taskIndex = taskmgr_getTaskListIndex();
 
 	handle -> state = KSTATE_UNINIT;
 	
@@ -55,6 +55,6 @@ void kernel_stackCorruptionHook()
 	}
 	
 	threads_endAtomicOperation(sreg);
-	kernel_yield(0);
+	taskmgr_yield(0);
 	while(1);
 }

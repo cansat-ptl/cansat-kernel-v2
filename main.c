@@ -21,7 +21,7 @@ kFifo_t queue0;
 
 kTask simpleTask(void* args)
 {
-	kernel_yield(1500);
+	taskmgr_yield(1500);
 	debug_logMessage(PGM_ON, L_INFO, PSTR("task1: Job 1 starts, creating queue\r\n"));
 
 	char buff[32];
@@ -29,7 +29,7 @@ kTask simpleTask(void* args)
 	uint8_t hellosize = strlen(hello);
 	queue0 = threads_fifoInit(buff, 32);
 
-	kTaskHandle_t handle = kernel_getCurrentTaskHandle();
+	kTaskHandle_t handle = taskmgr_getCurrentTaskHandle();
 
 	while (1) {
 		uint16_t startTime = kernel_getUptime();
@@ -50,7 +50,7 @@ kTask simpleTask(void* args)
 
 		uint16_t endTime = kernel_getUptime();
 		debug_logMessage(PGM_ON, L_INFO, PSTR("task1: Job 1 exec time: %d\r\n"), endTime-startTime);
-		kernel_yield(200);
+		taskmgr_yield(200);
 		//break;
 	}
 	//return; //Oops!
@@ -58,7 +58,7 @@ kTask simpleTask(void* args)
 
 kTask simpleTask1(void* args)
 {
-	kernel_yield(1500);
+	taskmgr_yield(1500);
 	debug_logMessage(PGM_ON, L_INFO, PSTR("task2: Job 2 starts\r\n"));
 	while (1) {
 		char hello1[32] = "";
@@ -72,13 +72,13 @@ kTask simpleTask1(void* args)
 
 		//debug_logMessage(PGM_ON, L_INFO, PSTR("task2: Job 2 ends\r\n"));
 		threads_mutexUnlock(&mutex0);
-		kernel_yield(50);
+		taskmgr_yield(50);
 	}
 }
 
 kTask simpleTask2(void* args)
 {
-	kernel_yield(1500);
+	taskmgr_yield(1500);
 	debug_logMessage(PGM_ON, L_INFO, PSTR("task3: Job 3 starts\r\n"));
 	char* hello1 = (char*)args;
 	uint8_t hellosize = strlen(hello1);
@@ -96,7 +96,7 @@ kTask simpleTask2(void* args)
 
 		//debug_logMessage(PGM_ON, L_INFO, PSTR("task3: Job 3 ends\r\n"));
 		threads_mutexUnlock(&mutex0);
-		kernel_yield(10);
+		taskmgr_yield(10);
 		threads_exitCriticalSection();
 	}
 }
@@ -105,10 +105,10 @@ kTask simpleTask3(void* args)
 	while (1) {
 		threads_semaphoreWait(&semaphore0);
 		debug_puts(L_INFO, PSTR("Job 4 starts, waiting for semaphore\r\n"));
-		kernel_yield(1000);
+		taskmgr_yield(1000);
 		debug_puts(L_INFO, PSTR("Job 4 ends, signaling semaphore\r\n"));
 		threads_semaphoreSignal(&semaphore0);
-		kernel_yield(1000);
+		taskmgr_yield(1000);
 	}
 }
 kTask simpleTask4(void* args)
@@ -128,7 +128,7 @@ kTask simpleTask4(void* args)
 }
 kTask simpleTask5(void* args)
 {
-	kernel_yield(1500);
+	taskmgr_yield(1500);
 	while (1) {
 		threads_semaphoreWait(&semaphore0);
 		debug_puts(L_INFO, PSTR("Job 6 starts, waiting for semaphore\r\n"));
@@ -144,7 +144,7 @@ kTask simpleTask5(void* args)
 
 kTask simpleTask6(void* args)
 {
-	kernel_yield(1500);
+	taskmgr_yield(1500);
 	while (1) {
 		threads_semaphoreWait(&semaphore0);
 		debug_puts(L_INFO, PSTR("Job 7 starts, waiting for semaphore\r\n"));
@@ -160,7 +160,7 @@ kTask simpleTask6(void* args)
 
 kTask simpleTask7(void* args)
 {
-	kernel_yield(1500);
+	taskmgr_yield(1500);
 	while (1) {
 		threads_semaphoreWait(&semaphore0);
 		debug_puts(L_INFO, PSTR("Job 8 starts, waiting for semaphore\r\n"));
@@ -205,9 +205,9 @@ void user_init()
 	mutex0 = threads_mutexInit();
 	semaphore0 = threads_semaphoreInit(2);
 
-	kernel_createTask(simpleTask, NULL, 250, 5, KTASK_USER, "task1");
-	kernel_createTask(simpleTask1, NULL, 250, 4, KTASK_USER, "task2");
-	kernel_createTask(simpleTask2, (void*)test, 250, 2, KTASK_USER, "task3");
+	taskmgr_createTask(simpleTask, NULL, 250, 2, KTASK_USER, "task1");
+	taskmgr_createTask(simpleTask1, NULL, 250, 4, KTASK_USER, "task2");
+	taskmgr_createTask(simpleTask2, (void*)test, 250, 2, KTASK_USER, "task3");
 	//kernel_createTask(simpleTask3, NULL, 250, 5, KTASK_USER, "task1");
 	//kernel_createTask(simpleTask4, NULL, 250, 5, KTASK_USER, "task2");
 	//kernel_createTask(simpleTask5, NULL, 250, 4, KTASK_USER, "task1");

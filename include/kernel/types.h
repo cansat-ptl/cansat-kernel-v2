@@ -9,6 +9,12 @@
 #define TYPES_H_
 
 #include <stdint.h>
+
+#ifndef _SIZE_T
+#define _SIZE_T
+typedef uint32_t size_t;
+#endif
+
 #include <stddef.h>
 
 typedef void (*kTask_t)(void*);

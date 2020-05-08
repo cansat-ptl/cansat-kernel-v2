@@ -18,23 +18,24 @@
 #define KPRIO_IDLE 0
 #define KPRIO_REALTIME 255
 
-uint8_t kernel_createTaskStatic(kTaskHandle_t taskStruct, kStackPtr_t stack, kTask_t entry, void* args, kStackSize_t stackSize, uint8_t priority, kTaskType_t type, char* name);
-uint8_t kernel_createTaskDynamic(kTaskHandle_t* handle, kTask_t entry, void* args, kStackSize_t stackSize, uint8_t priority, kTaskType_t type, char* name);
-kTaskHandle_t kernel_createTask(kTask_t entry, void* args, kStackSize_t stackSize, uint8_t priority, kTaskType_t type, char* name);
+uint8_t taskmgr_createTaskStatic(kTaskHandle_t taskStruct, kStackPtr_t stack, kTask_t entry, void* args, kStackSize_t stackSize, uint8_t priority, kTaskType_t type, char* name);
+uint8_t taskmgr_createTaskDynamic(kTaskHandle_t* handle, kTask_t entry, void* args, kStackSize_t stackSize, uint8_t priority, kTaskType_t type, char* name);
+kTaskHandle_t taskmgr_createTask(kTask_t entry, void* args, kStackSize_t stackSize, uint8_t priority, kTaskType_t type, char* name);
 
-uint8_t kernel_setTaskState(kTaskHandle_t t_handle, kTaskState_t t_state);
-uint8_t kernel_removeTask(kTaskHandle_t handle);
+uint8_t taskmgr_removeTask(kTaskHandle_t handle);
 
-kTaskHandle_t kernel_getCurrentTaskHandle();
-kTaskHandle_t kernel_getNextTaskHandle();
-kTaskHandle_t* kernel_getTaskListPtr();
-uint8_t kernel_getTaskListIndex();
-void kernel_setCurrentTask(kTaskHandle_t taskHandle);
-void kernel_setNextTask(kTaskHandle_t taskHandle);
+void taskmgr_setTaskState(kTaskHandle_t t_handle, kTaskState_t t_state);
 
-void kernel_tick()  __attribute__ ( ( naked, noinline ));
-void kernel_yield(uint16_t sleep) __attribute__ (( naked, noinline ));
-void kernel_switchTo(kTaskHandle_t handle) __attribute__ (( naked, noinline ));
-void kernel_stopTask(kTaskState_t exitState);
+kTaskHandle_t taskmgr_getCurrentTaskHandle();
+kTaskHandle_t taskmgr_getNextTaskHandle();
+kTaskHandle_t* taskmgr_getTaskListPtr();
+uint8_t taskmgr_getTaskListIndex();
+void taskmgr_setCurrentTask(kTaskHandle_t taskHandle);
+void taskmgr_setNextTask(kTaskHandle_t taskHandle);
+
+void taskmgr_tick()  __attribute__ ( ( naked, noinline ));
+void taskmgr_yield(uint16_t sleep) __attribute__ (( naked, noinline ));
+void taskmgr_switchTo(kTaskHandle_t handle) __attribute__ (( naked, noinline ));
+void taskmgr_stopTask(kTaskState_t exitState);
 
 #endif /* TASKMGR_H_ */
