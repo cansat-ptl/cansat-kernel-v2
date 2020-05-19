@@ -11,8 +11,8 @@
 
 #define CFG_HEAP_SIZE 2000 //TODO: move to config
 #define CFG_PLATFORM_BYTE_ALIGNMENT 1
-#define CFG_PLATFORM_BYTE_ALIGNMENT_MASK 1
-#define CFG_MIN_BLOCK_SIZE 4
+#define CFG_PLATFORM_BYTE_ALIGNMENT_MASK 0
+#define CFG_MIN_BLOCK_SIZE 8
 
 static uint8_t kHeapRegion[CFG_HEAP_SIZE];
 
@@ -24,17 +24,17 @@ static struct kMemoryBlock_t* kHeapEnd;
 static size_t kFreeMemory = 0;
 static size_t kMinimumFreeMemory = 0;
 
-size_t kernel_getFreeHeap()
+size_t memmgr_getFreeHeap()
 {
 	return kFreeMemory;
 }
 
-size_t kernel_getFreeHeapMin()
+size_t memmgr_getFreeHeapMin()
 {
 	return kMinimumFreeMemory;
 }
 
-void kernel_heapInit()
+void memmgr_heapInit()
 {
 	struct kMemoryBlock_t* firstFreeBlock;
 	uint8_t* heapAligned;
@@ -73,7 +73,7 @@ void kernel_heapInit()
 	kFreeMemory = firstFreeBlock -> blockSize;
 }
 
-static void kernel_insertFreeBlock(struct kMemoryBlock_t* blockToInsert)
+static void memmgr_insertFreeBlock(struct kMemoryBlock_t* blockToInsert)
 {
 	struct kMemoryBlock_t* blockIterator;
 	uint8_t* pointer_casted;
@@ -109,7 +109,7 @@ static void kernel_insertFreeBlock(struct kMemoryBlock_t* blockToInsert)
 	return;
 }
 
-void* kernel_heapAlloc(size_t size)
+void* memmgr_heapAlloc(size_t size)
 {
 	void* returnAddress = NULL;
 	struct kMemoryBlock_t *block, *newBlock, *previousBlock;
@@ -140,7 +140,7 @@ void* kernel_heapAlloc(size_t size)
 				newBlock -> blockSize = block -> blockSize - size;
 				block -> blockSize = size;
 
-				kernel_insertFreeBlock(newBlock);
+				memmgr_insertFreeBlock(newBlock);
 			}
 
 			kFreeMemory -= block -> blockSize;
@@ -158,7 +158,7 @@ void* kernel_heapAlloc(size_t size)
 	return returnAddress;
 }
 
-void kernel_heapFree(void* pointer)
+void memmgr_heapFree(void* pointer)
 {
 	uint8_t* pointer_casted = (uint8_t*)pointer;
 	struct kMemoryBlock_t* block;
@@ -173,7 +173,7 @@ void kernel_heapFree(void* pointer)
 			if (block -> next == NULL) {
 				block -> state = 0;
 				kFreeMemory += block -> blockSize;
-				kernel_insertFreeBlock((struct kMemoryBlock_t*)block);
+				memmgr_insertFreeBlock((struct kMemoryBlock_t*)block);
 			}
 		}
 	}

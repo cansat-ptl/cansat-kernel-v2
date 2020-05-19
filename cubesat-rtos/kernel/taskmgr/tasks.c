@@ -75,9 +75,8 @@ uint8_t taskmgr_createTaskStatic(kTaskHandle_t taskStruct, kStackPtr_t stack, kT
 		if (taskStruct != NULL) {
 			if (stack != NULL) {
 				if (kTaskIndex < CFG_MAX_TASK_COUNT) {
-					stack += stackSize + CFG_KERNEL_STACK_SAFETY_MARGIN;
 					taskmgr_setupTaskStructure(taskStruct, entry, stack, stackSize, args, priority, type, name);
-					platform_prepareStackFrame(stack + (CFG_KERNEL_STACK_FRAME_REGISTER_OFFSET + CFG_KERNEL_STACK_FRAME_END_OFFSET), entry, args);
+					platform_prepareStackFrame(stack, stackSize, entry, args);
 
 					kTaskQueue[kTaskIndex] = taskStruct;
 					kTaskIndex++;
@@ -107,14 +106,14 @@ uint8_t taskmgr_createTaskDynamic(kTaskHandle_t* handle, kTask_t entry, void* ar
 	uint8_t exitcode = 1;
 	kStatusRegister_t sreg = threads_startAtomicOperation();
 	
-	kTaskHandle_t taskStruct = (kTaskHandle_t)kernel_heapAlloc(sizeof(struct kTaskStruct_t));
-	kStackPtr_t stackPointer = (kStackPtr_t)kernel_heapAlloc(stackSize + CFG_KERNEL_STACK_SAFETY_MARGIN);
+	kTaskHandle_t taskStruct = (kTaskHandle_t)memmgr_heapAlloc(sizeof(struct kTaskStruct_t)); //TODO: 1 allocation
+	kStackPtr_t stackPointer = (kStackPtr_t)memmgr_heapAlloc(stackSize + CFG_KERNEL_STACK_SAFETY_MARGIN);
 				
 	exitcode = taskmgr_createTaskStatic(taskStruct, stackPointer, entry, args, stackSize, priority, type, name);
 	
 	if (exitcode != 0) {
-		kernel_heapFree((void*)taskStruct);
-		kernel_heapFree((void*)stackPointer);
+		memmgr_heapFree((void*)taskStruct);
+		memmgr_heapFree((void*)stackPointer);
 	}
 	else {
 		*handle = taskStruct;

@@ -28,7 +28,7 @@ void kernel_preinit()
 		//debug_puts(L_INFO, PSTR("\x0C"));
 		debug_puts(L_INFO, PSTR("kernel: Initializing debug uart interface, baud=38400\r\n"));
 		debug_puts(L_INFO, PSTR("kernel: Firing up RTOS\r\n"));
-		kernel_heapInit();
+		memmgr_heapInit();
 	#endif
 }
 

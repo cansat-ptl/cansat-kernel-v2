@@ -10,6 +10,32 @@
 
 #include <stdint.h>
 
+#define ERR_KRN_STACK_OVERFLOW 1
+#define ERR_NULLPTR 2
+#define ERR_MEMORY_CORRUPTION 3
+#define ERR_QUEUE_END 4
+#define ERR_WDT_RESET 5
+#define ERR_BOD_RESET 6
+#define ERR_KRN_RETURN 7
+#define ERR_DEVICE_FAIL 8
+#define ERR_GENERIC 255
+
+#define KFLAG_INIT 0
+#define KFLAG_TIMER_SET 1
+#define KFLAG_TIMER_EN 2
+#define KFLAG_TIMER_ISR 3
+#define KFLAG_SD_INIT 4
+#define KFLAG_CSW_ALLOWED 5
+#define KFLAG_RROBIN_SWITCHED 6
+#define KFLAG_LOG_SD 13
+#define KFLAG_LOG_UART 14
+#define KFLAG_DEBUG 15
+
+#define KOSSTATUS_INIT 0
+#define KOSSTATUS_RUNNING 1
+#define KOSSTATUS_HALTED 2
+#define KOSSTATUS_ERRORED 3
+
 #ifndef _SIZE_T
 #define _SIZE_T
 typedef uint32_t size_t;
@@ -93,6 +119,7 @@ struct kTaskStruct_t
 	uint8_t pid;
 	uint8_t flags;
 	char* name;
+	kTaskHandle_t next;
 };
 
 struct kMemoryBlock_t

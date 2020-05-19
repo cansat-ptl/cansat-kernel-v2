@@ -12,6 +12,8 @@ static volatile kStackSize_t kSystemStackUsage = 0;
 
 void platform_handleStackCorruption();
 
+//TODO: refactor
+
 kStackPtr_t kernel_getStackPtr()
 {
 	return NULL; //TODO: remove
