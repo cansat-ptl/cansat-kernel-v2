@@ -7,65 +7,63 @@
 
 #include <kernel/kernel.h>
 
-static volatile kTaskHandle_t* kSchedulingList;
-static volatile uint8_t kSchedulingAmount;
-static volatile uint8_t kCurrentTaskIdx = 0;
-static volatile uint8_t kNextTaskIdx = 0;
-static volatile uint8_t kIdleTaskIdx = 0;
+static volatile kTaskHandle_t kSchedulingList;
+static volatile kTaskHandle_t kNextTask;
+static volatile kTaskHandle_t kCurrentTask;
+static volatile kTaskHandle_t kIdleTask;
 
-static kTaskHandle_t kIdleTaskHandle;
+static volatile uint8_t kCurrentTaskIndex;
+static volatile uint8_t kNextTaskIndex;
 
 extern volatile uint16_t kTaskActiveTicks;
 
-static void taskmgr_setIdleTask(kTaskHandle_t idle)
+void taskmgr_setIdleTask(kTaskHandle_t idle)
 {
-	kIdleTaskHandle = idle;
+	kIdleTask = idle;
 }
 
 void taskmgr_init(kTaskHandle_t* taskQueue, uint8_t taskIndex)
 {
 	kSchedulingList = taskQueue;
-	kSchedulingAmount = taskIndex;
-	kIdleTaskIdx = kSchedulingAmount;
-	
-	for (int i = 0; i < CFG_MAX_TASK_COUNT; i++) {
-		if (kSchedulingList[i] -> pid == 0 && kSchedulingList[i] -> type == KTASK_SYSTEM) {
-			kIdleTaskIdx = i;
-			break;
-		}
-	}
-	kCurrentTaskIdx = kSchedulingAmount; // Idle task should always be the last
 }
 
 static inline void taskmgr_assign()
 {
-	taskmgr_setNextTask(kSchedulingList[kNextTaskIdx]);
-	kCurrentTaskIdx = kNextTaskIdx;
+	taskmgr_setNextTask(kNextTask);
+	kCurrentTask = kNextTask;
+	kCurrentTaskIndex = kNextTaskIndex;
 	kTaskActiveTicks = CFG_TICKS_PER_TASK;
-	kNextTaskIdx = kIdleTaskIdx;
+	kNextTask = kIdleTask;
+	kNextTaskIndex = 0;
 	return;
 }
-
+//WHAT THE HELL AM I DOING SOMEBODY PLEASE HELP ME
 static inline void taskmgr_search()
 {
-	for (int i = 0; i < kSchedulingAmount+1; i++) {
-		if (kSchedulingList[i] -> state == KSTATE_READY) {
-			if (kSchedulingList[i] -> priority > kSchedulingList[kCurrentTaskIdx] -> priority) {
-				kNextTaskIdx = i;
+	kTaskHandle_t temp = taskmgr_getTaskListPtr();
+	while(temp != NULL) {
+		if (temp->state == KSTATE_READY) {
+			if (temp->priority > kCurrentTask->priority) {
+				kNextTask = temp;
+				break;
 			}
-			else if (kSchedulingList[i] -> priority == kSchedulingList[kCurrentTaskIdx] -> priority) {
-				if (i > kCurrentTaskIdx) {
-					kNextTaskIdx = i;
+			else if (temp->priority == kCurrentTask->priority) {
+				if (kNextTaskIndex > kCurrentTaskIndex) {
+					kNextTask = temp;
+					break;
 				}
 			}
 			else {
-				kNextTaskIdx = i;
+				kNextTask = temp;
+				break;
 			}
+			kNextTaskIndex++;
 		}
-		else if (kSchedulingList[i] -> state == KSTATE_SLEEPING) {
-			if (kSchedulingList[i] -> sleepTime) kSchedulingList[i] -> sleepTime--;
-			else kSchedulingList[i] -> state = KSTATE_READY;
+		else if (temp->state == KSTATE_SLEEPING) {
+			if (temp->sleepTime) temp->sleepTime--;
+			else temp->state = KSTATE_READY;
 		}
+		temp = temp->next;
 	}
 	taskmgr_assign();
 	return;

@@ -57,15 +57,15 @@ uint8_t threads_mutexUnlock(struct kLock_t* mutex)
 		mutex -> lockCount = 0;
 		mutex -> owner = NULL;
 	
-		kTaskHandle_t* taskList = taskmgr_getTaskListPtr();
-		uint8_t taskIndex = taskmgr_getTaskListIndex();
-
-		for (int i = 0; i < taskIndex; i++) {
-			if (taskList[i] -> lock == mutex) {
+		kTaskHandle_t temp = taskmgr_getTaskListPtr();
+		
+		while(temp != NULL) {
+			if (temp->lock == mutex) {
 				//debug_puts(L_INFO, PSTR("threads: unlocking waiting tasks\r\n"));
-				taskList[i] -> lock = NULL;
-				taskmgr_setTaskState(taskList[i], KSTATE_READY);
+				temp->lock = NULL;
+				taskmgr_setTaskState(temp, KSTATE_READY);
 			}
+			temp = temp->next; 
 		}
 		exitcode = 0;
 		threads_endAtomicOperation(sreg);

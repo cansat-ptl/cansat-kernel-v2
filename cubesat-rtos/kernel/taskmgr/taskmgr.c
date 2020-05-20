@@ -44,6 +44,11 @@ static inline void kernel_switchContext()
 	kCurrentTask = kNextTask;
 }
 
+kStackPtr_t taskmgr_getKernelStackPointer()
+{
+	return kStackPointer;
+}
+
 kTaskHandle_t taskmgr_getCurrentTaskHandle()
 {
 	return kCurrentTask;

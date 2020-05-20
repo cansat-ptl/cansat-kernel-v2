@@ -6,11 +6,13 @@
  */
 #include <initd/initd.h>
 
-void taskmgr_init(kTaskHandle_t* taskQueue, uint8_t taskIndex);
+void taskmgr_init();
 
 void user_preinit();
 void user_init();
 void user_postinit();
+void taskmgr_setIdleTask(kTaskHandle_t idle);
+void _debug_taskmgr_printTasks();
 
 kTask kernel_idle1(void* args)
 {
@@ -29,20 +31,16 @@ void kernel_preinit()
 		debug_puts(L_INFO, PSTR("kernel: Initializing debug uart interface, baud=38400\r\n"));
 		debug_puts(L_INFO, PSTR("kernel: Firing up RTOS\r\n"));
 		memmgr_heapInit();
+		taskmgr_init();
 	#endif
 }
 
 uint8_t kernel_startScheduler()
 {
-	#if CFG_LOGGING == 1
-		debug_puts(L_INFO, PSTR("kernel: Starting up task manager"));
-	#endif
 	//debug_puts(L_INFO, PSTR(" kernel: Starting up task manager                      [OK]\r\n"));
 	//.................................................................
-	taskmgr_init(taskmgr_getTaskListPtr(), taskmgr_getTaskListIndex());
 
 	#if CFG_LOGGING == 1
-		debug_puts(L_NONE, PSTR("                      [OK]\r\n"));
 		debug_puts(L_INFO, PSTR("kernel: Preparing safety memory barrier"));
 	#endif
 
@@ -58,6 +56,8 @@ uint8_t kernel_startScheduler()
 		while(1);
 	}
 	ct -> pid = 0;
+	
+	taskmgr_setIdleTask(ct);
 
 	#if CFG_LOGGING == 1
 		debug_puts(L_INFO, PSTR("kernel: Starting up first task"));
@@ -82,6 +82,7 @@ uint8_t kernel_startScheduler()
 		debug_puts(L_NONE, PSTR("                      [OK]\r\n"));
 		debug_puts(L_INFO, PSTR("kernel: System startup complete\r\n"));
 	#endif
+	_debug_taskmgr_printTasks();
 
 	platform_DELAY_MS(1000);
 

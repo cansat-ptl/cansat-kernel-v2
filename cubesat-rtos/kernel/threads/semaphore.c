@@ -54,15 +54,15 @@ uint8_t threads_semaphoreSignal(struct kLock_t* semaphore)
 		//debug_puts(L_INFO, PSTR("threads: signaling semaphore\r\n"));
 		semaphore -> lockCount++;
 	
-		kTaskHandle_t* taskList = taskmgr_getTaskListPtr();
-		uint8_t taskIndex = taskmgr_getTaskListIndex();
+		kTaskHandle_t temp = taskmgr_getTaskListPtr();
 
-		for (int i = 0; i < taskIndex; i++) {
-			if (taskList[i] -> lock == semaphore) {
+		while(temp != NULL) {
+			if (temp->lock == semaphore) {
 				//debug_puts(L_INFO, PSTR("threads: unlocking waiting tasks\r\n"));
-				taskList[i] -> lock = NULL;
-				taskmgr_setTaskState(taskList[i], KSTATE_READY);
+				temp->lock = NULL;
+				taskmgr_setTaskState(temp, KSTATE_READY);
 			}
+			temp = temp->next;
 		}
 		
 		exitcode = 0;
