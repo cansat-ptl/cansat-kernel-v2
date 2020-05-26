@@ -7,11 +7,17 @@
 
 #include <kernel/kernel.h>
 
-static volatile uint8_t kGlobalPid = 1;
+static volatile uint8_t kGlobalPid = 0;
 static volatile uint8_t kTaskIndex = 0;
 
 static volatile kTaskHandle_t kTaskListHead;
 static volatile kTaskHandle_t kTaskListTail;
+
+static volatile struct kTaskStruct_t kIdleTaskStruct;
+
+void taskmgr_setKernelStackPointer(kStackPtr_t pointer); //TODO: add to header
+void taskmgr_setIdleTask(kTaskHandle_t idle);
+void taskmgr_initScheduler(kTaskHandle_t idle);
 
 kTaskHandle_t taskmgr_getTaskListPtr()
 {
@@ -19,6 +25,28 @@ kTaskHandle_t taskmgr_getTaskListPtr()
 	kTaskHandle_t temp = kTaskListHead;
 	threads_endAtomicOperation(sreg);
 	return temp;
+}
+
+uint8_t taskmgr_init(kTask_t idle)
+{
+	kStackPtr_t rMemory = taskmgr_getReservedMemoryPointer();
+	
+	uint8_t result = taskmgr_createTaskStatic(&kIdleTaskStruct, rMemory, idle, NULL, CFG_KERNEL_RESERVED_MEMORY, KPRIO_IDLE, KTASK_SYSTEM, "idle");
+	
+	if (result != 0) {
+		debug_logMessage(PGM_PUTS, L_FATAL, PSTR("\r\ntaskmgr: Startup failed, could not create idle task.\r\n"));
+		while(1);
+	}
+	
+	rMemory += CFG_KERNEL_RESERVED_MEMORY + CFG_KERNEL_STACK_FRAME_REGISTER_OFFSET + CFG_KERNEL_STACK_FRAME_END_OFFSET;
+	taskmgr_setKernelStackPointer(rMemory);
+	
+	kTaskListHead = &kIdleTaskStruct;
+	
+	taskmgr_initScheduler(&kIdleTaskStruct);
+	taskmgr_setCurrentTask(&kIdleTaskStruct);
+	
+	return 0;
 }
 
 uint8_t taskmgr_getTaskListIndex()
@@ -36,6 +64,7 @@ void taskmgr_setTaskState(kTaskHandle_t t_handle, kTaskState_t t_state)
 static inline void taskmgr_setupTaskStructure(kTaskHandle_t task, \
 												kTask_t startupPointer, \
 												kStackPtr_t stackPointer, \
+												kStackPtr_t stackBegin, \
 												kStackSize_t stackSize, \
 												void* args, \
 												uint8_t priority, \
@@ -43,8 +72,8 @@ static inline void taskmgr_setupTaskStructure(kTaskHandle_t task, \
 												kTaskType_t type, \
 												char* name)
 {
-	task -> stackPtr = stackPointer + (CFG_KERNEL_STACK_FRAME_REGISTER_OFFSET + CFG_KERNEL_STACK_FRAME_END_OFFSET);
-	task -> stackBegin = stackPointer;
+	task -> stackPtr = stackPointer;
+	task -> stackBegin = stackBegin;
 	task -> stackSize = stackSize;
 	task -> taskPtr = startupPointer;
 	task -> args = args;
@@ -54,6 +83,8 @@ static inline void taskmgr_setupTaskStructure(kTaskHandle_t task, \
 	task -> type = type;
 	task -> pid = kGlobalPid;
 	task -> name = name;
+	task -> next = NULL;
+	task -> prev = NULL;
 }
 
 
@@ -79,17 +110,21 @@ void taskmgr_insertTask(kTaskHandle_t newTask)
 	}
 }
 
+#ifdef DEBUG
 void _debug_taskmgr_printTasks() 
 {
-	debug_logMessage(PGM_PUTS, L_INFO, PSTR("taskmgr: Current task list: "));
+	debug_logMessage(PGM_PUTS, L_INFO, PSTR("taskmgr: Current task list: \r\n"));
 	kTaskHandle_t temp = kTaskListHead;
 	while(temp != NULL)
 	{
-		debug_logMessage(PGM_ON, L_NONE, PSTR("name:%s,prio:%d,stack=0x%04X  "),temp->name, temp->priority, temp->stackPtr);
+		debug_logMessage(PGM_ON, L_NONE, PSTR("name:%s,prio:%d,stack=0x%04X  \r\n"),temp->name, temp->priority, temp->stackPtr);
 		temp = temp->next;
 	}
 	debug_logMessage(PGM_PUTS, L_NONE, PSTR("\r\n"));
 }
+#else
+void _debug_taskmgr_printTasks() {return;}
+#endif
 
 uint8_t taskmgr_createTaskStatic(kTaskHandle_t taskStruct, kStackPtr_t stack, kTask_t entry, void* args, kStackSize_t stackSize, uint8_t priority, kTaskType_t type, char* name)
 {
@@ -99,8 +134,8 @@ uint8_t taskmgr_createTaskStatic(kTaskHandle_t taskStruct, kStackPtr_t stack, kT
 	if (entry != NULL) {
 		if (taskStruct != NULL) {
 			if (stack != NULL) {
-				taskmgr_setupTaskStructure(taskStruct, entry, stack, stackSize, args, priority, KSTATE_READY, type, name);
-				platform_prepareStackFrame(stack, 0, entry, args);
+				kStackPtr_t stackPrepared = platform_prepareStackFrame(stack, stackSize, entry, args);
+				taskmgr_setupTaskStructure(taskStruct, entry, stackPrepared, stack, stackSize, args, priority, KSTATE_READY, type, name); //TODO: Fix this shit
 
 				taskmgr_insertTask(taskStruct);
 				
@@ -127,9 +162,8 @@ uint8_t taskmgr_createTaskDynamic(kTaskHandle_t* handle, kTask_t entry, void* ar
 	uint8_t exitcode = 1;
 	kStatusRegister_t sreg = threads_startAtomicOperation();
 	
-	kTaskHandle_t taskStruct = (kTaskHandle_t)memmgr_heapAlloc(sizeof(struct kTaskStruct_t)); //TODO: 1 allocation
-	kStackPtr_t stackPointer = (kStackPtr_t)memmgr_heapAlloc(stackSize + CFG_KERNEL_STACK_SAFETY_MARGIN);
-	if (stackPointer != NULL) stackPointer += stackSize + CFG_KERNEL_STACK_SAFETY_MARGIN + CFG_KERNEL_STACK_FRAME_REGISTER_OFFSET + CFG_KERNEL_STACK_FRAME_END_OFFSET;
+	kTaskHandle_t taskStruct = (kTaskHandle_t)memmgr_heapAlloc(sizeof(struct kTaskStruct_t)+1); //TODO: 1 allocation
+	kStackPtr_t stackPointer = (kStackPtr_t)memmgr_heapAlloc(stackSize+sizeof(struct kTaskStruct_t));
 				
 	exitcode = taskmgr_createTaskStatic(taskStruct, stackPointer, entry, args, stackSize, priority, type, name);
 	

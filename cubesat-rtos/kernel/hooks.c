@@ -7,15 +7,17 @@
 
 #include <kernel/kernel.h>
 
+//TODO: Fix these
+
 void kernel_taskReturnHook()
 {
-	debug_logMessage(PGM_ON, L_FATAL, PSTR("kernel: Task return detected\r\n"));
+	/*debug_logMessage(PGM_ON, L_FATAL, PSTR("kernel: Task return detected\r\n"));
 	debug_logMessage(PGM_ON, L_FATAL, PSTR("kernel: Executing task return hook\r\n"));
 
 	kStatusRegister_t sreg = threads_startAtomicOperation();
 
 	kTaskHandle_t handle = taskmgr_getCurrentTaskHandle();
-	kTaskHandle_t* taskList = taskmgr_getTaskListPtr();
+	kTaskHandle_t taskList = taskmgr_getTaskListPtr();
 	uint8_t taskIndex = taskmgr_getTaskListIndex();
 
 	handle -> state = KSTATE_UNINIT;
@@ -31,15 +33,15 @@ void kernel_taskReturnHook()
 	threads_endAtomicOperation(sreg);
 	taskmgr_yield(0);
 
-	while(1);
+	while(1);*/
 }
 
 void kernel_stackCorruptionHook()
 {
-	kStatusRegister_t sreg = threads_startAtomicOperation();
+	/*kStatusRegister_t sreg = threads_startAtomicOperation();
 
 	kTaskHandle_t handle = taskmgr_getCurrentTaskHandle();
-	kTaskHandle_t* taskList = taskmgr_getTaskListPtr();
+	kTaskHandle_t taskList = taskmgr_getTaskListPtr();
 	uint8_t taskIndex = taskmgr_getTaskListIndex();
 
 	handle -> state = KSTATE_UNINIT;
@@ -56,5 +58,5 @@ void kernel_stackCorruptionHook()
 	
 	threads_endAtomicOperation(sreg);
 	taskmgr_yield(0);
-	while(1);
+	while(1);*/
 }

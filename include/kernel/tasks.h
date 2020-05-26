@@ -18,6 +18,8 @@
 #define KPRIO_IDLE 0
 #define KPRIO_REALTIME 255
 
+uint8_t taskmgr_init(kTask_t idle);
+
 uint8_t taskmgr_createTaskStatic(kTaskHandle_t taskStruct, kStackPtr_t stack, kTask_t entry, void* args, kStackSize_t stackSize, uint8_t priority, kTaskType_t type, char* name);
 uint8_t taskmgr_createTaskDynamic(kTaskHandle_t* handle, kTask_t entry, void* args, kStackSize_t stackSize, uint8_t priority, kTaskType_t type, char* name);
 kTaskHandle_t taskmgr_createTask(kTask_t entry, void* args, kStackSize_t stackSize, uint8_t priority, kTaskType_t type, char* name);
@@ -30,6 +32,7 @@ kTaskHandle_t taskmgr_getCurrentTaskHandle();
 kTaskHandle_t taskmgr_getNextTaskHandle();
 kTaskHandle_t taskmgr_getTaskListPtr();
 uint8_t taskmgr_getTaskListIndex();
+kStackPtr_t taskmgr_getReservedMemoryPointer();
 void taskmgr_setCurrentTask(kTaskHandle_t taskHandle);
 void taskmgr_setNextTask(kTaskHandle_t taskHandle);
 

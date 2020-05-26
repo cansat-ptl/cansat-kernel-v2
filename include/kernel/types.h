@@ -79,7 +79,6 @@ typedef struct kSystemIO_t* kLifoHandle_t;
 typedef struct kSystemIO_t* kFifoHandle_t;
 typedef struct kSystemIO_t* kSystemIOHandle_t;
 
-
 struct kLock_t
 {
 	kTaskHandle_t owner;
@@ -106,20 +105,21 @@ struct kEvent_t
 struct kTaskStruct_t
 {
 	kStackPtr_t stackPtr;
-	kStackPtr_t stackBegin;
 	kTask_t taskPtr;
 	void* args;
+	kStackPtr_t stackBegin;
 	kStackSize_t stackSize;
-	uint8_t priority;
-	kTaskState_t state;
-	uint16_t sleepTime;
 	struct kLock_t* lock;
 	struct kEvent_t notification;
+	kTaskState_t state;
+	uint16_t sleepTime;
 	kTaskType_t type;
+	uint8_t priority;
 	uint8_t pid;
 	uint8_t flags;
 	char* name;
 	kTaskHandle_t next;
+	kTaskHandle_t prev;
 };
 
 struct kMemoryBlock_t

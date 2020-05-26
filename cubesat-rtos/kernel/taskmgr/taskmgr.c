@@ -49,6 +49,11 @@ kStackPtr_t taskmgr_getKernelStackPointer()
 	return kStackPointer;
 }
 
+kStackPtr_t taskmgr_getReservedMemoryPointer()
+{
+	return kReservedMemory;
+}
+
 kTaskHandle_t taskmgr_getCurrentTaskHandle()
 {
 	return kCurrentTask;
@@ -67,6 +72,11 @@ void taskmgr_setCurrentTask(kTaskHandle_t taskHandle)
 void taskmgr_setNextTask(kTaskHandle_t taskHandle)
 {
 	kNextTask = taskHandle;
+}
+
+void taskmgr_setKernelStackPointer(kStackPtr_t pointer)
+{
+	kStackPointer = pointer;
 }
 
 static inline void taskmgr_switchTask()

@@ -6,19 +6,16 @@
  */
 #include <initd/initd.h>
 
-void taskmgr_init();
-
 void user_preinit();
 void user_init();
 void user_postinit();
-void taskmgr_setIdleTask(kTaskHandle_t idle);
 void _debug_taskmgr_printTasks();
 
 kTask kernel_idle1(void* args)
 {
 	while(1) {
 		platform_NOP();
-		debug_logMessage(PGM_PUTS, L_INFO, PSTR("idle: idle task debug output\r\n"));
+		//debug_logMessage(PGM_PUTS, L_INFO, PSTR("idle: idle task debug output\r\n"));
 	}
 }
 
@@ -30,9 +27,14 @@ void kernel_preinit()
 		//debug_puts(L_INFO, PSTR("\x0C"));
 		debug_puts(L_INFO, PSTR("kernel: Initializing debug uart interface, baud=38400\r\n"));
 		debug_puts(L_INFO, PSTR("kernel: Firing up RTOS\r\n"));
-		memmgr_heapInit();
-		taskmgr_init();
+		debug_puts(L_INFO, PSTR("kernel: Initializing memory manager\r\n"));
+	#endif	
+	memmgr_heapInit();
+	
+	#if CFG_LOGGING == 1	
+		debug_puts(L_INFO, PSTR("kernel: Initializing task manager\r\n"));
 	#endif
+	taskmgr_init(kernel_idle1);
 }
 
 uint8_t kernel_startScheduler()
@@ -40,33 +42,17 @@ uint8_t kernel_startScheduler()
 	//debug_puts(L_INFO, PSTR(" kernel: Starting up task manager                      [OK]\r\n"));
 	//.................................................................
 
-	#if CFG_LOGGING == 1
-		debug_puts(L_INFO, PSTR("kernel: Preparing safety memory barrier"));
-	#endif
+	//#if CFG_LOGGING == 1
+	//	debug_puts(L_INFO, PSTR("kernel: Preparing safety memory barrier"));
+	//#endif
 
 	//kernel_prepareMemoryBarrier(kernel_getStackPtr() + (CFG_TASK_STACK_SIZE + CFG_KERNEL_STACK_SAFETY_MARGIN)-1, CFG_KERNEL_STACK_SAFETY_MARGIN, 0xFE);
 
-	#if CFG_LOGGING == 1
-		debug_puts(L_NONE, PSTR("               [OK]\r\n"));
-	#endif
-
-	kTaskHandle_t ct = taskmgr_createTask(kernel_idle1, NULL, 64, KPRIO_IDLE, KTASK_SYSTEM, "idle");
-	if (ct == NULL) {
-		debug_puts(L_ERROR, PSTR("kernel: Failed to create idle task"));
-		while(1);
-	}
-	ct -> pid = 0;
-	
-	taskmgr_setIdleTask(ct);
+	//#if CFG_LOGGING == 1
+	//	debug_puts(L_NONE, PSTR("               [OK]\r\n"));
+	//#endif
 
 	#if CFG_LOGGING == 1
-		debug_puts(L_INFO, PSTR("kernel: Starting up first task"));
-	#endif
-
-	taskmgr_setCurrentTask(ct);
-
-	#if CFG_LOGGING == 1
-		debug_puts(L_NONE, PSTR("                        [OK]\r\n"));
 		debug_puts(L_INFO, PSTR("kernel: Setting up system timer"));
 	#endif
 

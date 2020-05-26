@@ -17,14 +17,13 @@ static volatile uint8_t kNextTaskIndex;
 
 extern volatile uint16_t kTaskActiveTicks;
 
-void taskmgr_setIdleTask(kTaskHandle_t idle)
+static volatile kTaskHandle_t temp = NULL;
+
+void taskmgr_initScheduler(kTaskHandle_t idle)
 {
 	kIdleTask = idle;
-}
-
-void taskmgr_init(kTaskHandle_t* taskQueue, uint8_t taskIndex)
-{
-	kSchedulingList = taskQueue;
+	kCurrentTask = idle;
+	kNextTask = idle;
 }
 
 static inline void taskmgr_assign()
@@ -40,7 +39,7 @@ static inline void taskmgr_assign()
 //WHAT THE HELL AM I DOING SOMEBODY PLEASE HELP ME
 static inline void taskmgr_search()
 {
-	kTaskHandle_t temp = taskmgr_getTaskListPtr();
+	temp = taskmgr_getTaskListPtr();
 	while(temp != NULL) {
 		if (temp->state == KSTATE_READY) {
 			if (temp->priority > kCurrentTask->priority) {
