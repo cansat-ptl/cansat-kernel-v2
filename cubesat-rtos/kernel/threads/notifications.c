@@ -11,7 +11,7 @@ void threads_notificationWait()
 {
 	while (1) {
 		kStatusRegister_t sreg = threads_startAtomicOperation();
-		kTaskHandle_t runningTask = kernel_getCurrentTaskHandle();
+		kTaskHandle_t runningTask = taskmgr_getCurrentTaskHandle();
 		
 		if (runningTask -> notification.state == KEVENT_FIRED) {
 			runningTask -> notification.state = KEVENT_NONE;
@@ -21,7 +21,7 @@ void threads_notificationWait()
 		else {
 			runningTask -> state = KSTATE_BLOCKED;
 			threads_endAtomicOperation(sreg);
-			kernel_yield(0);
+			taskmgr_yield(0);
 		}
 	}
 	return;

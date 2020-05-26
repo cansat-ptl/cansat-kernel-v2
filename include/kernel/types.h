@@ -9,6 +9,38 @@
 #define TYPES_H_
 
 #include <stdint.h>
+
+#define ERR_KRN_STACK_OVERFLOW 1
+#define ERR_NULLPTR 2
+#define ERR_MEMORY_CORRUPTION 3
+#define ERR_QUEUE_END 4
+#define ERR_WDT_RESET 5
+#define ERR_BOD_RESET 6
+#define ERR_KRN_RETURN 7
+#define ERR_DEVICE_FAIL 8
+#define ERR_GENERIC 255
+
+#define KFLAG_INIT 0
+#define KFLAG_TIMER_SET 1
+#define KFLAG_TIMER_EN 2
+#define KFLAG_TIMER_ISR 3
+#define KFLAG_SD_INIT 4
+#define KFLAG_CSW_ALLOWED 5
+#define KFLAG_RROBIN_SWITCHED 6
+#define KFLAG_LOG_SD 13
+#define KFLAG_LOG_UART 14
+#define KFLAG_DEBUG 15
+
+#define KOSSTATUS_INIT 0
+#define KOSSTATUS_RUNNING 1
+#define KOSSTATUS_HALTED 2
+#define KOSSTATUS_ERRORED 3
+
+#ifndef _SIZE_T
+#define _SIZE_T
+typedef uint32_t size_t;
+#endif
+
 #include <stddef.h>
 
 typedef void (*kTask_t)(void*);
@@ -47,7 +79,6 @@ typedef struct kSystemIO_t* kLifoHandle_t;
 typedef struct kSystemIO_t* kFifoHandle_t;
 typedef struct kSystemIO_t* kSystemIOHandle_t;
 
-
 struct kLock_t
 {
 	kTaskHandle_t owner;
@@ -74,19 +105,28 @@ struct kEvent_t
 struct kTaskStruct_t
 {
 	kStackPtr_t stackPtr;
-	kStackPtr_t stackBegin;
 	kTask_t taskPtr;
 	void* args;
+	kStackPtr_t stackBegin;
 	kStackSize_t stackSize;
-	uint8_t priority;
-	kTaskState_t state;
-	uint16_t sleepTime;
 	struct kLock_t* lock;
 	struct kEvent_t notification;
+	kTaskState_t state;
+	uint16_t sleepTime;
 	kTaskType_t type;
+	uint8_t priority;
 	uint8_t pid;
 	uint8_t flags;
-	char name[9];
+	char* name;
+	kTaskHandle_t next;
+	kTaskHandle_t prev;
+};
+
+struct kMemoryBlock_t
+{
+	struct kMemoryBlock_t* next;
+	size_t blockSize;
+	uint8_t state;
 };
 
 struct kTimerStruct_t

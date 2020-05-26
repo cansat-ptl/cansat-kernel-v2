@@ -298,6 +298,6 @@
 #define platform_startSystemTimer() platform_startTimer0();
 #define platform_stopSystemTimer() platform_stopTimer0();
 
-uint8_t platform_prepareStackFrame(kStackPtr_t regionPointer, kTask_t taskPointer, void* args);
+kStackPtr_t platform_prepareStackFrame(kStackPtr_t regionPointer, kStackSize_t stackSize, kTask_t taskPointer, void* args);
 
 #endif /* AVR_H_ */
