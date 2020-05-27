@@ -20,6 +20,11 @@ static volatile uint16_t kTaskActiveTicks = 0;
 
 extern volatile uint16_t _kflags;
 
+kTaskHandle_t taskmgr_getIdleTaskHandle()
+{
+	return kIdleTask;
+}
+
 void taskmgr_initScheduler(kTaskHandle_t idle)
 {
 	kIdleTask = idle;
