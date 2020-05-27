@@ -21,7 +21,7 @@ kTask kernel_idle1(void* args)
 
 void kernel_preinit()
 {
-	hal_UART_INIT(12);
+	hal_UART_INIT(24);
 	debug_init();
 	#if CFG_LOGGING == 1
 		//debug_puts(L_INFO, PSTR("\x0C"));
@@ -76,6 +76,8 @@ uint8_t kernel_startScheduler()
 
 	platform_ENABLE_INTERRUPTS();
 	threads_exitCriticalSection();
+	
+	taskmgr_switchTo(taskmgr_getNextTaskHandle());
 
 	return 0;
 }

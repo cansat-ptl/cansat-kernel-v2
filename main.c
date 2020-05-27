@@ -23,7 +23,8 @@ kTask simpleTask(void* args)
 {
 	while (1) {
 		debug_puts(L_INFO, PSTR("Task 1 executes\r\n"));
-		taskmgr_yield(200);
+		//taskmgr_yield(1);
+		_delay_ms(100);
 	}
 }
 
@@ -31,7 +32,8 @@ kTask simpleTask1(void* args)
 {
 	while (1) {
 		debug_puts(L_INFO, PSTR("Task 2 executes\r\n"));
-		taskmgr_yield(200);
+		//taskmgr_yield(200);
+		_delay_ms(100);
 	}
 }
 
@@ -39,7 +41,8 @@ kTask simpleTask2(void* args)
 {
 	while (1) {
 		debug_puts(L_INFO, PSTR("Task 3 executes\r\n"));
-		taskmgr_yield(200);
+		//taskmgr_yield(200);
+		_delay_ms(100);
 	}
 }
 
@@ -47,7 +50,8 @@ kTask simpleTask3(void* args)
 {
 	while (1) {
 		debug_puts(L_INFO, PSTR("Task 4 executes\r\n"));
-		taskmgr_yield(200);
+		//taskmgr_yield(200);
+		_delay_ms(100);
 	}
 }
 
@@ -55,7 +59,8 @@ kTask simpleTask4(void* args)
 {
 	while (1) {
 		debug_puts(L_INFO, PSTR("Task 5 executes\r\n"));
-		taskmgr_yield(200);
+		//taskmgr_yield(200);
+		_delay_ms(100);
 	}
 }
 
@@ -63,14 +68,16 @@ kTask simpleTask5(void* args)
 {
 	while (1) {
 		debug_puts(L_INFO, PSTR("Task 6 executes\r\n"));
-		taskmgr_yield(200);
+		//taskmgr_yield(200);
+		_delay_ms(100);
 	}
 }
 kTask simpleTask6(void* args)
 {
 	while (1) {
 		debug_puts(L_INFO, PSTR("Task 7 executes\r\n"));
-		taskmgr_yield(200);
+		//taskmgr_yield(200);
+		_delay_ms(100);
 	}
 }
 
@@ -78,7 +85,8 @@ kTask simpleTask7(void* args)
 {
 	while (1) {
 		debug_puts(L_INFO, PSTR("Task 8 executes\r\n"));
-		taskmgr_yield(200);
+		//taskmgr_yield(200);
+		_delay_ms(100);
 	}
 }
 
@@ -86,7 +94,8 @@ kTask simpleTask8(void* args)
 {
 	while (1) {
 		debug_puts(L_INFO, PSTR("Task 9 executes\r\n"));
-		taskmgr_yield(200);
+		//taskmgr_yield(200);
+		_delay_ms(100);
 	}
 }
 
@@ -94,7 +103,8 @@ kTask simpleTask9(void* args)
 {
 	while (1) {
 		debug_puts(L_INFO, PSTR("Task 10 executes\r\n"));
-		taskmgr_yield(200);
+		//taskmgr_yield(200);
+		_delay_ms(100);
 	}
 }
 
@@ -102,7 +112,8 @@ kTask simpleTask10(void* args)
 {
 	while (1) {
 		debug_puts(L_INFO, PSTR("Task 11 executes\r\n"));
-		taskmgr_yield(200);
+		//taskmgr_yield(200);
+		_delay_ms(100);
 	}
 }
 
@@ -110,7 +121,8 @@ kTask simpleTask11(void* args)
 {
 	while (1) {
 		debug_puts(L_INFO, PSTR("Task 12 executes\r\n"));
-		taskmgr_yield(200);
+		//taskmgr_yield(200);
+		_delay_ms(100);
 	}
 }
 
@@ -137,11 +149,11 @@ void user_preinit()
 void user_init()
 {
 	debug_puts(L_INFO, PSTR("kernel: Starting systemd process\r\n"));
-	//systemd_init();
+	systemd_init();
 	//static char test[] = "test arg string";
-	//systemd_addService(SDSERVICE_REPEATED, simpleService, 500, SDSTATE_ACTIVE);
-	//systemd_addService(SDSERVICE_REPEATED, simpleService1, 200, SDSTATE_ACTIVE);
-	//systemd_addService(SDSERVICE_REPEATED, simpleService2, 750, SDSTATE_ACTIVE);
+	systemd_addService(SDSERVICE_REPEATED, simpleService, 100, SDSTATE_ACTIVE);
+	systemd_addService(SDSERVICE_REPEATED, simpleService1, 200, SDSTATE_ACTIVE);
+	systemd_addService(SDSERVICE_REPEATED, simpleService2, 300, SDSTATE_ACTIVE);
 
 	mutex0 = threads_mutexInit();
 	semaphore0 = threads_semaphoreInit(2);

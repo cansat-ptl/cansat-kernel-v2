@@ -115,9 +115,7 @@ void* memmgr_heapAlloc(size_t size)
 		size += (CFG_PLATFORM_BYTE_ALIGNMENT - (size & CFG_PLATFORM_BYTE_ALIGNMENT_MASK));
 	}
 	
-	if (size > 0) {
-		size += kHeapStructSize;
-	}
+	if (size > 0) size += kHeapStructSize;
 	
 	if (size > 0 && size <= kFreeMemory) {
 		previousBlock = &kHeapStart;

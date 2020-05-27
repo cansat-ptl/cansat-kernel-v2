@@ -15,9 +15,10 @@ static volatile kTaskHandle_t kIdleTask;
 static volatile uint8_t kCurrentTaskIndex;
 static volatile uint8_t kNextTaskIndex;
 
-extern volatile uint16_t kTaskActiveTicks;
+static volatile uint8_t kTickRate = 0;
+static volatile uint16_t kTaskActiveTicks = 0;
 
-static volatile kTaskHandle_t temp = NULL;
+extern volatile uint16_t _kflags;
 
 void taskmgr_initScheduler(kTaskHandle_t idle)
 {
@@ -39,37 +40,51 @@ static inline void taskmgr_assign()
 //WHAT THE HELL AM I DOING SOMEBODY PLEASE HELP ME
 static inline void taskmgr_search()
 {
-	temp = taskmgr_getTaskListPtr();
+	register kTaskHandle_t temp = taskmgr_getTaskListPtr();
+	register uint8_t found = 0;
 	while(temp != NULL) {
-		if (temp->state == KSTATE_READY) {
-			if (temp->priority > kCurrentTask->priority) {
-				kNextTask = temp;
-				break;
-			}
-			else if (temp->priority == kCurrentTask->priority) {
-				if (kNextTaskIndex > kCurrentTaskIndex) {
-					kNextTask = temp;
-					break;
-				}
-			}
-			else {
-				kNextTask = temp;
-				break;
-			}
-			kNextTaskIndex++;
-		}
-		else if (temp->state == KSTATE_SLEEPING) {
+		if (temp->state == KSTATE_SLEEPING) {
 			if (temp->sleepTime) temp->sleepTime--;
 			else temp->state = KSTATE_READY;
 		}
+		
+		if (hal_CHECK_BIT(_kflags, KFLAG_CSW_ALLOWED) && !found) {
+			if (temp->state == KSTATE_READY) {
+				if (temp->priority > kCurrentTask->priority) {
+					kNextTask = temp;
+					found = 1;
+					continue;
+				}
+				else if (temp->priority == kCurrentTask->priority) {
+					if (kNextTaskIndex > kCurrentTaskIndex) {
+						kNextTask = temp;
+						found = 1;
+						continue;
+					}
+				}
+				else {
+					kNextTask = temp;
+					found = 1;
+					continue;
+				}
+				kNextTaskIndex++;
+			}
+		}
 		temp = temp->next;
 	}
-	taskmgr_assign();
+	if (kTaskActiveTicks) kTaskActiveTicks--;
+	if (found) taskmgr_assign();
 	return;
 }
 
 void taskmgr_schedule()
 {
-	taskmgr_search();
+	if (!kTickRate) {
+		taskmgr_search();
+		kTickRate = CFG_TICKRATE_MS;
+	}
+	else {
+		kTickRate--;
+	}
 	return;
 }
