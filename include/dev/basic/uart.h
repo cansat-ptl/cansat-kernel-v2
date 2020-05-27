@@ -10,7 +10,7 @@
 #define UART_H_
 
 #ifndef F_CPU
-#define F_CPU 8000000L						//CPU frequency
+#define F_CPU 16000000L						//CPU frequency
 #endif
 
 #include <kernel/types.h>
