@@ -4,7 +4,7 @@ rwildcard=$(wildcard $(addsuffix $2, $1)) $(foreach d,$(wildcard $(addsuffix *, 
 # How to recursively find all files that match a pattern
 #ALL_C_FILES := $(call rwildcard,$(SRCDIR)/,*.c)
 
-TARG = example-tasks
+TARG = example-ipc
 
 CC = "D:\BuildTools\avr-gcc-9.2.0-x64-mingw\bin\avr-gcc.exe"
 OBJCOPY = "D:\BuildTools\avr-gcc-9.2.0-x64-mingw\bin\avr-objcopy.exe"

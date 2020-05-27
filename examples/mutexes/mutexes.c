@@ -20,10 +20,10 @@ kTask simpleTask1(void* args)
 	while (1) {
 		threads_mutexLock(&exampleMutex); //Locking mutex by its pointer (handle)
 		debug_logMessage(PGM_ON, L_INFO, PSTR("task1: Hello from task 1!\r\n"));
-		kernel_yield(100);
+		kernel_yield(50);
 		debug_logMessage(PGM_ON, L_INFO, PSTR("task1: Goodbye from task 1!\r\n"));
 		threads_mutexUnlock(&exampleMutex); //Unlocking mutex the same way
-		kernel_yield(100);
+		kernel_yield(50);
 	}
 }
 
@@ -79,7 +79,7 @@ void user_init()
 	 * KTASK_USER - task type, may be either KTASK_USER or KTASK_SYSTEM, defines memory protection rules
 	 * "task1" - task name
 	 */
-	kernel_createTask(simpleTask1, NULL, 250, 1, KTASK_USER, "task1");
+	kernel_createTask(simpleTask1, NULL, 250, 3, KTASK_USER, "task1");
 
 	/*
 	 * kernel_createTask - Create a task

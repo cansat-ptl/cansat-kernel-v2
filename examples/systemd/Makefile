@@ -4,23 +4,23 @@ rwildcard=$(wildcard $(addsuffix $2, $1)) $(foreach d,$(wildcard $(addsuffix *, 
 # How to recursively find all files that match a pattern
 #ALL_C_FILES := $(call rwildcard,$(SRCDIR)/,*.c)
 
-TARG = example-mutexes
- 
+TARG = example-systemd
+
 CC = "D:\BuildTools\avr-gcc-9.2.0-x64-mingw\bin\avr-gcc.exe"
 OBJCOPY = "D:\BuildTools\avr-gcc-9.2.0-x64-mingw\bin\avr-objcopy.exe"
 OBJDUMP = "D:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-objdump.exe"
 ATMEL_DFP = "D:\Program Files (x86)\Atmel\Studio\7.0\Packs\Atmel\ATmega_DFP\1.4.346\include"
 
 AVR_SIZE_CMD = "D:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-size.exe" "$(TARG).elf"
- 
+
 RTOS_INC = -I"../../include"
 RTOS_SRCDIR = ../../cubesat-rtos
-SRCS = $(call rwildcard, $(RTOS_SRCDIR)/,*.c) ./mutexes.c
- 
+SRCS = $(call rwildcard, $(RTOS_SRCDIR)/,*.c) ./systemd.c
+
 OBJS = $(SRCS:.c=.o)
 
 MCU=atmega128
- 
+
 CFLAGS = -x c -funsigned-char -funsigned-bitfields -DDEBUG	-I$(ATMEL_DFP) $(RTOS_INC) -O2 -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -mrelax -g2 -Wall -mmcu=$(MCU) -c -std=gnu99
 
 LDFLAGS = -Wl,-static -Wl,-Map="yktsat-rtos.map" -Wl,-u,vfprintf -Wl,--start-group -Wl,-lm	-Wl,--end-group -Wl,--gc-sections -mrelax -Wl,-section-start=.bootloader=0x3c000   -mmcu=$(MCU)	 -Wl,-u,vfprintf -lprintf_flt -lm
@@ -34,9 +34,9 @@ OBJCOPY_SIGN_FLAGS = -j .user_signatures --set-section-flags=.user_signatures=al
 OBJCOPY_SREC_FLAGS = -O srec -R .eeprom -R .fuse -R .lock -R .signature -R .user_signatures
 
 OBJDUMP_LSS_FLAGS = -h -S
- 
+
 all: $(TARG)
-	
+
 $(TARG): $(OBJS)
 	$(CC) -o $@.elf $(OBJS) $(LDFLAGS)
 	$(OBJCOPY)  $(OBJCOPY_HEX_FLAGS) "$(TARG).elf" "$(TARG).hex"
@@ -45,9 +45,9 @@ $(TARG): $(OBJS)
 	$(OBJCOPY)  $(OBJCOPY_SREC_FLAGS) "$(TARG).elf" "$(TARG).srec"
 	$(OBJCOPY)  $(OBJCOPY_SIGN_FLAGS) "$(TARG).elf" "$(TARG).usersignatures" || exit 0
 	$(AVR_SIZE_CMD)
- 
+
 %.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $<
- 
+
 clean:
 	rm -f $(TARG).elf $(TARG).bin $(TARG).hex  $(OBJS) $(TARG).map $(TARG).usersignatures $(TARG).srec $(TARG).lss $(TARG).eep 

@@ -18,10 +18,11 @@ kMutex_t exampleMutex; //Mutex declaration - not required, but recommended
 kTask simpleTask1(void* args)
 {
 	debug_logMessage(PGM_ON, L_INFO, PSTR("task1: Task 1 starts\r\n"));
-	char receiveBuffer[32] = "";
-	uint8_t receiveBufferIndex = 0;
 
 	while (1) {
+		char receiveBuffer[32] = "";
+		uint8_t receiveBufferIndex = 0;
+
 		debug_logMessage(PGM_ON, L_INFO, PSTR("task1: Hello from task 1!\r\n"));
 
 		threads_mutexLock(&exampleMutex);
@@ -49,10 +50,11 @@ kTask simpleTask1(void* args)
 kTask simpleTask2(void* args)
 {
 	debug_logMessage(PGM_ON, L_INFO, PSTR("task2: Task 2 starts\r\n"));
-	char receiveBuffer[32] = "";
-	uint8_t receiveBufferIndex = 0;
 
 	while (1) {
+		char receiveBuffer[32] = "";
+		uint8_t receiveBufferIndex = 0;
+
 		debug_logMessage(PGM_ON, L_INFO, PSTR("task2: Hello from task 2!\r\n"));
 
 		threads_mutexLock(&exampleMutex);
@@ -93,7 +95,7 @@ kTask simpleTask3(void* args)
 			 * (char*)args[i] - character to send
 			 * Returns: 1 if write was successful, otherwise 0
 			 */
-			if (!threads_fifoWrite(&exampleFifo, (char*)args[i])) {
+			if (!threads_fifoWrite(&exampleFifo, ((char*)args)[i])) {
 				debug_logMessage(PGM_ON, L_INFO, PSTR("task3: Fifo write error\r\n"));
 			}
 		}
