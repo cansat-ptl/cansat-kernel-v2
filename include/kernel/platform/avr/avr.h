@@ -10,7 +10,7 @@
 #define AVR_H_
 
 #ifndef F_CPU
-#define F_CPU 8000000L						//CPU frequency
+#define F_CPU 16000000L						//CPU frequency
 #endif
 
 #define AVRDEF_VER "0.1.0-bleeding"
@@ -294,9 +294,9 @@
 #endif
 
 
-#define platform_setupSystemTimer() platform_setupTimer0(CFG_KERNEL_TIMER_PRESCALER);
-#define platform_startSystemTimer() platform_startTimer0();
-#define platform_stopSystemTimer() platform_stopTimer0();
+#define platform_setupSystemTimer() platform_setupTimer1A(CFG_KERNEL_TIMER_PRESCALER);
+#define platform_startSystemTimer() platform_startTimer1A();
+#define platform_stopSystemTimer() platform_stopTimer1A();
 
 kStackPtr_t platform_prepareStackFrame(kStackPtr_t regionPointer, kStackSize_t stackSize, kTask_t taskPointer, void* args);
 

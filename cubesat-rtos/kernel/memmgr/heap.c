@@ -9,11 +9,6 @@
 #include <kernel/kernel.h>
 #include <kernel/types.h>
 
-#define CFG_HEAP_SIZE 2000 //TODO: move to config
-#define CFG_PLATFORM_BYTE_ALIGNMENT 1
-#define CFG_PLATFORM_BYTE_ALIGNMENT_MASK 0x0000
-#define CFG_MIN_BLOCK_SIZE 4
-
 static uint8_t kHeapRegion[CFG_HEAP_SIZE];
 
 static const size_t kHeapStructSize	= (sizeof(struct kMemoryBlock_t) + ((size_t)(CFG_PLATFORM_BYTE_ALIGNMENT - 1))) & ~((size_t)CFG_PLATFORM_BYTE_ALIGNMENT_MASK); //What the hell is this I shouldn't have copied FreeRTOS code
@@ -119,6 +114,8 @@ void* memmgr_heapAlloc(size_t size)
 	if (size > 0 && (size & CFG_PLATFORM_BYTE_ALIGNMENT_MASK) != 0x00) {
 		size += (CFG_PLATFORM_BYTE_ALIGNMENT - (size & CFG_PLATFORM_BYTE_ALIGNMENT_MASK));
 	}
+	
+	if (size > 0) size += kHeapStructSize;
 	
 	if (size > 0 && size <= kFreeMemory) {
 		previousBlock = &kHeapStart;

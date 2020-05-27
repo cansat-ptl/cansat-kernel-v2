@@ -31,6 +31,7 @@ void taskmgr_setTaskState(kTaskHandle_t t_handle, kTaskState_t t_state);
 kTaskHandle_t taskmgr_getCurrentTaskHandle();
 kTaskHandle_t taskmgr_getNextTaskHandle();
 kTaskHandle_t taskmgr_getTaskListPtr();
+kTaskHandle_t taskmgr_getIdleTaskHandle();
 uint8_t taskmgr_getTaskListIndex();
 kStackPtr_t taskmgr_getReservedMemoryPointer();
 void taskmgr_setCurrentTask(kTaskHandle_t taskHandle);

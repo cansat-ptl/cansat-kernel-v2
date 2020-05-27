@@ -14,14 +14,10 @@ static volatile struct kTaskStruct_t *kCurrentTask;
 static volatile struct kTaskStruct_t *kNextTask;
 volatile uint64_t __e_time = 0;
 extern volatile uint16_t _kflags;
-extern volatile uint8_t _kTaskMgrFlags;
 static volatile uint8_t kInterruptDepth = 0;
-static volatile uint8_t kTickRate = 0;
 
 static volatile uint8_t kReservedMemory[CFG_KERNEL_RESERVED_MEMORY];
 static volatile kStackPtr_t kStackPointer = &kReservedMemory[CFG_KERNEL_RESERVED_MEMORY-1];
-
-volatile uint16_t kTaskActiveTicks = 0;
 
 static inline void taskmgr_switchTask();
 void taskmgr_schedule();
@@ -81,8 +77,7 @@ void taskmgr_setKernelStackPointer(kStackPtr_t pointer)
 
 static inline void taskmgr_switchTask()
 {	
-	if (hal_CHECK_BIT(_kflags, KFLAG_CSW_ALLOWED))
-		taskmgr_schedule();
+	taskmgr_schedule();
 	if (kNextTask != kCurrentTask) kernel_switchContext();
 }
 
@@ -122,16 +117,7 @@ void taskmgr_tick()
 	
 	hal_SET_BIT(_kflags, KFLAG_TIMER_ISR);
 	
-	if (kTickRate == 0) {
-		if (kTaskActiveTicks != 0 && kCurrentTask -> priority != KPRIO_REALTIME  && kCurrentTask -> priority != KPRIO_IDLE)
-			kTaskActiveTicks--;
-		else
-			taskmgr_switchTask();
-		kTickRate = CFG_TICKRATE_MS;
-	}
-	else {
-		kTickRate--;
-	}
+	taskmgr_switchTask();
 	
 	kernel_timerService();
 	

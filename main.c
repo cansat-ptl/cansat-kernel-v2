@@ -22,65 +22,110 @@ kFifo_t queue0;
 kTask simpleTask(void* args)
 {
 	while (1) {
-		//threads_semaphoreWait(&semaphore0);
-		debug_puts(L_INFO, PSTR("Job 5 starts, waiting for semaphore\r\n"));
-		//kernel_yield(200);
+		debug_puts(L_INFO, PSTR("Task 1 executes\r\n"));
+		//taskmgr_yield(1);
 		_delay_ms(100);
-		debug_puts(L_INFO, PSTR("Job 5 ends, signaling semaphore\r\n"));
-		//threads_semaphoreSignal(&semaphore0);
-		_delay_ms(100);
-		taskmgr_yield(200);
-		//kernel_setTaskState(kernel_getCurrentTaskHandle(), KSTATE_SUSPENDED);
-		//while(1);
 	}
 }
+
 kTask simpleTask1(void* args)
 {
-	taskmgr_yield(1500);
 	while (1) {
-		//threads_semaphoreWait(&semaphore0);
-		debug_puts(L_INFO, PSTR("Job 6 starts, waiting for semaphore\r\n"));
-		//kernel_yield(200);
-		debug_puts(L_INFO, PSTR("Job 6 ends, signaling semaphore\r\n"));
-		//threads_semaphoreSignal(&semaphore0);
-		_delay_ms(1);
-		taskmgr_yield(200);
-		//kernel_setTaskState(kernel_getCurrentTaskHandle(), KSTATE_SUSPENDED);
-		//while(1);
+		debug_puts(L_INFO, PSTR("Task 2 executes\r\n"));
+		//taskmgr_yield(200);
+		_delay_ms(100);
 	}
 }
 
 kTask simpleTask2(void* args)
 {
-	taskmgr_yield(1500);
 	while (1) {
-		//threads_semaphoreWait(&semaphore0);
-		debug_puts(L_INFO, PSTR("Job 7 starts, waiting for semaphore\r\n"));
-		//kernel_yield(200);
-		debug_puts(L_INFO, PSTR("Job 7 ends, signaling semaphore\r\n"));
-		//threads_semaphoreSignal(&semaphore0);
-		_delay_ms(1);
-		taskmgr_yield(200);
-		//kernel_setTaskState(kernel_getCurrentTaskHandle(), KSTATE_SUSPENDED);
-		//while(1);
+		debug_puts(L_INFO, PSTR("Task 3 executes\r\n"));
+		//taskmgr_yield(200);
+		_delay_ms(100);
 	}
 }
 
 kTask simpleTask3(void* args)
 {
-	taskmgr_yield(1500);
 	while (1) {
-		//threads_semaphoreWait(&semaphore0);
-		debug_puts(L_INFO, PSTR("Job 8 starts, waiting for semaphore\r\n"));
-		//kernel_yield(200);
-		debug_puts(L_INFO, PSTR("Job 8 ends, signaling semaphore\r\n"));
-		//threads_semaphoreSignal(&semaphore0);
-		_delay_ms(1);
-		taskmgr_yield(200);
-		//kernel_setTaskState(kernel_getCurrentTaskHandle(), KSTATE_SUSPENDED);
-		//while(1);
+		debug_puts(L_INFO, PSTR("Task 4 executes\r\n"));
+		//taskmgr_yield(200);
+		_delay_ms(100);
 	}
 }
+
+kTask simpleTask4(void* args)
+{
+	while (1) {
+		debug_puts(L_INFO, PSTR("Task 5 executes\r\n"));
+		//taskmgr_yield(200);
+		_delay_ms(100);
+	}
+}
+
+kTask simpleTask5(void* args)
+{
+	while (1) {
+		debug_puts(L_INFO, PSTR("Task 6 executes\r\n"));
+		//taskmgr_yield(200);
+		_delay_ms(100);
+	}
+}
+kTask simpleTask6(void* args)
+{
+	while (1) {
+		debug_puts(L_INFO, PSTR("Task 7 executes\r\n"));
+		//taskmgr_yield(200);
+		_delay_ms(100);
+	}
+}
+
+kTask simpleTask7(void* args)
+{
+	while (1) {
+		debug_puts(L_INFO, PSTR("Task 8 executes\r\n"));
+		//taskmgr_yield(200);
+		_delay_ms(100);
+	}
+}
+
+kTask simpleTask8(void* args)
+{
+	while (1) {
+		debug_puts(L_INFO, PSTR("Task 9 executes\r\n"));
+		//taskmgr_yield(200);
+		_delay_ms(100);
+	}
+}
+
+kTask simpleTask9(void* args)
+{
+	while (1) {
+		debug_puts(L_INFO, PSTR("Task 10 executes\r\n"));
+		//taskmgr_yield(200);
+		_delay_ms(100);
+	}
+}
+
+kTask simpleTask10(void* args)
+{
+	while (1) {
+		debug_puts(L_INFO, PSTR("Task 11 executes\r\n"));
+		//taskmgr_yield(200);
+		_delay_ms(100);
+	}
+}
+
+kTask simpleTask11(void* args)
+{
+	while (1) {
+		debug_puts(L_INFO, PSTR("Task 12 executes\r\n"));
+		//taskmgr_yield(200);
+		_delay_ms(100);
+	}
+}
+
 
 void simpleService()
 {
@@ -105,10 +150,10 @@ void user_init()
 {
 	debug_puts(L_INFO, PSTR("kernel: Starting systemd process\r\n"));
 	systemd_init();
-	static char test[] = "test arg string";
-	systemd_addService(SDSERVICE_REPEATED, simpleService, 500, SDSTATE_ACTIVE);
+	//static char test[] = "test arg string";
+	systemd_addService(SDSERVICE_REPEATED, simpleService, 100, SDSTATE_ACTIVE);
 	systemd_addService(SDSERVICE_REPEATED, simpleService1, 200, SDSTATE_ACTIVE);
-	systemd_addService(SDSERVICE_REPEATED, simpleService2, 750, SDSTATE_ACTIVE);
+	systemd_addService(SDSERVICE_REPEATED, simpleService2, 300, SDSTATE_ACTIVE);
 
 	mutex0 = threads_mutexInit();
 	semaphore0 = threads_semaphoreInit(2);
@@ -122,9 +167,18 @@ void user_init()
 
 void user_postinit()
 {
-	taskmgr_createTask(simpleTask, NULL, 250, 2, KTASK_USER, "task1");
-	taskmgr_createTask(simpleTask1, NULL, 250, 4, KTASK_USER, "task2");
-	taskmgr_createTask(simpleTask2, NULL, 250, 2, KTASK_USER, "task3");
+	taskmgr_createTask(simpleTask, NULL, 128, 2, KTASK_USER, "task1");
+	taskmgr_createTask(simpleTask1, NULL, 128, 2, KTASK_USER, "task2");
+	taskmgr_createTask(simpleTask2, NULL, 128, 2, KTASK_USER, "task3");
+	taskmgr_createTask(simpleTask3, NULL, 128, 2, KTASK_USER, "task4");
+	taskmgr_createTask(simpleTask4, NULL, 128, 2, KTASK_USER, "task5");
+	taskmgr_createTask(simpleTask5, NULL, 128, 2, KTASK_USER, "task6");
+	taskmgr_createTask(simpleTask6, NULL, 128, 2, KTASK_USER, "task7");
+	taskmgr_createTask(simpleTask7, NULL, 128, 2, KTASK_USER, "task8");
+	taskmgr_createTask(simpleTask8, NULL, 128, 2, KTASK_USER, "task9");
+	taskmgr_createTask(simpleTask9, NULL, 128, 2, KTASK_USER, "task10");
+	taskmgr_createTask(simpleTask10, NULL, 128, 2, KTASK_USER, "task11");
+	taskmgr_createTask(simpleTask11, NULL, 128, 2, KTASK_USER, "task12");
 	return;
 }
 

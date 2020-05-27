@@ -13,6 +13,8 @@ static volatile uint8_t kTaskIndex = 0;
 static volatile kTaskHandle_t kTaskListHead;
 static volatile kTaskHandle_t kTaskListTail;
 
+static const size_t kTaskStructSize	= (sizeof(struct kTaskStruct_t) + ((size_t)(CFG_PLATFORM_BYTE_ALIGNMENT - 1))) & ~((size_t)CFG_PLATFORM_BYTE_ALIGNMENT_MASK);
+
 static volatile struct kTaskStruct_t kIdleTaskStruct;
 
 void taskmgr_setKernelStackPointer(kStackPtr_t pointer); //TODO: add to header
@@ -110,7 +112,6 @@ void taskmgr_insertTask(kTaskHandle_t newTask)
 	}
 }
 
-#ifdef DEBUG
 void _debug_taskmgr_printTasks() 
 {
 	debug_logMessage(PGM_PUTS, L_INFO, PSTR("taskmgr: Current task list: \r\n"));
@@ -122,9 +123,6 @@ void _debug_taskmgr_printTasks()
 	}
 	debug_logMessage(PGM_PUTS, L_NONE, PSTR("\r\n"));
 }
-#else
-void _debug_taskmgr_printTasks() {return;}
-#endif
 
 uint8_t taskmgr_createTaskStatic(kTaskHandle_t taskStruct, kStackPtr_t stack, kTask_t entry, void* args, kStackSize_t stackSize, uint8_t priority, kTaskType_t type, char* name)
 {
@@ -162,17 +160,15 @@ uint8_t taskmgr_createTaskDynamic(kTaskHandle_t* handle, kTask_t entry, void* ar
 	uint8_t exitcode = 1;
 	kStatusRegister_t sreg = threads_startAtomicOperation();
 	
-	kTaskHandle_t taskStruct = (kTaskHandle_t)memmgr_heapAlloc(sizeof(struct kTaskStruct_t)+1); //TODO: 1 allocation
-	kStackPtr_t stackPointer = (kStackPtr_t)memmgr_heapAlloc(stackSize+sizeof(struct kTaskStruct_t));
+	kStackPtr_t stackPointer = (kStackPtr_t)memmgr_heapAlloc(stackSize + kTaskStructSize);
 				
-	exitcode = taskmgr_createTaskStatic(taskStruct, stackPointer, entry, args, stackSize, priority, type, name);
+	exitcode = taskmgr_createTaskStatic((kTaskHandle_t)stackPointer, stackPointer + kTaskStructSize, entry, args, stackSize, priority, type, name);
 	
 	if (exitcode != 0) {
-		memmgr_heapFree((void*)taskStruct);
 		memmgr_heapFree((void*)stackPointer);
 	}
 	else {
-		*handle = taskStruct;
+		*handle = (kTaskHandle_t)stackPointer;
 	}
 	
 	threads_endAtomicOperation(sreg);
