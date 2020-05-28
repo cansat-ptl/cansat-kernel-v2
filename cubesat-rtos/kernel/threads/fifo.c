@@ -59,7 +59,7 @@ uint8_t threads_fifoWrite(kFifoHandle_t fifo, void* item)
 	uint8_t exitcode = 1;
 	if (fifo != NULL) {
 		if (threads_fifoFreeSpace(fifo)) {
-			memcpy(fifo->pointer+ fifo->inputPosition, item, fifo->itemSize);
+			memcpy(fifo->pointer + fifo->inputPosition, item, fifo->itemSize);
 			
 			fifo->inputPosition += fifo->itemSize;
 			if (fifo->inputPosition >= fifo->size) fifo->inputPosition = 0;
@@ -101,7 +101,7 @@ uint8_t threads_fifoPeek(kFifoHandle_t fifo, void* item)
 
 size_t threads_fifoFreeSpace(kFifoHandle_t fifo)
 {
-	if (fifo->size - fifo->currentPosition > 0)
+	if (fifo->size - fifo->currentPosition >= fifo->itemSize)
 		return fifo->size - fifo->currentPosition;
 	else
 		return 0;
