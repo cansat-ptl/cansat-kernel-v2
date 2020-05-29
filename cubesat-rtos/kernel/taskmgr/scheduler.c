@@ -43,49 +43,56 @@ static inline void taskmgr_assign()
 	return;
 }
 //WHAT THE HELL AM I DOING SOMEBODY PLEASE HELP ME
-static inline void taskmgr_search()
+static inline void taskmgr_tickTasks()
 {
 	register kTaskHandle_t temp = taskmgr_getTaskListPtr();
-	register uint8_t found = 0;
+	
 	while(temp != NULL) {
 		if (temp->state == KSTATE_SLEEPING) {
 			if (temp->sleepTime) temp->sleepTime--;
 			else temp->state = KSTATE_READY;
 		}
-		
-		if (hal_CHECK_BIT(_kflags, KFLAG_CSW_ALLOWED) && !found) {
-			if (temp->state == KSTATE_READY) {
-				if (temp->priority > kCurrentTask->priority) {
-					kNextTask = temp;
-					found = 1;
-					continue;
-				}
-				else if (temp->priority == kCurrentTask->priority) {
-					if (kNextTaskIndex > kCurrentTaskIndex) {
-						kNextTask = temp;
-						found = 1;
-						continue;
-					}
-				}
-				else {
-					kNextTask = temp;
-					found = 1;
-					continue;
-				}
-				kNextTaskIndex++;
+		temp = temp->next;
+	}
+	
+	return;
+}
+
+static inline void taskmgr_search()
+{
+	register kTaskHandle_t temp = taskmgr_getTaskListPtr();
+	while(temp != NULL) {		
+		if (temp->state == KSTATE_READY) {
+			if (temp->priority > kCurrentTask->priority) {
+				kNextTask = temp;
+				break;
 			}
+			else if (temp->priority == kCurrentTask->priority) {
+				if (kNextTaskIndex > kCurrentTaskIndex) {
+					kNextTask = temp;
+					break;
+				}
+			}
+			else {
+				kNextTask = temp;
+				break;
+			}
+			kNextTaskIndex++;
 		}
 		temp = temp->next;
 	}
-	if (kTaskActiveTicks) kTaskActiveTicks--;
-	if (found) taskmgr_assign();
+	taskmgr_assign();
 	return;
 }
 
 void taskmgr_schedule()
 {
 	if (!kTickRate) {
-		taskmgr_search();
+		taskmgr_tickTasks();
+		
+		if (kTaskActiveTicks) kTaskActiveTicks--;
+		else taskmgr_search();
+		
 		kTickRate = CFG_TICKRATE_MS;
 	}
 	else {
