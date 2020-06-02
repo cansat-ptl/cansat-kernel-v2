@@ -7,69 +7,23 @@
 
 #include <kernel/threads/threads.h>
 
-struct kLock_t threads_mutexInit()  //TODO: this function is a stub. You can help by improving it
+struct kLockStruct_t threads_mutexInit()
 {
-	struct kLock_t mutex;
+	struct kLockStruct_t mutex;
 	mutex.type = KLOCK_MUTEX;
-	mutex.lockCount = 0;
+	mutex.lockCount = 1;
 	return mutex;
 }
 
 
-uint8_t threads_mutexLock(struct kLock_t* mutex)
+uint8_t threads_mutexLock(struct kLockStruct_t* mutex)
 {
-	uint8_t exitcode = 1;
-	if (mutex != NULL) {
-		while (1) {
-			kStatusRegister_t sreg = threads_startAtomicOperation();
-			kTaskHandle_t runningTask = kernel_getCurrentTaskHandle();
-		
-			//debug_puts(L_INFO, PSTR("threads: attempting to lock mutex..."));
-		
-			if (mutex -> lockCount == 0 || mutex -> owner == NULL || mutex -> owner -> state == KSTATE_UNINIT) {
-				mutex -> lockCount = 1;
-				mutex -> owner = runningTask;
-				//debug_puts(L_INFO, PSTR("success!\r\n"));
-				exitcode = 0;
-				threads_endAtomicOperation(sreg);
-				break;
-			}
-			else {
-				runningTask -> lock = mutex;
-				//debug_puts(L_INFO, PSTR("error: locked\r\n"));
-				kernel_setTaskState(kernel_getCurrentTaskHandle(), KSTATE_BLOCKED);
-				threads_endAtomicOperation(sreg);
-				kernel_yield(0);
-			}
-		}
-	}
+	uint8_t exitcode = threads_semaphoreWait(mutex);
 	return exitcode;
 }
 
-uint8_t threads_mutexUnlock(struct kLock_t* mutex)
+uint8_t threads_mutexUnlock(struct kLockStruct_t* mutex)
 {
-	uint8_t exitcode = 1;
-	
-	//debug_puts(L_INFO, PSTR("threads: unlocking mutex\r\n"));
-	if (mutex != NULL) {
-		kStatusRegister_t sreg = threads_startAtomicOperation();
-		
-		mutex -> lockCount = 0;
-		mutex -> owner = NULL;
-	
-		kTaskHandle_t taskList = kernel_getTaskListPtr();
-		uint8_t taskIndex = kernel_getTaskListIndex();
-
-		for (int i = 0; i < taskIndex; i++) {
-			if (taskList[i].lock == mutex) {
-				//debug_puts(L_INFO, PSTR("threads: unlocking waiting tasks\r\n"));
-				taskList[i].lock = NULL;
-				kernel_setTaskState(&taskList[i], KSTATE_READY);
-			}
-		}
-		exitcode = 0;
-		threads_endAtomicOperation(sreg);
-	}
-	
+	uint8_t exitcode = threads_semaphoreSignal(mutex);
 	return exitcode;
 }

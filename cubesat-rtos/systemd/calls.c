@@ -3,12 +3,12 @@
  *
  * Created: 22.02.2020 20:32:25
  *  Author: Admin
- */ 
+ */
 
 #include <systemd/systemd.h>
 
-volatile uint8_t sdCallIndex = 0;
-volatile sdServiceHandle_t sdCallQueue[CFG_SYSTEMD_MAX_SERVICES*2];
+volatile uint8_t sdCallIndex = 0u;
+volatile sdServiceHandle_t sdCallQueue[CFG_SYSTEMD_MAX_SERVICES*2u];
 
 void systemd_idle()
 {
@@ -17,52 +17,51 @@ void systemd_idle()
 
 uint8_t systemd_addCall(sdServiceHandle_t handle)
 {
+	uint8_t exitcode = 1u;
 	kStatusRegister_t sreg = threads_startAtomicOperation();
-	
+
 	if (sdCallIndex < CFG_SYSTEMD_MAX_SERVICES) {
 		sdCallQueue[sdCallIndex] = handle;
 		sdCallIndex++;
-		
-		threads_endAtomicOperation(sreg);
-		return 0;
+
+		exitcode = 0u;
 	}
-	else {
-		threads_endAtomicOperation(sreg);
-		return 1;
-	}
+
+	threads_endAtomicOperation(sreg);
+	return exitcode;
 }
 
 uint8_t systemd_removeCall()
 {
 	kStatusRegister_t sreg = threads_startAtomicOperation();
-	if (sdCallIndex != 0) {
+	if (sdCallIndex != 0u) {
 		sdCallIndex--;
-		for (int i = 0; i < CFG_SYSTEMD_MAX_SERVICES-1; i++) {
-			sdCallQueue[i] = sdCallQueue[i+1];
+		for (uint16_t i = 0u; i < CFG_SYSTEMD_MAX_SERVICES-1u; i++) {
+			sdCallQueue[i] = sdCallQueue[i+1u];
 		}
-		sdCallQueue[CFG_SYSTEMD_MAX_SERVICES-1] = NULL;
+		sdCallQueue[CFG_SYSTEMD_MAX_SERVICES-1u] = NULL;
 	}
 	else {
 		sdCallQueue[0] = NULL;
 	}
-	
+
 	threads_endAtomicOperation(sreg);
-	return 0;
+	return 0u;
 }
 
 void systemd_clearCallQueue()
 {
 	kStatusRegister_t sreg = threads_startAtomicOperation();
-	for (int i = 0; i < CFG_SYSTEMD_MAX_SERVICES; i++) {
+	for (uint16_t i = 0; i < CFG_SYSTEMD_MAX_SERVICES; i++) {
 		sdCallQueue[i] = NULL;
 	}
-	sdCallIndex = 0;
+	sdCallIndex = 0u;
 	threads_endAtomicOperation(sreg);
 }
 
 void systemd_serviceManager()
 {
-	while(sdCallQueue[0] != NULL){
+	while (sdCallQueue[0] != NULL) {
 		(sdCallQueue[0] -> pointer)();
 		systemd_removeCall();
 	}

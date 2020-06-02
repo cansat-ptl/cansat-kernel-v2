@@ -3,7 +3,7 @@
  *
  * Created: 25.05.2019 20:44:34
  *  Author: ThePetrovich
- */ 
+ */
 
 #ifndef HAL_H_
 #define HAL_H_
@@ -32,11 +32,11 @@
 	#define hal_STOP_SYSTEM_TIMER() hal_stopTimer1A()
 #endif
 
-#define hal_SET_BIT(x,y) x |= (1 << y)
-#define hal_CLEAR_BIT(x,y) x &= ~(1 << y)
-#define hal_CHECK_BIT(x,y) ((0u == (x & (1 << y))) ? 0u : 1u)
-#define hal_SWITCH_BIT(x,y) (x ^= (1 << y))
-#define hal_WRITE_BIT(x,y,z) x ^= (-1 * z ^ x) & (1 << y);
+#define hal_SET_BIT(x,y) ((x) |= (1u << (y)))
+#define hal_CLEAR_BIT(x,y) ((x) &= ~(1u << (y)))
+#define hal_CHECK_BIT(x,y) (((0u == ((x) & (1u << (y)))) ? 0u : 1u))
+#define hal_SWITCH_BIT(x,y) ((x) ^= (1u << (y)))
+#define hal_WRITE_BIT(x,y,z) ((x) = ((x) & ~(1u << (y))) | ((z) << (y)));
 
 #ifndef hal_UART_INIT
 	#define hal_UART_INIT(ubrr) basicUart_init(ubrr)

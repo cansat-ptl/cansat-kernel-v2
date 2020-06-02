@@ -14,6 +14,7 @@
 
 #define CFG_KERNEL_STACK_FRAME_REGISTER_OFFSET -6  //Memory offset, from which General Purpose Registers are stored during stack initialization
 #define CFG_KERNEL_STACK_FRAME_END_OFFSET -31 //Last GPR position on stack
+#define CFG_TIMER_COMPARE_VALUE 250
 #define CFG_USE_3BYTE_PC 0 //AVR specific option
 #define CFG_USE_RAMP_REGISTERS 0 //AVR specific option
 

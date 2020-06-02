@@ -9,8 +9,7 @@
 
 uint8_t threads_startAtomicOperation()
 {
-	threads_enterCriticalSection();
-	#if CFG_NO_INTERRUPTS_IN_CRITICAL_SECTIONS == 1
+	#if CFG_ALLOW_INTERRUPTS_IN_ATOMIC_SECTIONS == 0
 		kStatusRegister_t sreg = platform_STATUS_REG;
 		platform_DISABLE_INTERRUPTS();
 		return sreg;
@@ -21,8 +20,7 @@ uint8_t threads_startAtomicOperation()
 
 void threads_endAtomicOperation(kStatusRegister_t sreg)
 {
-	threads_exitCriticalSection();
-	#if CFG_NO_INTERRUPTS_IN_CRITICAL_SECTIONS == 1
+	#if CFG_ALLOW_INTERRUPTS_IN_ATOMIC_SECTIONS == 0
 		platform_ENABLE_INTERRUPTS();
 		platform_STATUS_REG = sreg;
 	#endif

@@ -10,7 +10,7 @@
 #define AVR_H_
 
 #ifndef F_CPU
-#define F_CPU 8000000L						//CPU frequency
+#define F_CPU 16000000L						//CPU frequency
 #endif
 
 #define AVRDEF_VER "0.1.0-bleeding"
@@ -42,6 +42,10 @@
 
 #define platform_RET() asm volatile ("ret \n\t" ::)
 #define platform_RETI() asm volatile ("reti \n\t" ::)
+
+#ifndef CFG_USE_RAMP_REGISTERS
+#define CFG_USE_RAMP_REGISTERS 0
+#endif
 
 #if CFG_USE_RAMP_REGISTERS == 0
 #define platform_RESTORE_CONTEXT() asm volatile ( \
@@ -294,10 +298,10 @@
 #endif
 
 
-#define platform_setupSystemTimer() platform_setupTimer0(CFG_KERNEL_TIMER_PRESCALER);
-#define platform_startSystemTimer() platform_startTimer0();
-#define platform_stopSystemTimer() platform_stopTimer0();
+#define platform_setupSystemTimer() platform_setupTimer1A(CFG_KERNEL_TIMER_PRESCALER);
+#define platform_startSystemTimer() platform_startTimer1A();
+#define platform_stopSystemTimer() platform_stopTimer1A();
 
-uint8_t platform_prepareStackFrame(kStackPtr_t regionPointer, kTask_t taskPointer, void* args);
+kStackPtr_t platform_prepareStackFrame(kStackPtr_t regionPointer, kStackSize_t stackSize, kTask_t taskPointer, void* args);
 
 #endif /* AVR_H_ */
