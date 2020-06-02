@@ -27,6 +27,8 @@
 #include <kernel/utils/time.h>
 #include <kernel/platform/platform.h>
 
+void kernel_startup();
+
 kStackPtr_t kernel_getStackPtr();
 kStackSize_t kernel_getUserTaskStackUsage();
 kStackSize_t kernel_getSystemTaskStackUsage();

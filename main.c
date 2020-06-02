@@ -10,7 +10,6 @@
 #include <kernel/kernel.h>
 #include <avr/io.h>
 #include <systemd/systemd.h>
-#include <initd/initd.h>
 uint8_t resourse = 1;
 
 kMutex_t mutex0, mutex1;
@@ -184,7 +183,7 @@ void user_postinit()
 
 int main()
 {
-	initd_startup();
+	kernel_startup();
 	//kernel_createTask(simpleTask3, 64, KPRIO_HIGH, KTASK_DEFAULT, 200, "test3");
 	while (1);
 }
