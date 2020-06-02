@@ -7,7 +7,7 @@
 
 #include <kernel/threads/threads.h>
 
-struct kLock_t threads_semaphoreInit(uint8_t resourceAmount)  //TODO: this function is a stub. You can help by improving it
+struct kLockStruct_t threads_semaphoreInit(uint8_t resourceAmount)  //TODO: this function is a stub. You can help by improving it
 {
 	kSemaphore_t semaphore;
 	semaphore.type = KLOCK_SEMAPHORE;
@@ -17,7 +17,7 @@ struct kLock_t threads_semaphoreInit(uint8_t resourceAmount)  //TODO: this funct
 }
 
 
-uint8_t threads_semaphoreWait(struct kLock_t* semaphore)
+uint8_t threads_semaphoreWait(struct kLockStruct_t* semaphore)
 {
 	uint8_t exitcode = 1;
 	if (semaphore != NULL) {
@@ -45,7 +45,7 @@ uint8_t threads_semaphoreWait(struct kLock_t* semaphore)
 	return exitcode;
 }
 
-uint8_t threads_semaphoreSignal(struct kLock_t* semaphore)
+uint8_t threads_semaphoreSignal(struct kLockStruct_t* semaphore)
 {
 	uint8_t exitcode = 1;
 	if (semaphore != NULL) {

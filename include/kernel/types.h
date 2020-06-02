@@ -64,29 +64,29 @@ typedef enum {KLOCK_SEMAPHORE, KLOCK_MUTEX, KLOCK_SEMAPHORE_RECURSIVE} kLockType
 typedef volatile struct kTaskStruct_t* kTaskHandle_t;
 typedef volatile struct kTimerStruct_t* kTimerHandle_t;
 
-typedef struct kLock_t kMutex_t;
-typedef struct kLock_t kSemaphore_t;
+typedef struct kLockStruct_t kMutex_t;
+typedef struct kLockStruct_t kSemaphore_t;
 typedef uint8_t kSpinlock_t;
 
 typedef kMutex_t* kMutexHandle_t;
 typedef kSemaphore_t* kSemaphoreHandle_t;
 typedef kSpinlock_t* kSpinlockHandle_t;
 
-typedef struct kSystemIO_t kLifo_t;
-typedef struct kSystemIO_t kFifo_t;
+typedef struct kIPCStruct_t kLifo_t;
+typedef struct kIPCStruct_t kFifo_t;
 
-typedef struct kSystemIO_t* kLifoHandle_t;
-typedef struct kSystemIO_t* kFifoHandle_t;
-typedef struct kSystemIO_t* kSystemIOHandle_t;
+typedef struct kIPCStruct_t* kLifoHandle_t;
+typedef struct kIPCStruct_t* kFifoHandle_t;
+typedef struct kIPCStruct_t* kSystemIOHandle_t;
 
-struct kLock_t
+struct kLockStruct_t
 {
 	kTaskHandle_t owner;
 	uint8_t lockCount;
 	kLockType_t type;
 };
 
-struct kSystemIO_t
+struct kIPCStruct_t
 {
 	char* pointer;
 	size_t itemSize;
@@ -96,7 +96,7 @@ struct kSystemIO_t
 	uint16_t currentPosition;
 };
 
-struct kEvent_t
+struct kEventStruct_t
 {
 	kEventState_t state;
 	uint16_t eventFlags;
@@ -109,8 +109,8 @@ struct kTaskStruct_t
 	void* args;
 	kStackPtr_t stackBegin;
 	kStackSize_t stackSize;
-	struct kLock_t* lock;
-	struct kEvent_t notification;
+	struct kLockStruct_t* lock;
+	struct kEventStruct_t* notification;
 	kTaskState_t state;
 	uint16_t sleepTime;
 	kTaskType_t type;
@@ -122,9 +122,9 @@ struct kTaskStruct_t
 	kTaskHandle_t prev;
 };
 
-struct kMemoryBlock_t
+struct kMemoryBlockStruct_t
 {
-	struct kMemoryBlock_t* next;
+	struct kMemoryBlockStruct_t* next;
 	size_t blockSize;
 	uint8_t state;
 };
@@ -136,7 +136,7 @@ struct kTimerStruct_t
 	uint32_t repeatPeriod;
 };
 
-struct kSystemTime_t
+struct kSystemTimeStruct_t
 {
 	uint16_t days;
 	uint8_t hours;

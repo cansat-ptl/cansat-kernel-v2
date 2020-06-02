@@ -11,10 +11,10 @@
 
 static uint8_t kHeapRegion[CFG_HEAP_SIZE];
 
-static const size_t kHeapStructSize	= (sizeof(struct kMemoryBlock_t) + ((size_t)(CFG_PLATFORM_BYTE_ALIGNMENT - 1))) & ~((size_t)CFG_PLATFORM_BYTE_ALIGNMENT_MASK); //What the hell is this I shouldn't have copied FreeRTOS code
+static const size_t kHeapStructSize	= (sizeof(struct kMemoryBlockStruct_t) + ((size_t)(CFG_PLATFORM_BYTE_ALIGNMENT - 1))) & ~((size_t)CFG_PLATFORM_BYTE_ALIGNMENT_MASK); //What the hell is this I shouldn't have copied FreeRTOS code
 
-static struct kMemoryBlock_t kHeapStart;
-static struct kMemoryBlock_t* kHeapEnd;
+static struct kMemoryBlockStruct_t kHeapStart;
+static struct kMemoryBlockStruct_t* kHeapEnd;
 
 static size_t kFreeMemory = 0;
 static size_t kMinimumFreeMemory = 0;
@@ -31,7 +31,7 @@ size_t memmgr_getFreeHeapMin()
 
 void memmgr_heapInit()
 {
-	struct kMemoryBlock_t* firstFreeBlock;
+	struct kMemoryBlockStruct_t* firstFreeBlock;
 	uint8_t* heapAligned;
 	size_t heapAddress;
 	size_t heapSize = CFG_HEAP_SIZE;
@@ -68,9 +68,9 @@ void memmgr_heapInit()
 	kFreeMemory = firstFreeBlock -> blockSize;
 }
 
-static void memmgr_insertFreeBlock(struct kMemoryBlock_t* blockToInsert)
+static void memmgr_insertFreeBlock(struct kMemoryBlockStruct_t* blockToInsert)
 {
-	struct kMemoryBlock_t* blockIterator;
+	struct kMemoryBlockStruct_t* blockIterator;
 	uint8_t* pointer_casted;
 	
 	for (blockIterator = &kHeapStart; blockIterator -> next < blockToInsert; blockIterator = blockIterator -> next) {;} //What
@@ -107,7 +107,7 @@ static void memmgr_insertFreeBlock(struct kMemoryBlock_t* blockToInsert)
 void* memmgr_heapAlloc(size_t size)
 {
 	void* returnAddress = NULL;
-	struct kMemoryBlock_t *block, *newBlock, *previousBlock;
+	struct kMemoryBlockStruct_t *block, *newBlock, *previousBlock;
 	
 	kStatusRegister_t sreg = threads_startAtomicOperation();
 	
@@ -158,7 +158,7 @@ void* memmgr_heapAlloc(size_t size)
 void memmgr_heapFree(void* pointer)
 {
 	uint8_t* pointer_casted = (uint8_t*)pointer;
-	struct kMemoryBlock_t* block;
+	struct kMemoryBlockStruct_t* block;
 	
 	kStatusRegister_t sreg = threads_startAtomicOperation();
 	
@@ -170,7 +170,7 @@ void memmgr_heapFree(void* pointer)
 			if (block -> next == NULL) {
 				block -> state = 0;
 				kFreeMemory += block -> blockSize;
-				memmgr_insertFreeBlock((struct kMemoryBlock_t*)block);
+				memmgr_insertFreeBlock((struct kMemoryBlockStruct_t*)block);
 			}
 		}
 	}
