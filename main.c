@@ -23,7 +23,7 @@ kTask simpleTask(void* args)
 	while (1) {
 		debug_puts(L_INFO, PSTR("Task 1 executes\r\n"));
 		//taskmgr_yield(1);
-		_delay_ms(100);
+		_delay_ms(10);
 	}
 }
 
@@ -32,7 +32,7 @@ kTask simpleTask1(void* args)
 	while (1) {
 		debug_puts(L_INFO, PSTR("Task 2 executes\r\n"));
 		//taskmgr_yield(200);
-		_delay_ms(100);
+		_delay_ms(10);
 	}
 }
 
@@ -41,7 +41,7 @@ kTask simpleTask2(void* args)
 	while (1) {
 		debug_puts(L_INFO, PSTR("Task 3 executes\r\n"));
 		//taskmgr_yield(200);
-		_delay_ms(100);
+		_delay_ms(10);
 	}
 }
 
@@ -50,7 +50,7 @@ kTask simpleTask3(void* args)
 	while (1) {
 		debug_puts(L_INFO, PSTR("Task 4 executes\r\n"));
 		//taskmgr_yield(200);
-		_delay_ms(100);
+		_delay_ms(10);
 	}
 }
 
@@ -59,7 +59,7 @@ kTask simpleTask4(void* args)
 	while (1) {
 		debug_puts(L_INFO, PSTR("Task 5 executes\r\n"));
 		//taskmgr_yield(200);
-		_delay_ms(100);
+		_delay_ms(10);
 	}
 }
 
@@ -68,7 +68,7 @@ kTask simpleTask5(void* args)
 	while (1) {
 		debug_puts(L_INFO, PSTR("Task 6 executes\r\n"));
 		//taskmgr_yield(200);
-		_delay_ms(100);
+		_delay_ms(10);
 	}
 }
 kTask simpleTask6(void* args)
@@ -76,7 +76,7 @@ kTask simpleTask6(void* args)
 	while (1) {
 		debug_puts(L_INFO, PSTR("Task 7 executes\r\n"));
 		//taskmgr_yield(200);
-		_delay_ms(100);
+		_delay_ms(10);
 	}
 }
 
@@ -85,7 +85,7 @@ kTask simpleTask7(void* args)
 	while (1) {
 		debug_puts(L_INFO, PSTR("Task 8 executes\r\n"));
 		//taskmgr_yield(200);
-		_delay_ms(100);
+		_delay_ms(10);
 	}
 }
 
@@ -94,7 +94,7 @@ kTask simpleTask8(void* args)
 	while (1) {
 		debug_puts(L_INFO, PSTR("Task 9 executes\r\n"));
 		//taskmgr_yield(200);
-		_delay_ms(100);
+		_delay_ms(10);
 	}
 }
 
@@ -103,7 +103,7 @@ kTask simpleTask9(void* args)
 	while (1) {
 		debug_puts(L_INFO, PSTR("Task 10 executes\r\n"));
 		//taskmgr_yield(200);
-		_delay_ms(100);
+		_delay_ms(10);
 	}
 }
 
@@ -112,7 +112,7 @@ kTask simpleTask10(void* args)
 	while (1) {
 		debug_puts(L_INFO, PSTR("Task 11 executes\r\n"));
 		//taskmgr_yield(200);
-		_delay_ms(100);
+		_delay_ms(10);
 	}
 }
 
@@ -121,7 +121,7 @@ kTask simpleTask11(void* args)
 	while (1) {
 		debug_puts(L_INFO, PSTR("Task 12 executes\r\n"));
 		//taskmgr_yield(200);
-		_delay_ms(100);
+		_delay_ms(10);
 	}
 }
 

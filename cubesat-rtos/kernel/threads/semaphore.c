@@ -66,7 +66,7 @@ uint8_t threads_semaphoreSignal(struct kLockStruct_t* semaphore)
 				if (temp->state == KSTATE_BLOCKED) taskmgr_setTaskState(temp, KSTATE_READY);
 				if (temp->priority >= semaphore->owner->priority) semaphore->owner = temp;
 			}
-			temp = temp->next;
+			temp = temp->taskList.next;
 		}
 		
 		exitcode = 0;

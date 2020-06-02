@@ -29,6 +29,11 @@ kTaskHandle_t taskmgr_getTaskListPtr()
 	return temp;
 }
 
+kTaskHandle_t taskmgr_getIdleTaskHandle()
+{
+	return &kIdleTaskStruct;
+}
+
 uint8_t taskmgr_init(kTask_t idle)
 {
 	kStackPtr_t rMemory = taskmgr_getReservedMemoryPointer();
@@ -44,9 +49,11 @@ uint8_t taskmgr_init(kTask_t idle)
 	taskmgr_setKernelStackPointer(rMemory);
 	
 	kTaskListHead = &kIdleTaskStruct;
+	kTaskListTail = &kIdleTaskStruct;
 	
 	taskmgr_initScheduler(&kIdleTaskStruct);
 	taskmgr_setCurrentTask(&kIdleTaskStruct);
+	taskmgr_setNextTask(&kIdleTaskStruct);
 	
 	return 0;
 }
@@ -85,33 +92,46 @@ static inline void taskmgr_setupTaskStructure(kTaskHandle_t task, \
 	task -> type = type;
 	task -> pid = kGlobalPid;
 	task -> name = name;
-	task -> next = NULL;
-	task -> prev = NULL;
+	task -> taskList.next = NULL;
+	task -> taskList.prev = NULL;
+	task -> schedulingList.next = NULL;
+	task -> schedulingList.prev = NULL;
 }
 
-
-void taskmgr_insertTask(kTaskHandle_t newTask)
+static void taskmgr_addTaskToTaskList(kTaskHandle_t newTask) 
 {
-	kTaskHandle_t current;
-
-	if (kTaskListHead == NULL || kTaskListHead->priority <= newTask->priority) {
-		newTask->next = kTaskListHead;
+	newTask->taskList.next = NULL;
+	newTask->taskList.prev = kTaskListTail;
+	
+	if (kTaskListTail) {
+		kTaskListTail->taskList.next = newTask;
+	}
+	
+	kTaskListTail = newTask;
+	
+	if (kTaskListHead == NULL) {
 		kTaskListHead = newTask;
 	}
-	else {
-		current = kTaskListHead;
+}
+/*
+static void taskmgr_removeTaskFromTaskList(kTaskHandle_t task) 
+{
+	kTaskHandle_t next;
+
+	if (kTaskListTail != NULL) {
+		next = kTaskListTail;
+		kTaskListTail = kTaskListTail->taskList.prev;
 		
-		while (current->next != NULL && current->next->priority > newTask->priority) {
-			current = current->next;
+		if (kTaskListTail) {
+			kTaskListTail->taskList.next = NULL;
 		}
 		
-		debug_logMessage(PGM_ON, L_INFO, PSTR("taskmgr: Inserting task to list, Cur = 0x%04X, Next = 0x%04X, New = 0x%04X\r\n"), current, current->next, newTask);
-		
-		newTask->next = current->next;
-		current->next = newTask;
+		if (next == kTaskListHead) {
+			kTaskListHead = NULL;
+		}
 	}
 }
-
+*/
 void _debug_taskmgr_printTasks() 
 {
 	debug_logMessage(PGM_PUTS, L_INFO, PSTR("taskmgr: Current task list: \r\n"));
@@ -119,7 +139,7 @@ void _debug_taskmgr_printTasks()
 	while(temp != NULL)
 	{
 		debug_logMessage(PGM_ON, L_NONE, PSTR("name:%s,prio:%d,stack=0x%04X  \r\n"),temp->name, temp->priority, temp->stackPtr);
-		temp = temp->next;
+		temp = temp->taskList.next;
 	}
 	debug_logMessage(PGM_PUTS, L_NONE, PSTR("\r\n"));
 }
@@ -135,7 +155,7 @@ uint8_t taskmgr_createTaskStatic(kTaskHandle_t taskStruct, kStackPtr_t stack, kT
 				kStackPtr_t stackPrepared = platform_prepareStackFrame(stack, stackSize, entry, args);
 				taskmgr_setupTaskStructure(taskStruct, entry, stackPrepared, stack, stackSize, args, priority, KSTATE_READY, type, name); //TODO: Fix this shit
 
-				taskmgr_insertTask(taskStruct);
+				taskmgr_addTaskToTaskList(taskStruct);
 				
 				kTaskIndex++;
 				kGlobalPid++;
@@ -203,5 +223,5 @@ kTaskHandle_t taskmgr_createTask(kTask_t entry, void* args, kStackSize_t stackSi
 
 uint8_t taskmgr_removeTask(kTaskHandle_t handle)
 {
-
+	
 }
