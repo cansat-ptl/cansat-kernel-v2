@@ -22,7 +22,7 @@ kTask simpleTask(void* args)
 {
 	while (1) {
 		debug_puts(L_INFO, PSTR("Task 1 executes\r\n"));
-		//taskmgr_yield(1);
+		taskmgr_yield(100);
 		_delay_ms(10);
 	}
 }
@@ -31,7 +31,7 @@ kTask simpleTask1(void* args)
 {
 	while (1) {
 		debug_puts(L_INFO, PSTR("Task 2 executes\r\n"));
-		//taskmgr_yield(200);
+		taskmgr_yield(200);
 		_delay_ms(10);
 	}
 }
@@ -40,7 +40,7 @@ kTask simpleTask2(void* args)
 {
 	while (1) {
 		debug_puts(L_INFO, PSTR("Task 3 executes\r\n"));
-		//taskmgr_yield(200);
+		taskmgr_yield(200);
 		_delay_ms(10);
 	}
 }
@@ -49,7 +49,7 @@ kTask simpleTask3(void* args)
 {
 	while (1) {
 		debug_puts(L_INFO, PSTR("Task 4 executes\r\n"));
-		//taskmgr_yield(200);
+		taskmgr_yield(200);
 		_delay_ms(10);
 	}
 }
@@ -58,7 +58,7 @@ kTask simpleTask4(void* args)
 {
 	while (1) {
 		debug_puts(L_INFO, PSTR("Task 5 executes\r\n"));
-		//taskmgr_yield(200);
+		taskmgr_yield(200);
 		_delay_ms(10);
 	}
 }
@@ -67,7 +67,7 @@ kTask simpleTask5(void* args)
 {
 	while (1) {
 		debug_puts(L_INFO, PSTR("Task 6 executes\r\n"));
-		//taskmgr_yield(200);
+		taskmgr_yield(200);
 		_delay_ms(10);
 	}
 }
@@ -75,7 +75,7 @@ kTask simpleTask6(void* args)
 {
 	while (1) {
 		debug_puts(L_INFO, PSTR("Task 7 executes\r\n"));
-		//taskmgr_yield(200);
+		taskmgr_yield(200);
 		_delay_ms(10);
 	}
 }
@@ -84,7 +84,7 @@ kTask simpleTask7(void* args)
 {
 	while (1) {
 		debug_puts(L_INFO, PSTR("Task 8 executes\r\n"));
-		//taskmgr_yield(200);
+		taskmgr_yield(200);
 		_delay_ms(10);
 	}
 }
@@ -93,7 +93,7 @@ kTask simpleTask8(void* args)
 {
 	while (1) {
 		debug_puts(L_INFO, PSTR("Task 9 executes\r\n"));
-		//taskmgr_yield(200);
+		taskmgr_yield(200);
 		_delay_ms(10);
 	}
 }
@@ -102,7 +102,7 @@ kTask simpleTask9(void* args)
 {
 	while (1) {
 		debug_puts(L_INFO, PSTR("Task 10 executes\r\n"));
-		//taskmgr_yield(200);
+		taskmgr_yield(200);
 		_delay_ms(10);
 	}
 }
@@ -111,7 +111,7 @@ kTask simpleTask10(void* args)
 {
 	while (1) {
 		debug_puts(L_INFO, PSTR("Task 11 executes\r\n"));
-		//taskmgr_yield(200);
+		taskmgr_yield(200);
 		_delay_ms(10);
 	}
 }
@@ -120,7 +120,7 @@ kTask simpleTask11(void* args)
 {
 	while (1) {
 		debug_puts(L_INFO, PSTR("Task 12 executes\r\n"));
-		//taskmgr_yield(200);
+		taskmgr_yield(200);
 		_delay_ms(10);
 	}
 }
@@ -170,12 +170,12 @@ void user_postinit()
 	taskmgr_createTask(simpleTask1, NULL, 128, 2, KTASK_USER, "task2");
 	taskmgr_createTask(simpleTask2, NULL, 128, 2, KTASK_USER, "task3");
 	taskmgr_createTask(simpleTask3, NULL, 128, 2, KTASK_USER, "task4");
-	taskmgr_createTask(simpleTask4, NULL, 128, 2, KTASK_USER, "task5");
+	taskmgr_createTask(simpleTask4, NULL, 128, 3, KTASK_USER, "task5");
 	taskmgr_createTask(simpleTask5, NULL, 128, 2, KTASK_USER, "task6");
-	taskmgr_createTask(simpleTask6, NULL, 128, 2, KTASK_USER, "task7");
-	taskmgr_createTask(simpleTask7, NULL, 128, 2, KTASK_USER, "task8");
-	taskmgr_createTask(simpleTask8, NULL, 128, 2, KTASK_USER, "task9");
-	taskmgr_createTask(simpleTask9, NULL, 128, 2, KTASK_USER, "task10");
+	taskmgr_createTask(simpleTask6, NULL, 128, 4, KTASK_USER, "task7");
+	taskmgr_createTask(simpleTask7, NULL, 128, 7, KTASK_USER, "task8");
+	taskmgr_createTask(simpleTask8, NULL, 128, 7, KTASK_USER, "task9");
+	taskmgr_createTask(simpleTask9, NULL, 128, 7, KTASK_USER, "task10");
 	taskmgr_createTask(simpleTask10, NULL, 128, 2, KTASK_USER, "task11");
 	taskmgr_createTask(simpleTask11, NULL, 128, 2, KTASK_USER, "task12");
 	return;

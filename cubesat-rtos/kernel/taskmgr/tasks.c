@@ -8,7 +8,6 @@
 #include <kernel/kernel.h>
 
 static volatile uint8_t kGlobalPid = 0;
-static volatile uint8_t kTaskIndex = 0;
 
 static volatile kTaskHandle_t kTaskListHead;
 static volatile kTaskHandle_t kTaskListTail;
@@ -58,16 +57,33 @@ uint8_t taskmgr_init(kTask_t idle)
 	return 0;
 }
 
-uint8_t taskmgr_getTaskListIndex()
+void taskmgr_setTaskState(kTaskHandle_t task, kTaskState_t t_state)
 {
-	return kTaskIndex;
+	kStatusRegister_t sreg = threads_startAtomicOperation();
+	
+	if (task != NULL) {
+		task -> state = t_state;
+	}	
+	
+	threads_endAtomicOperation(sreg);
 }
 
-void taskmgr_setTaskState(kTaskHandle_t t_handle, kTaskState_t t_state)
+uint8_t taskmgr_setTaskPriority(kTaskHandle_t task, uint8_t priority)
 {
-	if (t_handle != NULL) {
-		t_handle -> state = t_state;
-	}	
+	uint8_t exitcode = 0;
+	kStatusRegister_t sreg = threads_startAtomicOperation();
+	
+	if (task != NULL) {
+		if (priority <= CFG_NUMBER_OF_PRIORITIES) {
+			task->priority = priority;
+		}
+		else {
+			exitcode = CFG_NUMBER_OF_PRIORITIES;
+		}
+	}
+	
+	threads_endAtomicOperation(sreg);
+	return exitcode;
 }
 
 static inline void taskmgr_setupTaskStructure(kTaskHandle_t task, \
@@ -113,25 +129,24 @@ static void taskmgr_addTaskToTaskList(kTaskHandle_t newTask)
 		kTaskListHead = newTask;
 	}
 }
-/*
+
 static void taskmgr_removeTaskFromTaskList(kTaskHandle_t task) 
 {
-	kTaskHandle_t next;
-
-	if (kTaskListTail != NULL) {
-		next = kTaskListTail;
-		kTaskListTail = kTaskListTail->taskList.prev;
-		
-		if (kTaskListTail) {
-			kTaskListTail->taskList.next = NULL;
+	if (task != NULL) {
+		if (kTaskListHead == task) {
+			kTaskListHead = task->taskList.next;
 		}
 		
-		if (next == kTaskListHead) {
-			kTaskListHead = NULL;
+		if (task->taskList.next != NULL) {
+			task->taskList.next->taskList.prev = task->taskList.prev;
+		}
+
+		if (task->taskList.prev != NULL) {
+			task->taskList.prev->taskList.next = task->taskList.next;
 		}
 	}
 }
-*/
+
 void _debug_taskmgr_printTasks() 
 {
 	debug_logMessage(PGM_PUTS, L_INFO, PSTR("taskmgr: Current task list: \r\n"));
@@ -153,13 +168,11 @@ uint8_t taskmgr_createTaskStatic(kTaskHandle_t taskStruct, kStackPtr_t stack, kT
 		if (taskStruct != NULL) {
 			if (stack != NULL) {
 				kStackPtr_t stackPrepared = platform_prepareStackFrame(stack, stackSize, entry, args);
-				taskmgr_setupTaskStructure(taskStruct, entry, stackPrepared, stack, stackSize, args, priority, KSTATE_READY, type, name); //TODO: Fix this shit
+				taskmgr_setupTaskStructure(taskStruct, entry, stackPrepared, stack, stackSize, args, priority, KSTATE_READY, type, name);
 
 				taskmgr_addTaskToTaskList(taskStruct);
-				
-				kTaskIndex++;
-				kGlobalPid++;
 
+				kGlobalPid++;
 				exitcode = 0;
 			}
 			else {
@@ -223,5 +236,14 @@ kTaskHandle_t taskmgr_createTask(kTask_t entry, void* args, kStackSize_t stackSi
 
 uint8_t taskmgr_removeTask(kTaskHandle_t handle)
 {
+	kStatusRegister_t sreg = threads_startAtomicOperation();
 	
+	if (handle != NULL) {
+		taskmgr_removeTaskFromTaskList(handle);
+		taskmgr_unscheduleTask(handle);
+		
+		memmgr_heapFree((void*)handle);
+	}
+	
+	threads_endAtomicOperation(sreg);
 }

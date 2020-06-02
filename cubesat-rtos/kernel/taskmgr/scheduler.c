@@ -66,6 +66,24 @@ static void taskmgr_removeTaskFromSchedulingList(uint8_t priority)
 	kPriorityQueue[priority].idx--;
 }
 
+void taskmgr_unscheduleTask(kTaskHandle_t task)
+{
+	if (task != NULL) {
+		if (kPriorityQueue[task->priority].head == task) {
+			kPriorityQueue[task->priority].head = task->schedulingList.next;
+		}
+		
+		if (task->schedulingList.next != NULL) {
+			task->schedulingList.next->schedulingList.prev = task->schedulingList.prev;
+		}
+
+		if (task->schedulingList.prev != NULL) {
+			task->schedulingList.prev->schedulingList.next = task->schedulingList.next;
+		}
+		kPriorityQueue[task->priority].idx--;
+	}
+}
+
 static inline void taskmgr_assign(kTaskHandle_t task)
 {
 	taskmgr_setNextTask(task);
@@ -101,7 +119,7 @@ static inline void taskmgr_search()
 	for (uint16_t i = CFG_NUMBER_OF_PRIORITIES-1; i != 0; i--) {
 		if (kPriorityQueue[i].idx) {
 			taskmgr_assign(kPriorityQueue[i].head);
-			kPriorityQueue[i].head->state = KSTATE_READY;
+			if (kPriorityQueue[i].head->state == KSTATE_RUNNING) kPriorityQueue[i].head->state = KSTATE_READY;
 			taskmgr_removeTaskFromSchedulingList(kPriorityQueue[i].head->priority);
 			break;
 		}
@@ -113,8 +131,14 @@ void taskmgr_schedule()
 	if (!kTickRate) {
 		taskmgr_tickTasks();
 		
-		if (kTaskActiveTicks) kTaskActiveTicks--;
-		else taskmgr_search();
+		if (kTaskActiveTicks) {
+			kTaskActiveTicks--;
+		}
+		else {
+			if (utils_CHECK_BIT(_kflags, KFLAG_CSW_ALLOWED)) {
+				taskmgr_search();
+			}
+		}
 		
 		kTickRate = CFG_TICKRATE_MS;
 	}

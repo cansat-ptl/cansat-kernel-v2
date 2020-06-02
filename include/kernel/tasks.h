@@ -26,6 +26,7 @@ kTaskHandle_t taskmgr_createTask(kTask_t entry, void* args, kStackSize_t stackSi
 
 uint8_t taskmgr_removeTask(kTaskHandle_t handle);
 
+uint8_t taskmgr_setTaskPriority(kTaskHandle_t task, uint8_t priority);
 void taskmgr_setTaskState(kTaskHandle_t t_handle, kTaskState_t t_state);
 
 kTaskHandle_t taskmgr_getCurrentTaskHandle();
@@ -41,5 +42,8 @@ void taskmgr_tick()  __attribute__ ( ( naked, noinline ));
 void taskmgr_yield(uint16_t sleep) __attribute__ (( naked, noinline ));
 void taskmgr_switchTo(kTaskHandle_t handle) __attribute__ (( naked, noinline ));
 void taskmgr_stopTask(kTaskState_t exitState);
+
+void taskmgr_scheduleTask(kTaskHandle_t task);
+void taskmgr_unscheduleTask(kTaskHandle_t task);
 
 #endif /* TASKMGR_H_ */

@@ -11,8 +11,12 @@
 
 #include <kernel/types.h>
 
-void threads_exitCriticalSection();
-void threads_enterCriticalSection();
+void threads_exitCriticalSection(); //Deprecated
+void threads_enterCriticalSection(); //Deprecated
+
+uint16_t threads_startCriticalSection();
+void threads_endCriticalSection(uint16_t kflags);
+
 uint8_t threads_startAtomicOperation();
 void threads_endAtomicOperation(kStatusRegister_t sreg);
 
