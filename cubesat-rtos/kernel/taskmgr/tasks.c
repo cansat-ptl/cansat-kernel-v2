@@ -246,5 +246,4 @@ uint8_t taskmgr_removeTask(kTaskHandle_t handle)
 	}
 	
 	threads_endAtomicOperation(sreg);
-	return 0;
 }
