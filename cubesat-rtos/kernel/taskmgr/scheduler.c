@@ -24,7 +24,7 @@ void taskmgr_initScheduler(kTaskHandle_t idle)
 	kPriorityQueue[KPRIO_IDLE].tail = idle;
 }
 
-void taskmgr_scheduleTask(kTaskHandle_t task)
+static void taskmgr_addTaskToSchedulingList(kTaskHandle_t task)
 {
 	task->schedulingList.next = NULL;
 	task->schedulingList.prev = kPriorityQueue[task->priority].tail;
@@ -37,6 +37,29 @@ void taskmgr_scheduleTask(kTaskHandle_t task)
 	
 	if (kPriorityQueue[task->priority].head == NULL) {
 		kPriorityQueue[task->priority].head = task;
+	}
+}
+
+void taskmgr_scheduleTask(kTaskHandle_t task)
+{
+	taskmgr_addTaskToSchedulingList(task);
+}
+
+static void taskmgr_removeTaskFromSchedulingList(uint8_t priority)
+{
+	kTaskHandle_t prev;
+
+	if (kPriorityQueue[priority].head != NULL) {
+		prev = kPriorityQueue[priority].head;
+		kPriorityQueue[priority].head = kPriorityQueue[priority].head->schedulingList.next;
+		
+		if (kPriorityQueue[priority].head) {
+			kPriorityQueue[priority].head->schedulingList.prev = NULL;
+		}
+		
+		if (prev == kPriorityQueue[priority].tail) {
+			kPriorityQueue[priority].tail = NULL;
+		}
 	}
 }
 
@@ -54,8 +77,6 @@ void taskmgr_unscheduleTask(kTaskHandle_t task)
 		if (task->schedulingList.prev != NULL) {
 			task->schedulingList.prev->schedulingList.next = task->schedulingList.next;
 		}
-		task->schedulingList.prev = NULL;
-		task->schedulingList.next = NULL;
 	}
 }
 
@@ -80,7 +101,7 @@ static inline void taskmgr_tickTasks()
 			}
 		}
 		if (temp->state == KSTATE_READY) {
-			taskmgr_scheduleTask(temp);
+			taskmgr_addTaskToSchedulingList(temp);
 			temp->state = KSTATE_RUNNING;
 		}
 		temp = temp->taskList.next;
@@ -91,13 +112,11 @@ static inline void taskmgr_tickTasks()
 
 static inline void taskmgr_search()
 {
-	for (int16_t i = CFG_NUMBER_OF_PRIORITIES-1; i >= 0; i--) {
+	for (uint16_t i = CFG_NUMBER_OF_PRIORITIES-1; i > 0; i--) {
 		if (kPriorityQueue[i].head != NULL) {
 			taskmgr_assign(kPriorityQueue[i].head);
-			if (kPriorityQueue[i].head->state == KSTATE_RUNNING) {
-				kPriorityQueue[i].head->state = KSTATE_READY;
-			}
-			taskmgr_unscheduleTask(kPriorityQueue[i].head);
+			if (kPriorityQueue[i].head->state == KSTATE_RUNNING) kPriorityQueue[i].head->state = KSTATE_READY;
+			taskmgr_removeTaskFromSchedulingList(kPriorityQueue[i].head->priority);
 			break;
 		}
 	}

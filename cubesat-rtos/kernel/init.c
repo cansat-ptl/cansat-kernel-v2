@@ -11,12 +11,11 @@ void user_init();
 void user_postinit();
 void _debug_taskmgr_printTasks();
 
-kTask kernel_idle1()
+kTask kernel_idle1(void* args)
 {
-	platform_ENABLE_INTERRUPTS();
-	threads_exitCriticalSection();
 	while(1) {
 		platform_NOP();
+		//debug_logMessage(PGM_PUTS, L_INFO, PSTR("idle: idle task debug output\r\n"));
 	}
 }
 
@@ -40,6 +39,19 @@ void kernel_preinit()
 
 uint8_t kernel_startScheduler()
 {
+	//debug_puts(L_INFO, PSTR(" kernel: Starting up task manager                      [OK]\r\n"));
+	//.................................................................
+
+	//#if CFG_LOGGING == 1
+	//	debug_puts(L_INFO, PSTR("kernel: Preparing safety memory barrier"));
+	//#endif
+
+	//kernel_prepareMemoryBarrier(kernel_getStackPtr() + (CFG_TASK_STACK_SIZE + CFG_KERNEL_STACK_SAFETY_MARGIN)-1, CFG_KERNEL_STACK_SAFETY_MARGIN, 0xFE);
+
+	//#if CFG_LOGGING == 1
+	//	debug_puts(L_NONE, PSTR("               [OK]\r\n"));
+	//#endif
+
 	#if CFG_LOGGING == 1
 		debug_puts(L_INFO, PSTR("kernel: Setting up system timer"));
 	#endif
@@ -62,6 +74,11 @@ uint8_t kernel_startScheduler()
 
 	debug_puts(L_INFO, PSTR("\x0C"));
 
+	platform_ENABLE_INTERRUPTS();
+	threads_exitCriticalSection();
+	
+	taskmgr_switchTo(taskmgr_getNextTaskHandle());
+
 	return 0;
 }
 
@@ -80,6 +97,4 @@ void kernel_startup()
 	debug_puts(L_INFO, PSTR("initd: Init complete, starting scheduler\r\n"));
 	kernel_setSystemStatus(KOSSTATUS_RUNNING);
 	kernel_startScheduler();
-	
-	kernel_idle1();
 }

@@ -86,7 +86,7 @@ void taskmgr_yield(uint16_t sleep)
 	kernel_saveContext();
 	
 	if (sleep != 0) {
-		taskmgr_setTaskState(kCurrentTask, KSTATE_SLEEPING);
+		kCurrentTask -> state = KSTATE_SLEEPING;
 		kCurrentTask -> sleepTime = sleep;
 	}
 	

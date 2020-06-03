@@ -29,8 +29,8 @@ kStackPtr_t platform_prepareStackFrame(kStackPtr_t regionPointer, kStackSize_t s
 	for (int16_t i = CFG_KERNEL_STACK_FRAME_REGISTER_OFFSET; i > (CFG_KERNEL_STACK_FRAME_REGISTER_OFFSET + CFG_KERNEL_STACK_FRAME_END_OFFSET); i--)
 		regionPointer[i] = 0;						// R1-R31 initial values
 	
-	regionPointer[CFG_KERNEL_STACK_FRAME_REGISTER_OFFSET - 23] = (uint16_t)args & 0xFF; //-V542
-	regionPointer[CFG_KERNEL_STACK_FRAME_REGISTER_OFFSET - 24] = (uint16_t)args >> 8; //-V542
+	regionPointer[CFG_KERNEL_STACK_FRAME_REGISTER_OFFSET - 23] = (uint16_t)args & 0xFF;
+	regionPointer[CFG_KERNEL_STACK_FRAME_REGISTER_OFFSET - 24] = (uint16_t)args >> 8;
 	
 	return regionPointer + (CFG_KERNEL_STACK_FRAME_REGISTER_OFFSET + CFG_KERNEL_STACK_FRAME_END_OFFSET);
 }
