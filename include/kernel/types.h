@@ -82,8 +82,8 @@ typedef struct kIPCStruct_t* kSystemIOHandle_t;
 struct kLockStruct_t
 {
 	kTaskHandle_t owner;
+    kLockType_t type;
 	uint8_t lockCount;
-	kLockType_t type;
 	uint8_t basePriority;
 	uint8_t priority;
 };

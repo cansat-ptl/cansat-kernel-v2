@@ -22,7 +22,7 @@
 	
 	#define CFG_NUMBER_OF_PRIORITIES 32 
 
-	#define CFG_TICKS_PER_TASK 5
+	#define CFG_TICKS_PER_TASK 1
 	
 	#define CFG_HEAP_SIZE 2500 //TODO: move to config
 	#define CFG_PLATFORM_BYTE_ALIGNMENT 1

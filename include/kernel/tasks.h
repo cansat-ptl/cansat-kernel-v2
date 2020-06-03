@@ -27,7 +27,7 @@ kTaskHandle_t taskmgr_createTask(kTask_t entry, void* args, kStackSize_t stackSi
 uint8_t taskmgr_removeTask(kTaskHandle_t handle);
 
 uint8_t taskmgr_setTaskPriority(kTaskHandle_t task, uint8_t priority);
-void taskmgr_setTaskState(kTaskHandle_t t_handle, kTaskState_t t_state);
+void taskmgr_setTaskState(kTaskHandle_t task, kTaskState_t state);
 
 kTaskHandle_t taskmgr_getCurrentTaskHandle();
 kTaskHandle_t taskmgr_getNextTaskHandle();

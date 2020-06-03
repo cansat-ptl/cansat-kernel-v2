@@ -57,12 +57,13 @@ uint8_t taskmgr_init(kTask_t idle)
 	return 0;
 }
 
-void taskmgr_setTaskState(kTaskHandle_t task, kTaskState_t t_state)
+void taskmgr_setTaskState(kTaskHandle_t task, kTaskState_t state)
 {
 	kStatusRegister_t sreg = threads_startAtomicOperation();
 	
 	if (task != NULL) {
-		task -> state = t_state;
+		taskmgr_unscheduleTask(task);
+		task -> state = state;
 	}	
 	
 	threads_endAtomicOperation(sreg);
@@ -74,6 +75,7 @@ uint8_t taskmgr_setTaskPriority(kTaskHandle_t task, uint8_t priority)
 	kStatusRegister_t sreg = threads_startAtomicOperation();
 	
 	if (task != NULL) {
+		taskmgr_unscheduleTask(task);
 		if (priority <= CFG_NUMBER_OF_PRIORITIES) {
 			task->priority = priority;
 		}

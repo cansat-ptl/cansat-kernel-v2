@@ -32,13 +32,13 @@ uint8_t threads_semaphoreWait(struct kLockStruct_t* semaphore)
 					semaphore->owner = runningTask;
 					semaphore->basePriority = runningTask->priority;
 				}
-				
+				//debug_puts(L_INFO, PSTR("threads: waiting semaphore\r\n"));
 				exitcode = 0;
 				threads_endAtomicOperation(sreg);
 				break;
 			}
 			else {
-				runningTask -> lock = semaphore;
+				runningTask->lock = semaphore;
 				
 				if (semaphore->type == KLOCK_MUTEX) {
 					if (runningTask->priority > semaphore->owner->priority) {
@@ -66,10 +66,9 @@ uint8_t threads_semaphoreSignal(struct kLockStruct_t* semaphore)
 	
 		//debug_puts(L_INFO, PSTR("threads: signaling semaphore\r\n"));
 		semaphore->lockCount++;
-		runningTask->lock = NULL;
 		
 		if (semaphore->type == KLOCK_MUTEX) {
-			semaphore->owner->priority = semaphore->basePriority;
+			taskmgr_setTaskPriority(semaphore->owner, semaphore->basePriority);
 			semaphore->owner = NULL;
 		}
 		
@@ -79,6 +78,7 @@ uint8_t threads_semaphoreSignal(struct kLockStruct_t* semaphore)
 			if (temp->lock == semaphore) {
 				if (temp->state == KSTATE_BLOCKED) {
 					taskmgr_setTaskState(temp, KSTATE_READY);
+					runningTask->lock = NULL;
 				}
 			}
 			temp = temp->taskList.next;
