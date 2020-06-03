@@ -19,7 +19,6 @@ void taskmgr_initScheduler(kTaskHandle_t idle)
 	for (uint16_t i = 0; i < CFG_NUMBER_OF_PRIORITIES; i++) {
 		kPriorityQueue[i].head = NULL;
 		kPriorityQueue[i].tail = NULL;
-		kPriorityQueue[i].idx = 0;
 	}
 	kPriorityQueue[KPRIO_IDLE].head = idle;
 	kPriorityQueue[KPRIO_IDLE].tail = idle;
@@ -39,7 +38,6 @@ static void taskmgr_addTaskToSchedulingList(kTaskHandle_t task)
 	if (kPriorityQueue[task->priority].head == NULL) {
 		kPriorityQueue[task->priority].head = task;
 	}
-	kPriorityQueue[task->priority].idx++;
 }
 
 void taskmgr_scheduleTask(kTaskHandle_t task)
@@ -63,7 +61,6 @@ static void taskmgr_removeTaskFromSchedulingList(uint8_t priority)
 			kPriorityQueue[priority].tail = NULL;
 		}
 	}
-	kPriorityQueue[priority].idx--;
 }
 
 void taskmgr_unscheduleTask(kTaskHandle_t task)
@@ -80,7 +77,6 @@ void taskmgr_unscheduleTask(kTaskHandle_t task)
 		if (task->schedulingList.prev != NULL) {
 			task->schedulingList.prev->schedulingList.next = task->schedulingList.next;
 		}
-		kPriorityQueue[task->priority].idx--;
 	}
 }
 
@@ -116,8 +112,8 @@ static inline void taskmgr_tickTasks()
 
 static inline void taskmgr_search()
 {
-	for (uint16_t i = CFG_NUMBER_OF_PRIORITIES-1; i != 0; i--) {
-		if (kPriorityQueue[i].idx) {
+	for (uint16_t i = CFG_NUMBER_OF_PRIORITIES-1; i > 0; i--) {
+		if (kPriorityQueue[i].head != NULL) {
 			taskmgr_assign(kPriorityQueue[i].head);
 			if (kPriorityQueue[i].head->state == KSTATE_RUNNING) kPriorityQueue[i].head->state = KSTATE_READY;
 			taskmgr_removeTaskFromSchedulingList(kPriorityQueue[i].head->priority);

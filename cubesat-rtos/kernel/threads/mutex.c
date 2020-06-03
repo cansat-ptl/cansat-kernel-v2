@@ -12,6 +12,8 @@ struct kLockStruct_t threads_mutexInit()
 	struct kLockStruct_t mutex;
 	mutex.type = KLOCK_MUTEX;
 	mutex.lockCount = 1;
+	mutex.basePriority = 0;
+	mutex.priority = 0;
 	return mutex;
 }
 

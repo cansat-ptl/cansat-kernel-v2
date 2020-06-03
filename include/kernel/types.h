@@ -84,6 +84,8 @@ struct kLockStruct_t
 	kTaskHandle_t owner;
 	uint8_t lockCount;
 	kLockType_t type;
+	uint8_t basePriority;
+	uint8_t priority;
 };
 
 struct kIPCStruct_t
@@ -111,7 +113,6 @@ struct kListItemStruct_t
 struct kSchedulerQueueStruct_t
 {
 	kTaskHandle_t head;
-	uint8_t idx;
 	kTaskHandle_t tail;
 };
 

@@ -122,6 +122,11 @@ kTask simpleTask11(void* args)
 		debug_puts(L_INFO, PSTR("Task 12 executes\r\n"));
 		taskmgr_yield(200);
 		_delay_ms(10);
+		debug_logMessage(PGM_ON, L_INFO, PSTR("Removing tasks\r\n"));
+			taskmgr_removeTask(t1);
+			taskmgr_removeTask(t2);
+			taskmgr_removeTask(t3);
+			while(1);
 	}
 }
 
@@ -137,7 +142,7 @@ void simpleService1()
 
 void simpleService2()
 {
-	debug_logMessage(PGM_ON, L_INFO, PSTR("Example systemd service 2\r\n"));
+	//debug_logMessage(PGM_ON, L_INFO, PSTR("Removing tasks from systemd service\r\n"));
 }
 
 void user_preinit()
@@ -152,15 +157,10 @@ void user_init()
 	//static char test[] = "test arg string";
 	systemd_addService(SDSERVICE_REPEATED, simpleService, 100, SDSTATE_ACTIVE);
 	systemd_addService(SDSERVICE_REPEATED, simpleService1, 200, SDSTATE_ACTIVE);
-	systemd_addService(SDSERVICE_REPEATED, simpleService2, 300, SDSTATE_ACTIVE);
+	systemd_addService(SDSERVICE_SINGLERUN, simpleService2, 5000, SDSTATE_ACTIVE);
 
 	mutex0 = threads_mutexInit();
 	semaphore0 = threads_semaphoreInit(2);
-	//kernel_createTask(simpleTask3, NULL, 250, 5, KTASK_USER, "task1");
-	//kernel_createTask(simpleTask4, NULL, 250, 5, KTASK_USER, "task2");
-	//kernel_createTask(simpleTask5, NULL, 250, 4, KTASK_USER, "task1");
-	//kernel_createTask(simpleTask6, NULL, 250, 4, KTASK_USER, "task2");
-	//kernel_createTask(simpleTask7, NULL, 250, 4, KTASK_USER, "task1");
 	return;
 }
 
@@ -173,9 +173,9 @@ void user_postinit()
 	taskmgr_createTask(simpleTask4, NULL, 128, 3, KTASK_USER, "task5");
 	taskmgr_createTask(simpleTask5, NULL, 128, 2, KTASK_USER, "task6");
 	taskmgr_createTask(simpleTask6, NULL, 128, 4, KTASK_USER, "task7");
-	taskmgr_createTask(simpleTask7, NULL, 128, 7, KTASK_USER, "task8");
-	taskmgr_createTask(simpleTask8, NULL, 128, 7, KTASK_USER, "task9");
-	taskmgr_createTask(simpleTask9, NULL, 128, 7, KTASK_USER, "task10");
+	t3 = taskmgr_createTask(simpleTask7, NULL, 128, 7, KTASK_USER, "task8");
+	t2 = taskmgr_createTask(simpleTask8, NULL, 128, 7, KTASK_USER, "task9");
+	t1 = taskmgr_createTask(simpleTask9, NULL, 128, 7, KTASK_USER, "task10");
 	taskmgr_createTask(simpleTask10, NULL, 128, 2, KTASK_USER, "task11");
 	taskmgr_createTask(simpleTask11, NULL, 128, 2, KTASK_USER, "task12");
 	return;
