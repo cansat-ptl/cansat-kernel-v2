@@ -102,17 +102,17 @@ struct kEventStruct_t
 	uint16_t eventFlags;
 };
 
-struct kListItemStruct_t
-{
-	kTaskHandle_t next;
-	kTaskHandle_t prev;
-};
-
-struct kSchedulerQueueStruct_t
+struct kLinkedListStruct_t
 {
 	kTaskHandle_t head;
-	uint8_t idx;
 	kTaskHandle_t tail;
+};
+
+struct kListItemStruct_t
+{
+	struct kLinkedListStruct_t* list;
+	kTaskHandle_t next;
+	kTaskHandle_t prev;
 };
 
 struct kTaskStruct_t
@@ -130,9 +130,8 @@ struct kTaskStruct_t
 	uint8_t priority;
 	uint8_t pid;
 	uint8_t flags;
-	struct kListItemStruct_t taskList;
-	struct kListItemStruct_t schedulingList;
 	char* name;
+	struct kListItemStruct_t taskList;
 };
 
 struct kMemoryBlockStruct_t

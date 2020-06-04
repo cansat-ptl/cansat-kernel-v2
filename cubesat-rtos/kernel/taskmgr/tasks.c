@@ -57,12 +57,12 @@ uint8_t taskmgr_init(kTask_t idle)
 	return 0;
 }
 
-void taskmgr_setTaskState(kTaskHandle_t task, kTaskState_t t_state)
+void taskmgr_setTaskState(kTaskHandle_t task, kTaskState_t state)
 {
 	kStatusRegister_t sreg = threads_startAtomicOperation();
 	
 	if (task != NULL) {
-		task -> state = t_state;
+		task->state = state;
 	}	
 	
 	threads_endAtomicOperation(sreg);
@@ -110,41 +110,16 @@ static inline void taskmgr_setupTaskStructure(kTaskHandle_t task, \
 	task -> name = name;
 	task -> taskList.next = NULL;
 	task -> taskList.prev = NULL;
-	task -> schedulingList.next = NULL;
-	task -> schedulingList.prev = NULL;
 }
 
 static void taskmgr_addTaskToTaskList(kTaskHandle_t newTask) 
 {
-	newTask->taskList.next = NULL;
-	newTask->taskList.prev = kTaskListTail;
-	
-	if (kTaskListTail) {
-		kTaskListTail->taskList.next = newTask;
-	}
-	
-	kTaskListTail = newTask;
-	
-	if (kTaskListHead == NULL) {
-		kTaskListHead = newTask;
-	}
+
 }
 
 static void taskmgr_removeTaskFromTaskList(kTaskHandle_t task) 
 {
-	if (task != NULL) {
-		if (kTaskListHead == task) {
-			kTaskListHead = task->taskList.next;
-		}
-		
-		if (task->taskList.next != NULL) {
-			task->taskList.next->taskList.prev = task->taskList.prev;
-		}
-
-		if (task->taskList.prev != NULL) {
-			task->taskList.prev->taskList.next = task->taskList.next;
-		}
-	}
+	
 }
 
 void _debug_taskmgr_printTasks() 
