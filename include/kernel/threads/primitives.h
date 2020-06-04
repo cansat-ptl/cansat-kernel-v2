@@ -28,8 +28,8 @@ uint8_t threads_mutexLock(struct kLockStruct_t* mutex);
 uint8_t threads_mutexUnlock(struct kLockStruct_t* mutex);
 
 struct kLockStruct_t threads_semaphoreInit(uint8_t resourceAmount);
-uint8_t threads_semaphoreWait(struct kLockStruct_t* semaphore);
-uint8_t threads_semaphoreSignal(struct kLockStruct_t* semaphore);
+uint8_t threads_semaphoreWait(volatile struct kLockStruct_t* semaphore);
+uint8_t threads_semaphoreSignal(volatile struct kLockStruct_t* semaphore);
 
 void threads_spinlockAcquire(kSpinlock_t* spinlock);
 void threads_spinlockRelease(kSpinlock_t* spinlock);

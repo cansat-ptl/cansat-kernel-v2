@@ -11,10 +11,10 @@
 
 #include <kernel/kernel.h>
 
-void taskmgr_listAddBack(struct kLinkedListStruct_t* list, kTaskHandle_t task);
-void taskmgr_listDropBack(struct kLinkedListStruct_t* list);
-void taskmgr_listAddFront(struct kLinkedListStruct_t* list, kTaskHandle_t task);
-void taskmgr_listDropFront(struct kLinkedListStruct_t* list);
-void taskmgr_listDeleteAny(struct kLinkedListStruct_t* list, kTaskHandle_t task);
+void taskmgr_listAddBack(volatile struct kLinkedListStruct_t* list, kTaskHandle_t task);
+void taskmgr_listDropBack(volatile struct kLinkedListStruct_t* list);
+void taskmgr_listAddFront(volatile struct kLinkedListStruct_t* list, kTaskHandle_t task);
+void taskmgr_listDropFront(volatile struct kLinkedListStruct_t* list);
+void taskmgr_listDeleteAny(volatile struct kLinkedListStruct_t* list, kTaskHandle_t task);
 
 #endif /* LISTUTILS_H_ */

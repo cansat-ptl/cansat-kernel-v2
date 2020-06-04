@@ -10,15 +10,15 @@
 void threads_spinlockAcquire(kSpinlock_t* spinlock) 
 {
 	while(1) {
-		kStatusRegister_t sreg = threads_startAtomicOperation();
 		if(*spinlock == 0) {
+			kStatusRegister_t sreg = threads_startAtomicOperation();
 			if(*spinlock == 0) {
 				*spinlock = 1;
 				threads_endAtomicOperation(sreg);
 				return;
 			}
+			threads_endAtomicOperation(sreg);
 		}
-		threads_endAtomicOperation(sreg);
 	}
 }
 

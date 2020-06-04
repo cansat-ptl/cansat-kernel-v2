@@ -109,7 +109,7 @@ inline void debug_sendMessage_p(uint8_t level, const char * format, va_list args
 
 void debug_puts(uint8_t level, const char * format)
 {
-	uint16_t kflags = threads_startCriticalSection();
+	kStatusRegister_t sreg = threads_startAtomicOperation();
 
 	if (level != 0u) {
 
@@ -132,12 +132,12 @@ void debug_puts(uint8_t level, const char * format)
 		hal_UART_PUTC(hal_READ_BYTE_FROM_FLASH(format++)); //-V2573 //-V2571
     }
 
-	threads_endCriticalSection(kflags);
+	threads_endAtomicOperation(sreg);
 }
 
 void debug_logMessage(uint8_t pgm, uint8_t level, const char * format, ...)
 {
-	uint16_t kflags = threads_startCriticalSection();
+	kStatusRegister_t sreg = threads_startAtomicOperation();
 	va_list args;
 
 	va_start(args, format);
@@ -156,5 +156,5 @@ void debug_logMessage(uint8_t pgm, uint8_t level, const char * format, ...)
         break;
 	}
 	va_end(args);
-	threads_endCriticalSection(kflags);
+	threads_endAtomicOperation(sreg);
 }

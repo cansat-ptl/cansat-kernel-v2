@@ -22,6 +22,8 @@ static volatile kStackPtr_t kStackPointer = &kReservedMemory[CFG_KERNEL_RESERVED
 
 static inline void taskmgr_switchTask();
 void taskmgr_schedule();
+void taskmgr_setActiveTicks(uint16_t activeTicks);
+void taskmgr_setKernelTicks(uint16_t activeTicks);
 
 inline void kernel_saveContext()
 {
@@ -85,6 +87,8 @@ static inline void taskmgr_switchTask()
 void taskmgr_yield(uint16_t sleep) 
 {
 	kernel_saveContext();
+	
+	taskmgr_setActiveTicks(0);
 	
 	if (sleep != 0) {
 		taskmgr_setTaskState(kCurrentTask, KSTATE_SLEEPING);

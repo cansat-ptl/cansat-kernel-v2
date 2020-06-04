@@ -15,9 +15,21 @@ extern volatile uint16_t _kflags;
 
 struct kLinkedListStruct_t* taskmgr_getReadyTaskListArray();
 
+void taskmgr_setActiveTicks(uint16_t activeTicks)
+{
+	kTaskActiveTicks = activeTicks;
+}
+
+void taskmgr_setKernelTicks(uint16_t activeTicks)
+{
+	kTickRate = 0;
+}
+
 void taskmgr_initScheduler(kTaskHandle_t idle)
 {
-
+	struct kLinkedListStruct_t* priorityQueues = taskmgr_getReadyTaskListArray();
+	priorityQueues[KPRIO_IDLE].head = idle;
+	priorityQueues[KPRIO_IDLE].tail = idle;
 }
 
 static inline void taskmgr_assign(kTaskHandle_t task)
@@ -29,7 +41,7 @@ static inline void taskmgr_assign(kTaskHandle_t task)
 //WHAT THE HELL AM I DOING SOMEBODY PLEASE HELP ME
 static inline void taskmgr_tickTasks()
 {
-	struct kLinkedListStruct_t* sleepingList = taskmgr_getSleepingTaskListPtr();
+	volatile struct kLinkedListStruct_t* sleepingList = taskmgr_getSleepingTaskListPtr();
 	kTaskHandle_t temp = sleepingList->head;
 	
 	while (temp != NULL) {
@@ -49,6 +61,9 @@ static inline void taskmgr_search()
 	for (int16_t i = CFG_NUMBER_OF_PRIORITIES-1; i >= 0; i--) {
 		if (priorityQueues[i].head != NULL) {
 			taskmgr_assign(priorityQueues[i].head);
+			kTaskHandle_t temp = priorityQueues[i].head;
+			taskmgr_listDropFront(&priorityQueues[i]);
+			taskmgr_listAddBack(&priorityQueues[i], temp);
 			break;
 		}
 	}
@@ -58,20 +73,19 @@ void taskmgr_schedule()
 {
 	if (!kTickRate) {
 		taskmgr_tickTasks();
-		
-		if (kTaskActiveTicks) {
-			kTaskActiveTicks--;
-		}
-		else {
-			if (utils_CHECK_BIT(_kflags, KFLAG_CSW_ALLOWED)) {
-				taskmgr_search();
-			}
-		}
-		
 		kTickRate = CFG_TICKRATE_MS;
 	}
 	else {
 		kTickRate--;
+	}
+	
+	if (kTaskActiveTicks) {
+		kTaskActiveTicks--;
+	}
+	else {
+		if (utils_CHECK_BIT(_kflags, KFLAG_CSW_ALLOWED)) {
+			taskmgr_search();
+		}
 	}
 	return;
 }

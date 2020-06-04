@@ -64,13 +64,13 @@ typedef enum {KLOCK_SEMAPHORE, KLOCK_MUTEX, KLOCK_SEMAPHORE_RECURSIVE} kLockType
 typedef volatile struct kTaskStruct_t* kTaskHandle_t;
 typedef volatile struct kTimerStruct_t* kTimerHandle_t;
 
-typedef struct kLockStruct_t kMutex_t;
-typedef struct kLockStruct_t kSemaphore_t;
-typedef uint8_t kSpinlock_t;
+typedef volatile struct kLockStruct_t kMutex_t;
+typedef volatile struct kLockStruct_t kSemaphore_t;
+typedef volatile uint8_t kSpinlock_t;
 
-typedef kMutex_t* kMutexHandle_t;
-typedef kSemaphore_t* kSemaphoreHandle_t;
-typedef kSpinlock_t* kSpinlockHandle_t;
+typedef volatile kMutex_t* kMutexHandle_t;
+typedef volatile kSemaphore_t* kSemaphoreHandle_t;
+typedef volatile kSpinlock_t* kSpinlockHandle_t;
 
 typedef struct kIPCStruct_t kLifo_t;
 typedef struct kIPCStruct_t kFifo_t;
@@ -87,7 +87,7 @@ struct kLinkedListStruct_t
 
 struct kListItemStruct_t
 {
-	struct kLinkedListStruct_t* list;
+	volatile struct kLinkedListStruct_t* list;
 	kTaskHandle_t next;
 	kTaskHandle_t prev;
 };
@@ -123,8 +123,8 @@ struct kTaskStruct_t
 	void* args;
 	kStackPtr_t stackBegin;
 	kStackSize_t stackSize;
-	struct kLockStruct_t* lock;
-	struct kEventStruct_t* notification;
+	volatile struct kLockStruct_t* lock;
+	volatile struct kEventStruct_t* notification;
 	kTaskState_t state;
 	uint16_t sleepTime;
 	kTaskType_t type;

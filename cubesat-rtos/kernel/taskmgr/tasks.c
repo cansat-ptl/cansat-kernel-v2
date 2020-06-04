@@ -22,17 +22,17 @@ void taskmgr_setKernelStackPointer(kStackPtr_t pointer); //TODO: add to header
 void taskmgr_setIdleTask(kTaskHandle_t idle);
 void taskmgr_initScheduler(kTaskHandle_t idle);
 
-struct kLinkedListStruct_t* taskmgr_getReadyTaskListArray()
+volatile struct kLinkedListStruct_t* taskmgr_getReadyTaskListArray()
 {
 	return kReadyTaskList;
 }
 
-struct kLinkedListStruct_t* taskmgr_getReadyTaskListPtr(uint8_t priority)
+volatile struct kLinkedListStruct_t* taskmgr_getReadyTaskListPtr(uint8_t priority)
 {
 	return &kReadyTaskList[priority];
 }
 
-struct kLinkedListStruct_t* taskmgr_getSleepingTaskListPtr()
+volatile struct kLinkedListStruct_t* taskmgr_getSleepingTaskListPtr()
 {
 	return &kSleepingTaskList;
 }
@@ -55,8 +55,6 @@ uint8_t taskmgr_init(kTask_t idle)
 	
 	rMemory += CFG_KERNEL_RESERVED_MEMORY + CFG_KERNEL_STACK_FRAME_REGISTER_OFFSET + CFG_KERNEL_STACK_FRAME_END_OFFSET;
 	taskmgr_setKernelStackPointer(rMemory);
-
-	taskmgr_setTaskState(&kIdleTaskStruct, KSTATE_READY);
 		
 	taskmgr_initScheduler(&kIdleTaskStruct);
 	taskmgr_setCurrentTask(&kIdleTaskStruct);
@@ -65,7 +63,6 @@ uint8_t taskmgr_init(kTask_t idle)
 	return 0;
 }
 
-//typedef enum {KSTATE_UNINIT, KSTATE_SUSPENDED, KSTATE_SLEEPING, KSTATE_BLOCKED, KSTATE_READY, KSTATE_RUNNING} kTaskState_t;
 void taskmgr_setTaskState(kTaskHandle_t task, kTaskState_t state)
 {
 	kStatusRegister_t sreg = threads_startAtomicOperation();
@@ -249,4 +246,5 @@ uint8_t taskmgr_removeTask(kTaskHandle_t handle)
 	}
 	
 	threads_endAtomicOperation(sreg);
+	return 0;
 }

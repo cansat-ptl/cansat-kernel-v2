@@ -7,87 +7,95 @@
 
 #include "listutils.h"
 
-void taskmgr_listAddBack(struct kLinkedListStruct_t* list, kTaskHandle_t task)
+void taskmgr_listAddBack(volatile struct kLinkedListStruct_t* list, kTaskHandle_t task)
 {
-	task->taskList.next = NULL;
-	task->taskList.prev = list->tail;
-	
-	if (list->tail != NULL) {
-		list->tail->taskList.next = task;
+	if (list != NULL && task != NULL) {
+		task->taskList.next = NULL;
+		task->taskList.prev = list->tail;
+		
+		if (list->tail != NULL) {
+			list->tail->taskList.next = task;
+		}
+		
+		list->tail = task;
+		
+		if (list->head == NULL) {
+			list->head = task;
+		}
+		
+		task->taskList.list = list;
 	}
-	
-	list->tail = task;
-	
-	if (list->head == NULL) {
-		list->head = task;
-	}
-	
-	task->taskList.list = list;
 	return;
 }
 
-void taskmgr_listDropBack(struct kLinkedListStruct_t* list) 
+void taskmgr_listDropBack(volatile struct kLinkedListStruct_t* list) 
 {
 	kTaskHandle_t next;
 	
-	if (list->tail != NULL) {
-		next = list->tail;
-		list->tail = list->tail->taskList.prev;
-		
+	if (list != NULL) {
 		if (list->tail != NULL) {
-			list->tail->taskList.next = NULL;
+			next = list->tail;
+			list->tail = list->tail->taskList.prev;
+			
+			if (list->tail != NULL) {
+				list->tail->taskList.next = NULL;
+			}
+			
+			if (next == list->head) {
+				list->head = NULL;
+			}
+			
+			next->taskList.list = NULL;
 		}
-		
-		if (next == list->head) {
-			list->head = NULL;
-		}
-		
-		next->taskList.list = NULL;
 	}
 	return;
 }
 
-void taskmgr_listAddFront(struct kLinkedListStruct_t* list, kTaskHandle_t task)
+void taskmgr_listAddFront(volatile struct kLinkedListStruct_t* list, kTaskHandle_t task)
 {
-	task->taskList.next = list->head;
-	task->taskList.prev = NULL;
+	if (list != NULL && task != NULL) {
+		task->taskList.next = list->head;
+		task->taskList.prev = NULL;
 	
-	if (list->head != NULL) {
-		list->head->taskList.prev = task;
+		if (list->head != NULL) {
+			list->head->taskList.prev = task;
+		}
+	
+		list->head = task;
+	
+		if (list->tail == NULL) {
+			list->tail = task;
+		}
+	
+		task->taskList.list = list;
 	}
-	
-	list->head = task;
-	
-	if (list->tail == NULL) {
-		list->tail = task;
-	}
-	
-	task->taskList.list = list;
 	return;
 }
 
-void taskmgr_listDropFront(struct kLinkedListStruct_t* list)
+void taskmgr_listDropFront(volatile struct kLinkedListStruct_t* list)
 {
 	kTaskHandle_t prev;
 	
-	if (list->head != NULL) {
-		prev = list->head;
-		list->head = list->head->taskList.next;
-		
+	if (list != NULL) {
 		if (list->head != NULL) {
-			list->head->taskList.prev = NULL;
+			prev = list->head;
+			list->head = list->head->taskList.next;
+			
+			if (list->head != NULL) {
+				list->head->taskList.prev = NULL;
+			}
+			
+			if (prev == list->tail) {
+				list->tail = NULL;
+			}
+			
+			prev->taskList.list = NULL;
 		}
-		
-		if (prev == list->tail) {
-			list->tail = NULL;
-		}
-		
-		prev->taskList.list = NULL;
 	}
 	return;
 }
 
-void taskmgr_listDeleteAny(struct kLinkedListStruct_t* list, kTaskHandle_t task)
+void taskmgr_listDeleteAny(volatile struct kLinkedListStruct_t* list, kTaskHandle_t task)
 {
 	if (list != NULL && task != NULL) {
 		if (list->head == task) {
