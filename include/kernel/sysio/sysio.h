@@ -13,6 +13,13 @@
 #include <kernel/kernel.h>
 #include <stdio.h>
 
+struct kIODevStruct_t;
+{
+	FILE* dev_stdin;
+	FILE* dev_stdout;
+	FILE* dev_stderr;
+};
+
 int sysio_fopen(kSystemIOHandle_t handle, uint8_t flags);
 
 int sysio_read(int fd, void* rbuf, size_t amount);

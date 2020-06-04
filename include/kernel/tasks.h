@@ -26,13 +26,16 @@ kTaskHandle_t taskmgr_createTask(kTask_t entry, void* args, kStackSize_t stackSi
 
 uint8_t taskmgr_removeTask(kTaskHandle_t handle);
 
+uint8_t taskmgr_setTaskPriority(kTaskHandle_t task, uint8_t priority);
 void taskmgr_setTaskState(kTaskHandle_t t_handle, kTaskState_t t_state);
 
 kTaskHandle_t taskmgr_getCurrentTaskHandle();
 kTaskHandle_t taskmgr_getNextTaskHandle();
-kTaskHandle_t taskmgr_getTaskListPtr();
+
+volatile struct kLinkedListStruct_t* taskmgr_getReadyTaskListPtr(uint8_t priority);
+volatile struct kLinkedListStruct_t* taskmgr_getSleepingTaskListPtr();
+
 kTaskHandle_t taskmgr_getIdleTaskHandle();
-uint8_t taskmgr_getTaskListIndex();
 kStackPtr_t taskmgr_getReservedMemoryPointer();
 void taskmgr_setCurrentTask(kTaskHandle_t taskHandle);
 void taskmgr_setNextTask(kTaskHandle_t taskHandle);

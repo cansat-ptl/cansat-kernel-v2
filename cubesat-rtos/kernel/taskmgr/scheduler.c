@@ -6,90 +6,81 @@
  */
 
 #include <kernel/kernel.h>
-
-static volatile kTaskHandle_t kSchedulingList;
-static volatile kTaskHandle_t kNextTask;
-static volatile kTaskHandle_t kCurrentTask;
-static volatile kTaskHandle_t kIdleTask;
-
-static volatile uint8_t kCurrentTaskIndex;
-static volatile uint8_t kNextTaskIndex;
+#include "listutils.h"
 
 static volatile uint8_t kTickRate = 0;
 static volatile uint16_t kTaskActiveTicks = 0;
 
 extern volatile uint16_t _kflags;
 
-kTaskHandle_t taskmgr_getIdleTaskHandle()
+struct kLinkedListStruct_t* taskmgr_getReadyTaskListArray();
+
+void taskmgr_setActiveTicks(uint16_t activeTicks)
 {
-	return kIdleTask;
+	kTaskActiveTicks = activeTicks;
 }
 
 void taskmgr_initScheduler(kTaskHandle_t idle)
 {
-	kIdleTask = idle;
-	kCurrentTask = idle;
-	kNextTask = idle;
+	struct kLinkedListStruct_t* priorityQueues = taskmgr_getReadyTaskListArray();
+	priorityQueues[KPRIO_IDLE].head = idle;
+	priorityQueues[KPRIO_IDLE].tail = idle;
 }
 
-static inline void taskmgr_assign()
+static inline void taskmgr_assign(kTaskHandle_t task)
 {
-	taskmgr_setNextTask(kNextTask);
-	kCurrentTask = kNextTask;
-	kCurrentTaskIndex = kNextTaskIndex;
+	taskmgr_setNextTask(task);
 	kTaskActiveTicks = CFG_TICKS_PER_TASK;
-	kNextTask = kIdleTask;
-	kNextTaskIndex = 0;
-	return;
 }
+
 //WHAT THE HELL AM I DOING SOMEBODY PLEASE HELP ME
+static inline void taskmgr_tickTasks()
+{
+	volatile struct kLinkedListStruct_t* sleepingList = taskmgr_getSleepingTaskListPtr();
+	kTaskHandle_t temp = sleepingList->head;
+	
+	while (temp != NULL) {
+		if (temp->sleepTime) {
+			temp->sleepTime--;
+		}
+		else {
+			taskmgr_setTaskState(temp, KSTATE_READY);
+		}
+		temp = temp->taskList.next;
+	}
+}
+
 static inline void taskmgr_search()
 {
-	register kTaskHandle_t temp = taskmgr_getTaskListPtr();
-	register uint8_t found = 0;
-	while(temp != NULL) {
-		if (temp->state == KSTATE_SLEEPING) {
-			if (temp->sleepTime) temp->sleepTime--;
-			else temp->state = KSTATE_READY;
+	struct kLinkedListStruct_t* priorityQueues = taskmgr_getReadyTaskListArray();
+	for (int16_t i = CFG_NUMBER_OF_PRIORITIES-1; i >= 0; i--) {
+		if (priorityQueues[i].head != NULL) {
+			taskmgr_assign(priorityQueues[i].head);
+			kTaskHandle_t temp = priorityQueues[i].head;
+			taskmgr_listDropFront(&priorityQueues[i]);
+			taskmgr_listAddBack(&priorityQueues[i], temp);
+			break;
 		}
-		
-		if (hal_CHECK_BIT(_kflags, KFLAG_CSW_ALLOWED) && !found) {
-			if (temp->state == KSTATE_READY) {
-				if (temp->priority > kCurrentTask->priority) {
-					kNextTask = temp;
-					found = 1;
-					continue;
-				}
-				else if (temp->priority == kCurrentTask->priority) {
-					if (kNextTaskIndex > kCurrentTaskIndex) {
-						kNextTask = temp;
-						found = 1;
-						continue;
-					}
-				}
-				else {
-					kNextTask = temp;
-					found = 1;
-					continue;
-				}
-				kNextTaskIndex++;
-			}
-		}
-		temp = temp->next;
 	}
-	if (kTaskActiveTicks) kTaskActiveTicks--;
-	if (found) taskmgr_assign();
-	return;
 }
 
 void taskmgr_schedule()
 {
 	if (!kTickRate) {
-		taskmgr_search();
+		taskmgr_tickTasks();
 		kTickRate = CFG_TICKRATE_MS;
 	}
 	else {
 		kTickRate--;
+	}
+	
+	if (kTaskActiveTicks) {
+		kTaskActiveTicks--;
+	}
+	else {
+		if (utils_CHECK_BIT(_kflags, KFLAG_CSW_ALLOWED)) {
+			taskmgr_search();
+		}
 	}
 	return;
 }

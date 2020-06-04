@@ -9,6 +9,7 @@
 #include <kernel/kernel.h>
 #include <kernel/hal/hal.h>
 #include "../kernel_config.h"
+#include "listutils.h"
 
 static volatile struct kTaskStruct_t *kCurrentTask;
 static volatile struct kTaskStruct_t *kNextTask;
@@ -21,6 +22,8 @@ static volatile kStackPtr_t kStackPointer = &kReservedMemory[CFG_KERNEL_RESERVED
 
 static inline void taskmgr_switchTask();
 void taskmgr_schedule();
+void taskmgr_setActiveTicks(uint16_t activeTicks);
+void taskmgr_setKernelTicks(uint16_t activeTicks);
 
 inline void kernel_saveContext()
 {
@@ -85,8 +88,10 @@ void taskmgr_yield(uint16_t sleep)
 {
 	kernel_saveContext();
 	
+	taskmgr_setActiveTicks(0);
+	
 	if (sleep != 0) {
-		kCurrentTask -> state = KSTATE_SLEEPING;
+		taskmgr_setTaskState(kCurrentTask, KSTATE_SLEEPING);
 		kCurrentTask -> sleepTime = sleep;
 	}
 	

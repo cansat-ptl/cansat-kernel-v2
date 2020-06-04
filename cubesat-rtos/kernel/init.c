@@ -4,7 +4,7 @@
  * Created: 13.02.2020 22:38:32
  *  Author: Admin
  */
-#include <initd/initd.h>
+#include <kernel/kernel.h>
 
 void user_preinit();
 void user_init();
@@ -82,7 +82,7 @@ uint8_t kernel_startScheduler()
 	return 0;
 }
 
-void initd_startup()
+void kernel_startup()
 {
 	kernel_preinit();
 	debug_puts(L_INFO, PSTR("initd: Pre-init phase\r\n"));

@@ -13,14 +13,27 @@ volatile uint16_t _kflags = 0;
 volatile uint8_t _kTaskMgrFlags = 0;
 static volatile uint8_t _kSystemStatus = 0;
 
-void threads_enterCriticalSection()
+void threads_enterCriticalSection() //Deprecated
 {
 	kernel_DISABLE_CONTEXT_SWITCH();
 }
 
-void threads_exitCriticalSection()
+void threads_exitCriticalSection() //Deprecated
 {
 	kernel_ENABLE_CONTEXT_SWITCH();
+}
+
+uint16_t threads_startCriticalSection()
+{
+	uint16_t tempKflags = _kflags;
+	kernel_DISABLE_CONTEXT_SWITCH();
+	return tempKflags;
+}
+
+void threads_endCriticalSection(uint16_t kflags)
+{
+	kernel_ENABLE_CONTEXT_SWITCH();
+	_kflags = kflags;
 }
 
 void kernel_setFlag(uint8_t flag, uint8_t value)

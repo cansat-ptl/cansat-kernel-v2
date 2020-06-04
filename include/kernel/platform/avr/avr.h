@@ -43,6 +43,10 @@
 #define platform_RET() asm volatile ("ret \n\t" ::)
 #define platform_RETI() asm volatile ("reti \n\t" ::)
 
+#ifndef CFG_USE_RAMP_REGISTERS
+#define CFG_USE_RAMP_REGISTERS 0
+#endif
+
 #if CFG_USE_RAMP_REGISTERS == 0
 #define platform_RESTORE_CONTEXT() asm volatile ( \
 	";------Context-Restore------\n\t"\

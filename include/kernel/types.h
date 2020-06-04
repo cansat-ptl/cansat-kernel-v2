@@ -55,7 +55,7 @@ typedef void kTask;
 
 typedef uint8_t byte;
 
-typedef enum {KSTATE_UNINIT, KSTATE_SUSPENDED, KSTATE_SLEEPING, KSTATE_BLOCKED, KSTATE_SEMAPHORE, KSTATE_READY, KSTATE_RUNNING} kTaskState_t;
+typedef enum {KSTATE_UNINIT, KSTATE_SUSPENDED, KSTATE_SLEEPING, KSTATE_BLOCKED, KSTATE_READY, KSTATE_RUNNING} kTaskState_t;
 typedef enum {KEVENT_NONE, KEVENT_FIRED} kEventState_t;
 typedef enum {KTASK_USER, KTASK_SYSTEM} kTaskType_t;
 typedef enum {KTIMER_SINGLERUN, KTASK_REPEATED} kTimerType_t;
@@ -64,29 +64,43 @@ typedef enum {KLOCK_SEMAPHORE, KLOCK_MUTEX, KLOCK_SEMAPHORE_RECURSIVE} kLockType
 typedef volatile struct kTaskStruct_t* kTaskHandle_t;
 typedef volatile struct kTimerStruct_t* kTimerHandle_t;
 
-typedef struct kLock_t kMutex_t;
-typedef struct kLock_t kSemaphore_t;
-typedef uint8_t kSpinlock_t;
+typedef volatile struct kLockStruct_t kMutex_t;
+typedef volatile struct kLockStruct_t kSemaphore_t;
+typedef volatile uint8_t kSpinlock_t;
 
-typedef kMutex_t* kMutexHandle_t;
-typedef kSemaphore_t* kSemaphoreHandle_t;
-typedef kSpinlock_t* kSpinlockHandle_t;
+typedef volatile kMutex_t* kMutexHandle_t;
+typedef volatile kSemaphore_t* kSemaphoreHandle_t;
+typedef volatile kSpinlock_t* kSpinlockHandle_t;
 
-typedef struct kSystemIO_t kLifo_t;
-typedef struct kSystemIO_t kFifo_t;
+typedef struct kIPCStruct_t kLifo_t;
+typedef struct kIPCStruct_t kFifo_t;
 
-typedef struct kSystemIO_t* kLifoHandle_t;
-typedef struct kSystemIO_t* kFifoHandle_t;
-typedef struct kSystemIO_t* kSystemIOHandle_t;
+typedef struct kIPCStruct_t* kLifoHandle_t;
+typedef struct kIPCStruct_t* kFifoHandle_t;
+typedef struct kIPCStruct_t* kSystemIOHandle_t;
 
-struct kLock_t
+struct kLinkedListStruct_t
 {
-	kTaskHandle_t owner;
-	uint8_t lockCount;
-	kLockType_t type;
+	kTaskHandle_t head;
+	kTaskHandle_t tail;
 };
 
-struct kSystemIO_t
+struct kListItemStruct_t
+{
+	volatile struct kLinkedListStruct_t* list;
+	kTaskHandle_t next;
+	kTaskHandle_t prev;
+};
+
+struct kLockStruct_t
+{
+	uint8_t lockCount;
+	kLockType_t type;
+	uint8_t basePriority;
+	struct kLinkedListStruct_t blockedTasks;
+};
+
+struct kIPCStruct_t
 {
 	void* pointer;
 	size_t itemSize;
@@ -96,7 +110,7 @@ struct kSystemIO_t
 	size_t currentPosition;
 };
 
-struct kEvent_t
+struct kEventStruct_t
 {
 	kEventState_t state;
 	uint16_t eventFlags;
@@ -109,22 +123,21 @@ struct kTaskStruct_t
 	void* args;
 	kStackPtr_t stackBegin;
 	kStackSize_t stackSize;
-	struct kLock_t* lock;
-	struct kEvent_t notification;
+	volatile struct kLockStruct_t* lock;
+	volatile struct kEventStruct_t* notification;
 	kTaskState_t state;
 	uint16_t sleepTime;
 	kTaskType_t type;
 	uint8_t priority;
-	uint8_t pid;
 	uint8_t flags;
+	uint16_t pid;
 	char* name;
-	kTaskHandle_t next;
-	kTaskHandle_t prev;
+	struct kListItemStruct_t taskList;
 };
 
-struct kMemoryBlock_t
+struct kMemoryBlockStruct_t
 {
-	struct kMemoryBlock_t* next;
+	struct kMemoryBlockStruct_t* next;
 	size_t blockSize;
 	uint8_t state;
 };
@@ -136,7 +149,7 @@ struct kTimerStruct_t
 	uint32_t repeatPeriod;
 };
 
-struct kSystemTime_t
+struct kSystemTimeStruct_t
 {
 	uint16_t days;
 	uint8_t hours;

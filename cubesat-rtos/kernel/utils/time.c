@@ -7,7 +7,7 @@
 
 #include <kernel/kernel.h>
 
-static struct kSystemTime_t kSystemTime;
+static struct kSystemTimeStruct_t kSystemTime;
 /*
 struct kSystemTime_t {
 	uint16_t days;
