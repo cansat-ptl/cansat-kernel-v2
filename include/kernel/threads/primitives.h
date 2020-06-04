@@ -24,8 +24,8 @@ void threads_notificationWait();
 uint8_t threads_notificationSend(kTaskHandle_t taskToNotify, uint16_t flags);
 
 struct kLockStruct_t threads_mutexInit();
-uint8_t threads_mutexLock(struct kLockStruct_t* mutex);
-uint8_t threads_mutexUnlock(struct kLockStruct_t* mutex);
+uint8_t threads_mutexLock(volatile struct kLockStruct_t* mutex);
+uint8_t threads_mutexUnlock(volatile struct kLockStruct_t* mutex);
 
 struct kLockStruct_t threads_semaphoreInit(uint8_t resourceAmount);
 uint8_t threads_semaphoreWait(volatile struct kLockStruct_t* semaphore);

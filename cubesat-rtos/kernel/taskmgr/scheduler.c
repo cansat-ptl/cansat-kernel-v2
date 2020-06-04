@@ -20,11 +20,6 @@ void taskmgr_setActiveTicks(uint16_t activeTicks)
 	kTaskActiveTicks = activeTicks;
 }
 
-void taskmgr_setKernelTicks(uint16_t activeTicks)
-{
-	kTickRate = 0;
-}
-
 void taskmgr_initScheduler(kTaskHandle_t idle)
 {
 	struct kLinkedListStruct_t* priorityQueues = taskmgr_getReadyTaskListArray();

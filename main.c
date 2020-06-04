@@ -22,11 +22,11 @@ kTask simpleTask(void* args)
 {
 	debug_puts(L_INFO, PSTR("Task 1 starts\r\n"));
 	while (1) {
-		threads_semaphoreWait(&mutex0);
+		threads_mutexLock(&mutex0);
 		debug_puts(L_INFO, PSTR("Task 1 locks mutex\r\n"));
 		taskmgr_yield(100);
 		debug_puts(L_INFO, PSTR("Task 1 unlocks mutex\r\n"));
-		threads_semaphoreSignal(&mutex0);
+		threads_mutexUnlock(&mutex0);
 		taskmgr_yield(100);
 	}
 }
@@ -35,11 +35,11 @@ kTask simpleTask1(void* args)
 {
 	debug_puts(L_INFO, PSTR("Task 2 starts\r\n"));
 	while (1) {
-		threads_semaphoreWait(&mutex0);
+		threads_mutexLock(&mutex0);
 		debug_puts(L_INFO, PSTR("Task 2 locks mutex\r\n"));
 		taskmgr_yield(100);
 		debug_puts(L_INFO, PSTR("Task 2 unlocks mutex\r\n"));
-		threads_semaphoreSignal(&mutex0);
+		threads_mutexUnlock(&mutex0);
 		taskmgr_yield(100);
 	}
 }
@@ -48,11 +48,11 @@ kTask simpleTask2(void* args)
 {
 	debug_puts(L_INFO, PSTR("Task 3 starts\r\n"));
 	while (1) {
-		threads_semaphoreWait(&mutex0);
+		threads_mutexLock(&mutex0);
 		debug_puts(L_INFO, PSTR("Task 3 locks mutex\r\n"));
 		taskmgr_yield(100);
 		debug_puts(L_INFO, PSTR("Task 3 unlocks mutex\r\n"));
-		threads_semaphoreSignal(&mutex0);
+		threads_mutexUnlock(&mutex0);
 		taskmgr_yield(100);
 	}
 }
@@ -62,11 +62,11 @@ kTask simpleTask3(void* args)
 	debug_puts(L_INFO, PSTR("Task 4 starts\r\n"));
 	//debug_puts(L_INFO, PSTR("\r\n"));
 	while (1) {	
-		threads_semaphoreWait(&mutex0);
+		threads_mutexLock(&mutex0);
 		debug_puts(L_INFO, PSTR("Task 4 locks mutex\r\n"));
 		taskmgr_yield(100);
 		debug_puts(L_INFO, PSTR("Task 4 unlocks mutex\r\n"));
-		threads_semaphoreSignal(&mutex0);
+		threads_mutexUnlock(&mutex0);
 		taskmgr_yield(100);
 	}
 }
@@ -82,7 +82,14 @@ void simpleService1()
 
 void simpleService2()
 {
-	debug_logMessage(PGM_ON, L_INFO, PSTR("Example systemd service 2\r\n"));
+	debug_logMessage(PGM_ON, L_INFO, PSTR("Shutting down tasks 1 and 4\r\n"));
+	taskmgr_removeTask(t1);
+	taskmgr_removeTask(t4);
+	
+	threads_mutexUnlock(&mutex0);
+	
+	t1 = NULL;
+	t4 = NULL;
 }
 
 void user_preinit()
@@ -93,11 +100,11 @@ void user_preinit()
 void user_init()
 {
 	debug_puts(L_INFO, PSTR("kernel: Starting systemd process\r\n"));
-	//systemd_init();
+	systemd_init();
 	static char test[] = "test arg string";
-	//systemd_addService(SDSERVICE_REPEATED, simpleService, 100, SDSTATE_ACTIVE);
-	//systemd_addService(SDSERVICE_REPEATED, simpleService1, 200, SDSTATE_ACTIVE);
-	//systemd_addService(SDSERVICE_REPEATED, simpleService2, 300, SDSTATE_ACTIVE);
+	systemd_addService(SDSERVICE_REPEATED, simpleService, 100, SDSTATE_ACTIVE);
+	systemd_addService(SDSERVICE_REPEATED, simpleService1, 200, SDSTATE_ACTIVE);
+	systemd_addService(SDSERVICE_REPEATED, simpleService2, 1000, SDSTATE_ACTIVE);
 
 	mutex0 = threads_mutexInit();
 	semaphore0 = threads_semaphoreInit(2);

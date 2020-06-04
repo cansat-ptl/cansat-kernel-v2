@@ -18,13 +18,13 @@ struct kLockStruct_t threads_mutexInit()
 }
 
 
-uint8_t threads_mutexLock(struct kLockStruct_t* mutex)
+uint8_t threads_mutexLock(volatile struct kLockStruct_t* mutex)
 {
 	uint8_t exitcode = threads_semaphoreWait(mutex);
 	return exitcode;
 }
 
-uint8_t threads_mutexUnlock(struct kLockStruct_t* mutex)
+uint8_t threads_mutexUnlock(volatile struct kLockStruct_t* mutex)
 {
 	uint8_t exitcode = threads_semaphoreSignal(mutex);
 	return exitcode;
