@@ -102,12 +102,12 @@ struct kLockStruct_t
 
 struct kIPCStruct_t
 {
-	void* pointer;
+	char* pointer;
 	size_t itemSize;
 	size_t size;
-	size_t inputPosition;
-	size_t outputPosition;
-	size_t currentPosition;
+	uint16_t inputPosition;
+	uint16_t outputPosition;
+	uint16_t currentPosition;
 };
 
 struct kEventStruct_t
