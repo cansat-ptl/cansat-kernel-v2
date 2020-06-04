@@ -113,9 +113,6 @@ uint8_t taskmgr_setTaskPriority(kTaskHandle_t task, uint8_t priority)
 	if (task != NULL) {
 		if (priority <= CFG_NUMBER_OF_PRIORITIES) {
 			task->priority = priority;
-			if (task->state == KSTATE_READY) {
-				taskmgr_setTaskState(task, KSTATE_READY);
-			}
 		}
 		else {
 			exitcode = CFG_NUMBER_OF_PRIORITIES;
@@ -150,6 +147,18 @@ static inline void taskmgr_setupTaskStructure(kTaskHandle_t task, \
 	task -> name = name;
 	task -> taskList.next = NULL;
 	task -> taskList.prev = NULL;
+}
+
+void _debug_taskmgr_printTasks() 
+{
+	/*debug_logMessage(PGM_PUTS, L_INFO, PSTR("taskmgr: Current task list: \r\n"));
+	kTaskHandle_t temp = kTaskListHead;
+	while(temp != NULL)
+	{
+		debug_logMessage(PGM_ON, L_NONE, PSTR("name:%s,prio:%d,stack=0x%04X  \r\n"),temp->name, temp->priority, temp->stackPtr);
+		temp = temp->taskList.next;
+	}
+	debug_logMessage(PGM_PUTS, L_NONE, PSTR("\r\n"));*/
 }
 
 uint8_t taskmgr_createTaskStatic(kTaskHandle_t taskStruct, kStackPtr_t stack, kTask_t entry, void* args, kStackSize_t stackSize, uint8_t priority, kTaskType_t type, char* name)

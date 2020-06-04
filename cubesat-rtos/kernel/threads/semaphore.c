@@ -55,11 +55,14 @@ uint8_t threads_semaphoreWait(volatile struct kLockStruct_t* semaphore)
 			if (semaphore->lockCount != 0) {
 				semaphore->lockCount--;			
 				
+				//_delay_ms(1);
+				
 				exitcode = 0;
 				threads_endAtomicOperation(sreg);
 				break;
 			}
 			else {
+				//_delay_ms(1);
 				threads_blockTask(semaphore, taskmgr_getCurrentTaskHandle());
 				threads_endAtomicOperation(sreg);
 				taskmgr_yield(0);
