@@ -7,36 +7,63 @@
 
 #include <kernel/threads/threads.h>
 
+void taskmgr_listAddBack(volatile struct kLinkedListStruct_t* list, kTaskHandle_t task);
+void taskmgr_listDeleteAny(volatile struct kLinkedListStruct_t* list, kTaskHandle_t task);
+
 struct kLockStruct_t threads_semaphoreInit(uint8_t resourceAmount)  //TODO: this function is a stub. You can help by improving it
 {
 	kSemaphore_t semaphore;
 	semaphore.type = KLOCK_SEMAPHORE;
 	semaphore.lockCount = resourceAmount;
-	semaphore.owner = taskmgr_getIdleTaskHandle();
 	return semaphore;
 }
 
+static inline void threads_blockTask(volatile struct kLockStruct_t* lock, kTaskHandle_t task)
+{
+	kStatusRegister_t sreg = threads_startAtomicOperation();
+	if (task != NULL && lock != NULL) {
+		if (task->taskList.list != &lock->blockedTasks) {
+			taskmgr_listDeleteAny(task->taskList.list, task);
+			taskmgr_listAddBack(&(lock->blockedTasks), task);
+			task->state = KSTATE_BLOCKED;
+			task->lock = lock;
+		}
+	}
+	threads_endAtomicOperation(sreg);
+	return;
+}
 
-uint8_t threads_semaphoreWait(struct kLockStruct_t* semaphore)
+static void threads_unblockTask(kTaskHandle_t task)
+{
+	kStatusRegister_t sreg = threads_startAtomicOperation();
+	if (task != NULL) {
+		taskmgr_setTaskState(task, KSTATE_READY);
+		task->lock = NULL;
+	}
+	
+	threads_endAtomicOperation(sreg);
+	return;
+}
+
+uint8_t threads_semaphoreWait(volatile struct kLockStruct_t* semaphore)
 {
 	uint8_t exitcode = 1;
 	if (semaphore != NULL) {
 		while (1) {
 			kStatusRegister_t sreg = threads_startAtomicOperation();
-			kTaskHandle_t runningTask = taskmgr_getCurrentTaskHandle();
 		
-			if (semaphore->lockCount != 0 || semaphore->owner->state == KSTATE_UNINIT) {
-				semaphore->lockCount--;
+			if (semaphore->lockCount != 0) {
+				semaphore->lockCount--;			
 				
-				if (semaphore->owner->priority <= runningTask->priority) semaphore->owner = runningTask;
+				//_delay_ms(1);
 				
 				exitcode = 0;
 				threads_endAtomicOperation(sreg);
 				break;
 			}
 			else {
-				runningTask -> lock = semaphore;
-				taskmgr_setTaskState(runningTask, KSTATE_BLOCKED);
+				//_delay_ms(1);
+				threads_blockTask(semaphore, taskmgr_getCurrentTaskHandle());
 				threads_endAtomicOperation(sreg);
 				taskmgr_yield(0);
 			}
@@ -45,29 +72,22 @@ uint8_t threads_semaphoreWait(struct kLockStruct_t* semaphore)
 	return exitcode;
 }
 
-uint8_t threads_semaphoreSignal(struct kLockStruct_t* semaphore)
+uint8_t threads_semaphoreSignal(volatile struct kLockStruct_t* semaphore)
 {
 	uint8_t exitcode = 1;
 	if (semaphore != NULL) {
+		//debug_logMessage(PGM_PUTS, L_NONE, PSTR("a"));
 		kStatusRegister_t sreg = threads_startAtomicOperation();
-		kTaskHandle_t runningTask = taskmgr_getCurrentTaskHandle();
-		kTaskHandle_t idle = taskmgr_getIdleTaskHandle();
-	
-		//debug_puts(L_INFO, PSTR("threads: signaling semaphore\r\n"));
-		semaphore->lockCount++;
 		
-		runningTask->lock = NULL;
-		semaphore->owner = idle;
-	
-		kTaskHandle_t temp = taskmgr_getTaskListPtr();
+		kTaskHandle_t temp = semaphore->blockedTasks.head;
 
 		while(temp != NULL) {
-			if (temp->lock == semaphore) {
-				if (temp->state == KSTATE_BLOCKED) taskmgr_setTaskState(temp, KSTATE_READY);
-				if (temp->priority >= semaphore->owner->priority) semaphore->owner = temp;
-			}
+			//debug_logMessage(PGM_ON, L_NONE, PSTR(""));
+			threads_unblockTask(temp);
 			temp = temp->taskList.next;
 		}
+		
+		semaphore->lockCount++;
 		
 		exitcode = 0;
 		threads_endAtomicOperation(sreg);

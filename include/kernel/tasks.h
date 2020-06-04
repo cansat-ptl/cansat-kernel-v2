@@ -31,9 +31,11 @@ void taskmgr_setTaskState(kTaskHandle_t t_handle, kTaskState_t t_state);
 
 kTaskHandle_t taskmgr_getCurrentTaskHandle();
 kTaskHandle_t taskmgr_getNextTaskHandle();
-kTaskHandle_t taskmgr_getTaskListPtr();
+
+volatile struct kLinkedListStruct_t* taskmgr_getReadyTaskListPtr(uint8_t priority);
+volatile struct kLinkedListStruct_t* taskmgr_getSleepingTaskListPtr();
+
 kTaskHandle_t taskmgr_getIdleTaskHandle();
-uint8_t taskmgr_getTaskListIndex();
 kStackPtr_t taskmgr_getReservedMemoryPointer();
 void taskmgr_setCurrentTask(kTaskHandle_t taskHandle);
 void taskmgr_setNextTask(kTaskHandle_t taskHandle);
@@ -42,8 +44,5 @@ void taskmgr_tick()  __attribute__ ( ( naked, noinline ));
 void taskmgr_yield(uint16_t sleep) __attribute__ (( naked, noinline ));
 void taskmgr_switchTo(kTaskHandle_t handle) __attribute__ (( naked, noinline ));
 void taskmgr_stopTask(kTaskState_t exitState);
-
-void taskmgr_scheduleTask(kTaskHandle_t task);
-void taskmgr_unscheduleTask(kTaskHandle_t task);
 
 #endif /* TASKMGR_H_ */
