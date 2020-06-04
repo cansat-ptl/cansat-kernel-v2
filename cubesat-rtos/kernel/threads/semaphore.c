@@ -3,7 +3,7 @@
  *
  * Created: 18.02.2020 1:10:19
  *  Author: Admin
- */ 
+ */
 
 #include <kernel/threads/threads.h>
 
@@ -40,7 +40,7 @@ static void threads_unblockTask(kTaskHandle_t task)
 		taskmgr_setTaskState(task, KSTATE_READY);
 		task->lock = NULL;
 	}
-	
+
 	threads_endAtomicOperation(sreg);
 	return;
 }
@@ -51,18 +51,15 @@ uint8_t threads_semaphoreWait(volatile struct kLockStruct_t* semaphore)
 	if (semaphore != NULL) {
 		while (1) {
 			kStatusRegister_t sreg = threads_startAtomicOperation();
-		
+
 			if (semaphore->lockCount != 0) {
-				semaphore->lockCount--;			
-				
-				//_delay_ms(1);
-				
+				semaphore->lockCount--;
+
 				exitcode = 0;
 				threads_endAtomicOperation(sreg);
 				break;
 			}
 			else {
-				//_delay_ms(1);
 				threads_blockTask(semaphore, taskmgr_getCurrentTaskHandle());
 				threads_endAtomicOperation(sreg);
 				taskmgr_yield(0);
@@ -76,19 +73,17 @@ uint8_t threads_semaphoreSignal(volatile struct kLockStruct_t* semaphore)
 {
 	uint8_t exitcode = 1;
 	if (semaphore != NULL) {
-		//debug_logMessage(PGM_PUTS, L_NONE, PSTR("a"));
 		kStatusRegister_t sreg = threads_startAtomicOperation();
-		
+
 		kTaskHandle_t temp = semaphore->blockedTasks.head;
 
 		while(temp != NULL) {
-			//debug_logMessage(PGM_ON, L_NONE, PSTR(""));
 			threads_unblockTask(temp);
 			temp = temp->taskList.next;
 		}
-		
+
 		semaphore->lockCount++;
-		
+
 		exitcode = 0;
 		threads_endAtomicOperation(sreg);
 	}
