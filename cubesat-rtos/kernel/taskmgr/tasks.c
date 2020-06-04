@@ -6,11 +6,13 @@
  */
 
 #include <kernel/kernel.h>
+#include "listutils.h"
 
-static volatile uint8_t kGlobalPid = 0;
+static volatile uint16_t kGlobalPid = 0;
 
-static volatile kTaskHandle_t kTaskListHead;
-static volatile kTaskHandle_t kTaskListTail;
+static volatile struct kLinkedListStruct_t kReadyTaskList[CFG_NUMBER_OF_PRIORITIES];
+static volatile struct kLinkedListStruct_t kSleepingTaskList;
+static volatile struct kLinkedListStruct_t kSuspendedTaskList;
 
 static const size_t kTaskStructSize	= (sizeof(struct kTaskStruct_t) + ((size_t)(CFG_PLATFORM_BYTE_ALIGNMENT - 1))) & ~((size_t)CFG_PLATFORM_BYTE_ALIGNMENT_MASK);
 
@@ -20,12 +22,19 @@ void taskmgr_setKernelStackPointer(kStackPtr_t pointer); //TODO: add to header
 void taskmgr_setIdleTask(kTaskHandle_t idle);
 void taskmgr_initScheduler(kTaskHandle_t idle);
 
-kTaskHandle_t taskmgr_getTaskListPtr()
+struct kLinkedListStruct_t* taskmgr_getReadyTaskListArray()
 {
-	kStatusRegister_t sreg = threads_startAtomicOperation();
-	kTaskHandle_t temp = kTaskListHead;
-	threads_endAtomicOperation(sreg);
-	return temp;
+	return kReadyTaskList;
+}
+
+struct kLinkedListStruct_t* taskmgr_getReadyTaskListPtr(uint8_t priority)
+{
+	return &kReadyTaskList[priority];
+}
+
+struct kLinkedListStruct_t* taskmgr_getSleepingTaskListPtr()
+{
+	return &kSleepingTaskList;
 }
 
 kTaskHandle_t taskmgr_getIdleTaskHandle()
@@ -46,10 +55,9 @@ uint8_t taskmgr_init(kTask_t idle)
 	
 	rMemory += CFG_KERNEL_RESERVED_MEMORY + CFG_KERNEL_STACK_FRAME_REGISTER_OFFSET + CFG_KERNEL_STACK_FRAME_END_OFFSET;
 	taskmgr_setKernelStackPointer(rMemory);
-	
-	kTaskListHead = &kIdleTaskStruct;
-	kTaskListTail = &kIdleTaskStruct;
-	
+
+	taskmgr_setTaskState(&kIdleTaskStruct, KSTATE_READY);
+		
 	taskmgr_initScheduler(&kIdleTaskStruct);
 	taskmgr_setCurrentTask(&kIdleTaskStruct);
 	taskmgr_setNextTask(&kIdleTaskStruct);
@@ -57,13 +65,45 @@ uint8_t taskmgr_init(kTask_t idle)
 	return 0;
 }
 
+//typedef enum {KSTATE_UNINIT, KSTATE_SUSPENDED, KSTATE_SLEEPING, KSTATE_BLOCKED, KSTATE_READY, KSTATE_RUNNING} kTaskState_t;
 void taskmgr_setTaskState(kTaskHandle_t task, kTaskState_t state)
 {
 	kStatusRegister_t sreg = threads_startAtomicOperation();
 	
 	if (task != NULL) {
-		task->state = state;
-	}	
+		switch (state) {
+			case KSTATE_UNINIT:
+				taskmgr_listDeleteAny(task->taskList.list, task);
+				task->state = KSTATE_UNINIT;
+			break;
+			case KSTATE_SUSPENDED:
+				taskmgr_listDeleteAny(task->taskList.list, task);
+				taskmgr_listAddBack(&kSuspendedTaskList, task);
+				task->state = KSTATE_SUSPENDED;
+			break;
+			case KSTATE_SLEEPING:
+				taskmgr_listDeleteAny(task->taskList.list, task);
+				taskmgr_listAddBack(&kSleepingTaskList, task);
+				task->state = KSTATE_SLEEPING;
+			break;
+			case KSTATE_BLOCKED:
+				//Do nothing, blocking is handled by threads module
+				//This should also be logged
+			break;
+			case KSTATE_READY:
+				taskmgr_listDeleteAny(task->taskList.list, task);
+				taskmgr_listAddBack(&kReadyTaskList[task->priority], task);
+				task->state = KSTATE_READY;
+			break;
+			case KSTATE_RUNNING:
+				task->state = KSTATE_RUNNING;
+			break;
+			default:
+				//Unknown state, should be logged
+				//TODO: log state error
+			break;
+		}
+	}
 	
 	threads_endAtomicOperation(sreg);
 }
@@ -112,26 +152,16 @@ static inline void taskmgr_setupTaskStructure(kTaskHandle_t task, \
 	task -> taskList.prev = NULL;
 }
 
-static void taskmgr_addTaskToTaskList(kTaskHandle_t newTask) 
-{
-
-}
-
-static void taskmgr_removeTaskFromTaskList(kTaskHandle_t task) 
-{
-	
-}
-
 void _debug_taskmgr_printTasks() 
 {
-	debug_logMessage(PGM_PUTS, L_INFO, PSTR("taskmgr: Current task list: \r\n"));
+	/*debug_logMessage(PGM_PUTS, L_INFO, PSTR("taskmgr: Current task list: \r\n"));
 	kTaskHandle_t temp = kTaskListHead;
 	while(temp != NULL)
 	{
 		debug_logMessage(PGM_ON, L_NONE, PSTR("name:%s,prio:%d,stack=0x%04X  \r\n"),temp->name, temp->priority, temp->stackPtr);
 		temp = temp->taskList.next;
 	}
-	debug_logMessage(PGM_PUTS, L_NONE, PSTR("\r\n"));
+	debug_logMessage(PGM_PUTS, L_NONE, PSTR("\r\n"));*/
 }
 
 uint8_t taskmgr_createTaskStatic(kTaskHandle_t taskStruct, kStackPtr_t stack, kTask_t entry, void* args, kStackSize_t stackSize, uint8_t priority, kTaskType_t type, char* name)
@@ -145,7 +175,7 @@ uint8_t taskmgr_createTaskStatic(kTaskHandle_t taskStruct, kStackPtr_t stack, kT
 				kStackPtr_t stackPrepared = platform_prepareStackFrame(stack, stackSize, entry, args);
 				taskmgr_setupTaskStructure(taskStruct, entry, stackPrepared, stack, stackSize, args, priority, KSTATE_READY, type, name);
 
-				taskmgr_addTaskToTaskList(taskStruct);
+				taskmgr_setTaskState(taskStruct, KSTATE_READY);
 
 				kGlobalPid++;
 				exitcode = 0;
@@ -214,9 +244,7 @@ uint8_t taskmgr_removeTask(kTaskHandle_t handle)
 	kStatusRegister_t sreg = threads_startAtomicOperation();
 	
 	if (handle != NULL) {
-		taskmgr_removeTaskFromTaskList(handle);
-		taskmgr_unscheduleTask(handle);
-		
+		taskmgr_setTaskState(handle, KSTATE_UNINIT);
 		memmgr_heapFree((void*)handle);
 	}
 	

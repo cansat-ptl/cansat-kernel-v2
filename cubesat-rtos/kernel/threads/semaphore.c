@@ -12,14 +12,14 @@ struct kLockStruct_t threads_semaphoreInit(uint8_t resourceAmount)  //TODO: this
 	kSemaphore_t semaphore;
 	semaphore.type = KLOCK_SEMAPHORE;
 	semaphore.lockCount = resourceAmount;
-	semaphore.owner = taskmgr_getIdleTaskHandle();
+	//semaphore.owner = taskmgr_getIdleTaskHandle();
 	return semaphore;
 }
 
 
 uint8_t threads_semaphoreWait(struct kLockStruct_t* semaphore)
 {
-	uint8_t exitcode = 1;
+	/*uint8_t exitcode = 1;
 	if (semaphore != NULL) {
 		while (1) {
 			kStatusRegister_t sreg = threads_startAtomicOperation();
@@ -41,13 +41,13 @@ uint8_t threads_semaphoreWait(struct kLockStruct_t* semaphore)
 				taskmgr_yield(0);
 			}
 		}
-	}
-	return exitcode;
+	}*/
+	//return exitcode;
 }
 
 uint8_t threads_semaphoreSignal(struct kLockStruct_t* semaphore)
 {
-	uint8_t exitcode = 1;
+	/*uint8_t exitcode = 1;
 	if (semaphore != NULL) {
 		kStatusRegister_t sreg = threads_startAtomicOperation();
 		kTaskHandle_t runningTask = taskmgr_getCurrentTaskHandle();
@@ -72,5 +72,5 @@ uint8_t threads_semaphoreSignal(struct kLockStruct_t* semaphore)
 		exitcode = 0;
 		threads_endAtomicOperation(sreg);
 	}
-	return exitcode;
+	return exitcode;*/
 }

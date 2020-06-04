@@ -55,7 +55,7 @@ typedef void kTask;
 
 typedef uint8_t byte;
 
-typedef enum {KSTATE_UNINIT, KSTATE_SUSPENDED, KSTATE_SLEEPING, KSTATE_BLOCKED, KSTATE_SEMAPHORE, KSTATE_READY, KSTATE_RUNNING} kTaskState_t;
+typedef enum {KSTATE_UNINIT, KSTATE_SUSPENDED, KSTATE_SLEEPING, KSTATE_BLOCKED, KSTATE_READY, KSTATE_RUNNING} kTaskState_t;
 typedef enum {KEVENT_NONE, KEVENT_FIRED} kEventState_t;
 typedef enum {KTASK_USER, KTASK_SYSTEM} kTaskType_t;
 typedef enum {KTIMER_SINGLERUN, KTASK_REPEATED} kTimerType_t;
@@ -79,11 +79,25 @@ typedef struct kIPCStruct_t* kLifoHandle_t;
 typedef struct kIPCStruct_t* kFifoHandle_t;
 typedef struct kIPCStruct_t* kSystemIOHandle_t;
 
+struct kLinkedListStruct_t
+{
+	kTaskHandle_t head;
+	kTaskHandle_t tail;
+};
+
+struct kListItemStruct_t
+{
+	struct kLinkedListStruct_t* list;
+	kTaskHandle_t next;
+	kTaskHandle_t prev;
+};
+
 struct kLockStruct_t
 {
-	kTaskHandle_t owner;
 	uint8_t lockCount;
 	kLockType_t type;
+	uint8_t basePriority;
+	struct kLinkedListStruct_t blockedTasks;
 };
 
 struct kIPCStruct_t
@@ -102,19 +116,6 @@ struct kEventStruct_t
 	uint16_t eventFlags;
 };
 
-struct kLinkedListStruct_t
-{
-	kTaskHandle_t head;
-	kTaskHandle_t tail;
-};
-
-struct kListItemStruct_t
-{
-	struct kLinkedListStruct_t* list;
-	kTaskHandle_t next;
-	kTaskHandle_t prev;
-};
-
 struct kTaskStruct_t
 {
 	kStackPtr_t stackPtr;
@@ -128,8 +129,8 @@ struct kTaskStruct_t
 	uint16_t sleepTime;
 	kTaskType_t type;
 	uint8_t priority;
-	uint8_t pid;
 	uint8_t flags;
+	uint16_t pid;
 	char* name;
 	struct kListItemStruct_t taskList;
 };
