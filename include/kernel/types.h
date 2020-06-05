@@ -95,8 +95,9 @@ struct kListItemStruct_t
 struct kLockStruct_t
 {
 	uint8_t lockCount;
-	kLockType_t type;
 	uint8_t basePriority;
+	kLockType_t type;
+	kTaskHandle_t lockOwner;
 	struct kLinkedListStruct_t blockedTasks;
 };
 
