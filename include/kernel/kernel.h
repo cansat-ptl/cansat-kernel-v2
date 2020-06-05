@@ -8,7 +8,7 @@
 #ifndef KERNEL_H_
 #define KERNEL_H_
 
-#define KERNEL_VER "0.1.1-bleeding"
+#define KERNEL_VER "0.2.0-bleeding"
 #define KERNEL_TIMESTAMP __TIMESTAMP__
 
 #include <stdint.h>

@@ -115,6 +115,7 @@ struct kEventStruct_t
 {
 	kEventState_t state;
 	uint16_t eventFlags;
+	struct kLinkedListStruct_t blockedTasks;
 };
 
 struct kTaskStruct_t
