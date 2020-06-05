@@ -7,6 +7,8 @@
 
 #include <kernel/threads/threads.h>
 
+kSpinlock_t semaphoreOpLock = 0;
+
 void taskmgr_listAddBack(volatile struct kLinkedListStruct_t* list, kTaskHandle_t task);
 void taskmgr_listDeleteAny(volatile struct kLinkedListStruct_t* list, kTaskHandle_t task);
 
@@ -20,7 +22,6 @@ struct kLockStruct_t threads_semaphoreInit(uint8_t resourceAmount)  //TODO: this
 
 static inline void threads_blockTask(volatile struct kLockStruct_t* lock, kTaskHandle_t task)
 {
-	kStatusRegister_t sreg = threads_startAtomicOperation();
 	if (task != NULL && lock != NULL) {
 		if (task->taskList.list != &lock->blockedTasks) {
 			taskmgr_listDeleteAny(task->taskList.list, task);
@@ -29,19 +30,15 @@ static inline void threads_blockTask(volatile struct kLockStruct_t* lock, kTaskH
 			task->lock = lock;
 		}
 	}
-	threads_endAtomicOperation(sreg);
 	return;
 }
 
 static void threads_unblockTask(kTaskHandle_t task)
 {
-	kStatusRegister_t sreg = threads_startAtomicOperation();
 	if (task != NULL) {
 		taskmgr_setTaskState(task, KSTATE_READY);
 		task->lock = NULL;
 	}
-
-	threads_endAtomicOperation(sreg);
 	return;
 }
 
@@ -50,7 +47,7 @@ uint8_t threads_semaphoreWait(volatile struct kLockStruct_t* semaphore)
 	uint8_t exitcode = 1;
 	if (semaphore != NULL) {
 		while (1) {
-			kStatusRegister_t sreg = threads_startAtomicOperation();
+			threads_spinlockAcquire(&semaphoreOpLock);
 
 			if (semaphore->lockCount != 0) {
 				semaphore->lockCount--;
@@ -61,7 +58,7 @@ uint8_t threads_semaphoreWait(volatile struct kLockStruct_t* semaphore)
 				}
 
 				exitcode = 0;
-				threads_endAtomicOperation(sreg);
+				threads_spinlockRelease(&semaphoreOpLock);
 				break;
 			}
 			else {
@@ -74,7 +71,7 @@ uint8_t threads_semaphoreWait(volatile struct kLockStruct_t* semaphore)
 				}
 				
 				threads_blockTask(semaphore, currentTask);
-				threads_endAtomicOperation(sreg);
+				threads_spinlockRelease(&semaphoreOpLock);
 				taskmgr_yield(0);
 			}
 		}
@@ -86,7 +83,7 @@ uint8_t threads_semaphoreSignal(volatile struct kLockStruct_t* semaphore)
 {
 	uint8_t exitcode = 1;
 	if (semaphore != NULL) {
-		kStatusRegister_t sreg = threads_startAtomicOperation();
+		threads_spinlockAcquire(&semaphoreOpLock);
 
 		kTaskHandle_t temp = semaphore->blockedTasks.head;
 		
@@ -106,7 +103,7 @@ uint8_t threads_semaphoreSignal(volatile struct kLockStruct_t* semaphore)
 		semaphore->lockCount++;
 
 		exitcode = 0;
-		threads_endAtomicOperation(sreg);
+		threads_spinlockRelease(&semaphoreOpLock);
 	}
 	return exitcode;
 }

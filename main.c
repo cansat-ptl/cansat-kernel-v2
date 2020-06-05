@@ -121,8 +121,8 @@ void user_postinit()
 {
 	t1 = taskmgr_createTask(simpleTask, NULL, 250, 5, KTASK_USER, "task1");
 	t2 = taskmgr_createTask(simpleTask1, NULL, 250, 1, KTASK_USER, "task2");
-	//t3 = taskmgr_createTask(simpleTask2, NULL, 250, 2, KTASK_USER, "task3");
-	//t4 = taskmgr_createTask(simpleTask3, NULL, 250, 2, KTASK_USER, "task4");
+	t3 = taskmgr_createTask(simpleTask2, NULL, 250, 2, KTASK_USER, "task3");
+	t4 = taskmgr_createTask(simpleTask3, NULL, 250, 2, KTASK_USER, "task4");
 	return;
 }
 
