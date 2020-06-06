@@ -9,7 +9,6 @@
 void user_preinit();
 void user_init();
 void user_postinit();
-void _debug_taskmgr_printTasks();
 
 kTask kernel_idle1(void* args)
 {
@@ -68,7 +67,6 @@ uint8_t kernel_startScheduler()
 		debug_puts(L_NONE, PSTR("                      [OK]\r\n"));
 		debug_puts(L_INFO, PSTR("kernel: System startup complete\r\n"));
 	#endif
-	_debug_taskmgr_printTasks();
 
 	platform_DELAY_MS(1000);
 

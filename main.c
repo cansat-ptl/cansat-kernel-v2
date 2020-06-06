@@ -10,6 +10,7 @@
 #include <kernel/kernel.h>
 #include <kernel/types.h>
 
+
 char exampleBuffer[32]; //Declare a buffer to hold FIFO data
 static char exampleParameter[] = "Spaghetti and meatballs\0";
 kFifo_t exampleFifo; //Declare the FIFO itself
@@ -82,7 +83,6 @@ kTask simpleTask2(void* args)
 
 kTask simpleTask3(void* args)
 {
-	debug_logMessage(PGM_ON, L_INFO, PSTR("task3: Task 3 starts\r\n"));
 
 	while (1) {
 		debug_logMessage(PGM_ON, L_INFO, PSTR("task3: Hello from task 3! My favorite food is %s\r\n"), (char*)args);
@@ -127,7 +127,6 @@ void user_preinit()
 
 void user_init()
 {
-
 	/*
 	 * kernel_createTask - Create a task
 	 * simpleTask1 - task body
@@ -165,7 +164,6 @@ void user_init()
 
 void user_postinit()
 {
-	//Nothing to do in post-init
 	return;
 }
 

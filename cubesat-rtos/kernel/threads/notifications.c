@@ -7,20 +7,22 @@
 
 #include <kernel/threads/threads.h>
 
+kSpinlock_t notificationOpLock;
+
 void threads_notificationWait()
 {
 	while (1) {
-		kStatusRegister_t sreg = threads_startAtomicOperation();
+		threads_spinlockAcquire(&notificationOpLock);
 		kTaskHandle_t runningTask = taskmgr_getCurrentTaskHandle();
 		
 		if (runningTask -> notification -> state == KEVENT_FIRED) {
 			runningTask -> notification -> state = KEVENT_NONE;
-			threads_endAtomicOperation(sreg);
+			threads_spinlockRelease(&notificationOpLock);
 			break;
 		}
 		else {
 			runningTask -> state = KSTATE_BLOCKED;
-			threads_endAtomicOperation(sreg);
+			threads_spinlockRelease(&notificationOpLock);
 			taskmgr_yield(0);
 		}
 	}
@@ -31,7 +33,7 @@ uint8_t threads_notificationSend(kTaskHandle_t taskToNotify, uint16_t flags)
 {
 	uint8_t exitcode = 1;
 	if (taskToNotify != NULL) {
-		kStatusRegister_t sreg = threads_startAtomicOperation();
+		threads_spinlockAcquire(&notificationOpLock);
 	
 		//debug_puts(L_INFO, PSTR("threads: unlocking mutex\r\n"));
 	
@@ -40,7 +42,7 @@ uint8_t threads_notificationSend(kTaskHandle_t taskToNotify, uint16_t flags)
 		taskToNotify -> notification -> eventFlags = flags;
 		
 		exitcode = 0;
-		threads_endAtomicOperation(sreg);
+		threads_spinlockRelease(&notificationOpLock);
 	}
 	return exitcode;
 }
