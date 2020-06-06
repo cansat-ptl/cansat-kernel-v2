@@ -25,17 +25,7 @@ void taskmgr_schedule();
 void taskmgr_setActiveTicks(uint16_t activeTicks);
 void taskmgr_setKernelTicks(uint16_t activeTicks);
 
-inline void kernel_saveContext()
-{
-	platform_SAVE_CONTEXT();
-}
-
-inline void kernel_restoreContext()
-{
-	platform_RESTORE_CONTEXT();
-}
-
-static inline void kernel_switchContext()
+static void kernel_switchContext()
 {
 	#if CFG_ENABLE_MEMORY_PROTETCTION == 1
 		kernel_checkStackProtectionRegion(taskmgr_getCurrentTaskHandle());
@@ -84,41 +74,17 @@ static inline void taskmgr_switchTask()
 	if (kNextTask != kCurrentTask) kernel_switchContext();
 }
 
-void taskmgr_yield(uint16_t sleep) 
+void __attribute__ (( naked, noinline )) taskmgr_yield(void) 
 {
-	kernel_saveContext();
-	
-	taskmgr_setActiveTicks(0);
-	
-	if (sleep != 0) {
-		taskmgr_setTaskState(kCurrentTask, KSTATE_SLEEPING);
-		kCurrentTask -> sleepTime = sleep;
-	}
-	
+	platform_SAVE_CONTEXT();
 	taskmgr_switchTask();
-	kernel_restoreContext();
+	platform_RESTORE_CONTEXT();
 	platform_RET();
 }
 
-void taskmgr_switchTo(kTaskHandle_t task)
+void __attribute__ (( naked, noinline )) taskmgr_tick()
 {
-	kernel_saveContext();
-	
-	if (task == NULL) {
-		kernel_restoreContext();
-		platform_RET();
-	}
-		
-	kNextTask = task;
-	if (kNextTask != kCurrentTask) kernel_switchContext();
-	
-	kernel_restoreContext();
-	platform_RET();
-}
-
-void taskmgr_tick()
-{
-	kernel_saveContext();
+	platform_SAVE_CONTEXT();
 	
 	hal_SET_BIT(_kflags, KFLAG_TIMER_ISR);
 	
@@ -129,6 +95,17 @@ void taskmgr_tick()
 	__e_time++;
 	
 	hal_CLEAR_BIT(_kflags, KFLAG_TIMER_ISR);
-	kernel_restoreContext();
+	platform_RESTORE_CONTEXT();
 	platform_RET();
+}
+
+void taskmgr_sleep(uint16_t sleep)
+{
+	taskmgr_setActiveTicks(0);
+	
+	if (sleep != 0) {
+		taskmgr_setTaskState(kCurrentTask, KSTATE_SLEEPING);
+		kCurrentTask -> sleepTime = sleep;
+	}
+	taskmgr_yield();
 }

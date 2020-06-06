@@ -16,7 +16,7 @@ void systemd_main()
 	while(1)
 	{
 		if (utils_CHECK_BIT(sdFlags, 0)) systemd_serviceManager();
-		taskmgr_yield(CFG_SYSTEMD_YIELD_TICKS);
+		taskmgr_sleep(CFG_SYSTEMD_YIELD_TICKS);
 	}
 }
 

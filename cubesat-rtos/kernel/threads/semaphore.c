@@ -3,9 +3,11 @@
  *
  * Created: 18.02.2020 1:10:19
  *  Author: Admin
- */ 
+ */
 
 #include <kernel/threads/threads.h>
+
+kSpinlock_t semaphoreOpLock = 0;
 
 void taskmgr_listAddBack(volatile struct kLinkedListStruct_t* list, kTaskHandle_t task);
 void taskmgr_listDeleteAny(volatile struct kLinkedListStruct_t* list, kTaskHandle_t task);
@@ -20,7 +22,6 @@ struct kLockStruct_t threads_semaphoreInit(uint8_t resourceAmount)  //TODO: this
 
 static inline void threads_blockTask(volatile struct kLockStruct_t* lock, kTaskHandle_t task)
 {
-	kStatusRegister_t sreg = threads_startAtomicOperation();
 	if (task != NULL && lock != NULL) {
 		if (task->taskList.list != &lock->blockedTasks) {
 			taskmgr_listDeleteAny(task->taskList.list, task);
@@ -29,19 +30,15 @@ static inline void threads_blockTask(volatile struct kLockStruct_t* lock, kTaskH
 			task->lock = lock;
 		}
 	}
-	threads_endAtomicOperation(sreg);
 	return;
 }
 
 static void threads_unblockTask(kTaskHandle_t task)
 {
-	kStatusRegister_t sreg = threads_startAtomicOperation();
 	if (task != NULL) {
 		taskmgr_setTaskState(task, KSTATE_READY);
 		task->lock = NULL;
 	}
-	
-	threads_endAtomicOperation(sreg);
 	return;
 }
 
@@ -50,22 +47,32 @@ uint8_t threads_semaphoreWait(volatile struct kLockStruct_t* semaphore)
 	uint8_t exitcode = 1;
 	if (semaphore != NULL) {
 		while (1) {
-			kStatusRegister_t sreg = threads_startAtomicOperation();
-		
+			threads_spinlockAcquire(&semaphoreOpLock);
+
 			if (semaphore->lockCount != 0) {
-				semaphore->lockCount--;			
+				semaphore->lockCount--;
 				
-				//_delay_ms(1);
-				
+				if (semaphore->type == KLOCK_MUTEX) {
+					semaphore->lockOwner = taskmgr_getCurrentTaskHandle();
+					semaphore->basePriority = semaphore->lockOwner->priority;
+				}
+
 				exitcode = 0;
-				threads_endAtomicOperation(sreg);
+				threads_spinlockRelease(&semaphoreOpLock);
 				break;
 			}
 			else {
-				//_delay_ms(1);
-				threads_blockTask(semaphore, taskmgr_getCurrentTaskHandle());
-				threads_endAtomicOperation(sreg);
-				taskmgr_yield(0);
+				kTaskHandle_t currentTask = taskmgr_getCurrentTaskHandle();
+				
+				if (semaphore->type == KLOCK_MUTEX) {
+					if (semaphore->lockOwner->priority < currentTask->priority) {
+						taskmgr_setTaskPriority(semaphore->lockOwner, currentTask->priority);
+					}
+				}
+				
+				threads_blockTask(semaphore, currentTask);
+				threads_spinlockRelease(&semaphoreOpLock);
+				taskmgr_sleep(0);
 			}
 		}
 	}
@@ -76,21 +83,27 @@ uint8_t threads_semaphoreSignal(volatile struct kLockStruct_t* semaphore)
 {
 	uint8_t exitcode = 1;
 	if (semaphore != NULL) {
-		//debug_logMessage(PGM_PUTS, L_NONE, PSTR("a"));
-		kStatusRegister_t sreg = threads_startAtomicOperation();
-		
+		threads_spinlockAcquire(&semaphoreOpLock);
+
 		kTaskHandle_t temp = semaphore->blockedTasks.head;
+		
+		if (semaphore->type == KLOCK_MUTEX) {
+			if (semaphore->lockOwner->priority != semaphore->basePriority) {
+				taskmgr_setTaskPriority(semaphore->lockOwner, semaphore->basePriority);
+				semaphore->lockOwner = NULL;
+				semaphore->basePriority = 0;
+			}
+		}
 
 		while(temp != NULL) {
-			//debug_logMessage(PGM_ON, L_NONE, PSTR(""));
 			threads_unblockTask(temp);
 			temp = temp->taskList.next;
 		}
-		
+
 		semaphore->lockCount++;
-		
+
 		exitcode = 0;
-		threads_endAtomicOperation(sreg);
+		threads_spinlockRelease(&semaphoreOpLock);
 	}
 	return exitcode;
 }

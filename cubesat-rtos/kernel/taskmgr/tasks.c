@@ -113,6 +113,9 @@ uint8_t taskmgr_setTaskPriority(kTaskHandle_t task, uint8_t priority)
 	if (task != NULL) {
 		if (priority <= CFG_NUMBER_OF_PRIORITIES) {
 			task->priority = priority;
+			if (task->state == KSTATE_READY) {
+				taskmgr_setTaskState(task, KSTATE_READY);
+			}
 		}
 		else {
 			exitcode = CFG_NUMBER_OF_PRIORITIES;
@@ -149,18 +152,6 @@ static inline void taskmgr_setupTaskStructure(kTaskHandle_t task, \
 	task -> taskList.prev = NULL;
 }
 
-void _debug_taskmgr_printTasks() 
-{
-	/*debug_logMessage(PGM_PUTS, L_INFO, PSTR("taskmgr: Current task list: \r\n"));
-	kTaskHandle_t temp = kTaskListHead;
-	while(temp != NULL)
-	{
-		debug_logMessage(PGM_ON, L_NONE, PSTR("name:%s,prio:%d,stack=0x%04X  \r\n"),temp->name, temp->priority, temp->stackPtr);
-		temp = temp->taskList.next;
-	}
-	debug_logMessage(PGM_PUTS, L_NONE, PSTR("\r\n"));*/
-}
-
 uint8_t taskmgr_createTaskStatic(kTaskHandle_t taskStruct, kStackPtr_t stack, kTask_t entry, void* args, kStackSize_t stackSize, uint8_t priority, kTaskType_t type, char* name)
 {
 	uint8_t exitcode = 1;
@@ -195,7 +186,7 @@ uint8_t taskmgr_createTaskDynamic(kTaskHandle_t* handle, kTask_t entry, void* ar
 	uint8_t exitcode = 1;
 	kStatusRegister_t sreg = threads_startAtomicOperation();
 	
-	kStackPtr_t stackPointer = (kStackPtr_t)memmgr_heapAlloc(stackSize + kTaskStructSize);
+	kStackPtr_t stackPointer = (kStackPtr_t)memmgr_heapAlloc(stackSize + kTaskStructSize + 64);
 				
 	exitcode = taskmgr_createTaskStatic((kTaskHandle_t)stackPointer, stackPointer + kTaskStructSize, entry, args, stackSize, priority, type, name);
 	
