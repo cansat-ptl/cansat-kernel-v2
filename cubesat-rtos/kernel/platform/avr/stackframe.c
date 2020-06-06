@@ -18,7 +18,7 @@ void kernel_stackCorruptionHook();
 kStackPtr_t platform_prepareStackFrame(kStackPtr_t regionPointer, kStackSize_t stackSize, kTask_t taskPointer, void* args)
 {
 	//TODO: 3-byte PC support
-	regionPointer += stackSize;
+	regionPointer += stackSize-1;
 	regionPointer[0] = (uint16_t)kernel_taskReturnHook & 0xFF;	// Function address - will be grabbed by RETI when the task executes for first time, lower 8 bits
 	regionPointer[-1] = (uint16_t)kernel_taskReturnHook >> 8;
 	regionPointer[-2] = (uint16_t)taskPointer & 0xFF;	// Function address - will be grabbed by RETI when the task executes for first time, lower 8 bits

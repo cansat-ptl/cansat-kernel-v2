@@ -8,7 +8,7 @@
 #ifndef THREADS_H_
 #define THREADS_H_
 
-#define THREADS_VER "0.2.0-bleeding"
+#define THREADS_VER "0.2.1-bleeding"
 #define THREADS_TIMESTAMP __TIMESTAMP__
 
 #include <stdint.h>
