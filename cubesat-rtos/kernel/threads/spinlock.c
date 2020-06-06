@@ -10,6 +10,7 @@
 void threads_spinlockAcquire(kSpinlock_t* spinlock) 
 {
 	while(1) {
+		asm volatile("": : :"memory");
 		if(*spinlock == 0) {
 			kStatusRegister_t sreg = threads_startAtomicOperation();
 			if(*spinlock == 0) {
