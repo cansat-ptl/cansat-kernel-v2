@@ -7,72 +7,84 @@
 
 #include <kernel/threads/threads.h>
 
-kLifo_t threads_lifoInit(char* pointer, uint8_t size)
+/*
+ * fifo.c
+ *
+ * Created: 18.02.2020 21:54:55
+ *  Author: Admin
+ */ 
+
+/*
+ * queue.c
+ *
+ * Created: 18.02.2020 18:11:55
+ *  Author: Admin
+ */ 
+
+#include <kernel/threads/threads.h>
+
+static const size_t kLifoStructSize	= (sizeof(struct kIPCStruct_t) + ((size_t)(CFG_PLATFORM_BYTE_ALIGNMENT - 1))) & ~((size_t)CFG_PLATFORM_BYTE_ALIGNMENT_MASK);
+
+uint8_t threads_lifoCreateStatic(kLifoHandle_t lifo, void* pointer, size_t itemSize, size_t totalSize)
 {
-	kLifo_t lifo;
-	lifo.size = size;
-	lifo.pointer = pointer;
-	lifo.currentPosition = 0;
-	return lifo;
+	return threads_fifoCreateStatic(lifo, pointer, itemSize, totalSize);
 }
 
-uint8_t threads_lifoAvailable(kLifo_t* lifo) 
+kLifoHandle_t threads_lifoCreate(size_t itemSize, size_t itemsTotal)
 {
-	uint8_t exitcode = 0;
+	return threads_fifoCreate(itemSize, itemsTotal);
+}
+
+uint8_t threads_lifoWrite(kFifoHandle_t lifo, void* item)
+{
+	uint8_t exitcode = 1;
 	if (lifo != NULL) {
-		kStatusRegister_t sreg = threads_startAtomicOperation();
-		
-		if (lifo -> currentPosition != 0) exitcode = 1;
-		
-		threads_endAtomicOperation(sreg);
+		if (threads_lifoFreeSpace(lifo)) {
+			memcpy(lifo->pointer + lifo->currentPosition, item, lifo->itemSize);
+			
+			lifo->currentPosition += lifo->itemSize;
+			
+			exitcode = 0;
+		}
 	}
 	return exitcode;
 }
 
-uint8_t threads_lifoWrite(kLifo_t* lifo, char data)
+uint8_t threads_lifoRead(kFifoHandle_t lifo, void* item)
 {
-	uint8_t exitcode = 0;
+	uint8_t exitcode = 1;
 	if (lifo != NULL) {
-		kStatusRegister_t sreg = threads_startAtomicOperation();
-		
-		if (lifo -> currentPosition < lifo -> size) {
-			lifo -> currentPosition++;
-			lifo -> pointer[lifo -> currentPosition] = data;
-			exitcode = 1;
-		}
-		
-		threads_endAtomicOperation(sreg);
+		if (threads_lifoAvailable(lifo)) {
+			memcpy(item, lifo->pointer + lifo->currentPosition - lifo->itemSize, lifo->itemSize);
+			
+			lifo->currentPosition -= lifo->itemSize;
+			
+			exitcode = 0;
+		} 
 	}
 	return exitcode;
 }
 
-char threads_lifoRead(kLifo_t* lifo)
+uint8_t threads_lifoPeek(kFifoHandle_t lifo, void* item)
 {
-	char data = 0;
+	uint8_t exitcode = 1;
 	if (lifo != NULL) {
-		kStatusRegister_t sreg = threads_startAtomicOperation();
-		
-		if (lifo -> currentPosition != 0) {
-			data = lifo -> pointer[lifo -> currentPosition];
-			lifo -> currentPosition--;
+		if (threads_fifoAvailable(lifo)) {
+			memcpy(item, lifo->pointer + lifo->currentPosition - lifo->itemSize, lifo->itemSize);
 		}
-		
-		threads_endAtomicOperation(sreg);
 	}
-	return data;
+	return exitcode;
 }
 
-char threads_lifoPeek(kLifo_t* lifo)
+size_t threads_lifoFreeSpace(kFifoHandle_t lifo)
 {
-	char data = 0;
-	if (lifo != NULL) {
-		kStatusRegister_t sreg = threads_startAtomicOperation();
-		
-		if (lifo -> currentPosition != 0) {
-			data = lifo -> pointer[lifo -> currentPosition];
-		}
-		
-		threads_endAtomicOperation(sreg);
-	}
-	return data;
+	if (lifo->size - lifo->currentPosition >= lifo->itemSize)
+		return lifo->size - lifo->currentPosition;
+	else
+		return 0;
+}
+
+size_t threads_lifoAvailable(kFifoHandle_t lifo)
+{
+	return lifo->currentPosition;
 }
