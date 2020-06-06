@@ -9,7 +9,7 @@
 #ifndef DEBUG_H_
 #define DEBUG_H_
 
-#define DBG_MOD_VER "0.7.1-bleeding"
+#define DBG_MOD_VER "0.7.2-bleeding"
 #define DBG_MOD_TIMESTAMP __TIMESTAMP__
 
 #include <stdint.h>

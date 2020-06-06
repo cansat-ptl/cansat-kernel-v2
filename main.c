@@ -22,9 +22,10 @@ kTask simpleTask(void* args)
 {
 	debug_puts(L_INFO, PSTR("Task 1 starts\r\n"));
 	while (1) {
+		taskmgr_yield(100);
 		threads_mutexLock(&mutex0);
 		debug_puts(L_INFO, PSTR("Task 1 locks mutex\r\n"));
-		taskmgr_yield(100);
+		_delay_ms(100);
 		debug_puts(L_INFO, PSTR("Task 1 unlocks mutex\r\n"));
 		threads_mutexUnlock(&mutex0);
 		taskmgr_yield(100);
@@ -37,7 +38,7 @@ kTask simpleTask1(void* args)
 	while (1) {
 		threads_mutexLock(&mutex0);
 		debug_puts(L_INFO, PSTR("Task 2 locks mutex\r\n"));
-		taskmgr_yield(100);
+		_delay_ms(100);
 		debug_puts(L_INFO, PSTR("Task 2 unlocks mutex\r\n"));
 		threads_mutexUnlock(&mutex0);
 		taskmgr_yield(100);
@@ -50,7 +51,7 @@ kTask simpleTask2(void* args)
 	while (1) {
 		threads_mutexLock(&mutex0);
 		debug_puts(L_INFO, PSTR("Task 3 locks mutex\r\n"));
-		taskmgr_yield(100);
+		_delay_ms(100);
 		debug_puts(L_INFO, PSTR("Task 3 unlocks mutex\r\n"));
 		threads_mutexUnlock(&mutex0);
 		taskmgr_yield(100);
@@ -64,7 +65,7 @@ kTask simpleTask3(void* args)
 	while (1) {	
 		threads_mutexLock(&mutex0);
 		debug_puts(L_INFO, PSTR("Task 4 locks mutex\r\n"));
-		taskmgr_yield(100);
+		_delay_ms(100);
 		debug_puts(L_INFO, PSTR("Task 4 unlocks mutex\r\n"));
 		threads_mutexUnlock(&mutex0);
 		taskmgr_yield(100);
@@ -100,11 +101,11 @@ void user_preinit()
 void user_init()
 {
 	debug_puts(L_INFO, PSTR("kernel: Starting systemd process\r\n"));
-	systemd_init();
+	//systemd_init();
 	static char test[] = "test arg string";
-	systemd_addService(SDSERVICE_REPEATED, simpleService, 100, SDSTATE_ACTIVE);
-	systemd_addService(SDSERVICE_REPEATED, simpleService1, 200, SDSTATE_ACTIVE);
-	systemd_addService(SDSERVICE_REPEATED, simpleService2, 1000, SDSTATE_ACTIVE);
+	//systemd_addService(SDSERVICE_REPEATED, simpleService, 100, SDSTATE_ACTIVE);
+	//systemd_addService(SDSERVICE_REPEATED, simpleService1, 200, SDSTATE_ACTIVE);
+	//systemd_addService(SDSERVICE_REPEATED, simpleService2, 1000, SDSTATE_ACTIVE);
 
 	mutex0 = threads_mutexInit();
 	semaphore0 = threads_semaphoreInit(2);
@@ -119,9 +120,9 @@ void user_init()
 void user_postinit()
 {
 	t1 = taskmgr_createTask(simpleTask, NULL, 250, 5, KTASK_USER, "task1");
-	t2 = taskmgr_createTask(simpleTask1, NULL, 250, 5, KTASK_USER, "task2");
-	t3 = taskmgr_createTask(simpleTask2, NULL, 250, 5, KTASK_USER, "task3");
-	t4 = taskmgr_createTask(simpleTask3, NULL, 250, 5, KTASK_USER, "task4");
+	t2 = taskmgr_createTask(simpleTask1, NULL, 250, 1, KTASK_USER, "task2");
+	t3 = taskmgr_createTask(simpleTask2, NULL, 250, 2, KTASK_USER, "task3");
+	t4 = taskmgr_createTask(simpleTask3, NULL, 250, 2, KTASK_USER, "task4");
 	return;
 }
 
