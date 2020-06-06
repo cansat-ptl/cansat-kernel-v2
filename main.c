@@ -44,7 +44,7 @@ kTask simpleTask1(void* args)
 		debug_logMessage(PGM_ON, L_INFO, PSTR("task1: Fifo contents: %s\r\n"), receiveBuffer);
 		threads_mutexUnlock(&exampleMutex);
 
-		taskmgr_yield(200);
+		taskmgr_sleep(200);
 	}
 }
 
@@ -76,7 +76,7 @@ kTask simpleTask2(void* args)
 		debug_logMessage(PGM_ON, L_INFO, PSTR("task2: Fifo contents: %s\r\n"), receiveBuffer);
 		threads_mutexUnlock(&exampleMutex);
 
-		taskmgr_yield(200);
+		taskmgr_sleep(200);
 	}
 }
 
@@ -102,7 +102,7 @@ kTask simpleTask3(void* args)
 		}
 		threads_mutexUnlock(&exampleMutex);
 
-		taskmgr_yield(200);
+		taskmgr_sleep(200);
 	}
 }
 
