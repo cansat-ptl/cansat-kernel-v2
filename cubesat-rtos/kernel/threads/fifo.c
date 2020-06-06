@@ -9,7 +9,7 @@
 
 static const size_t kFifoStructSize	= (sizeof(struct kIPCStruct_t) + ((size_t)(CFG_PLATFORM_BYTE_ALIGNMENT - 1))) & ~((size_t)CFG_PLATFORM_BYTE_ALIGNMENT_MASK);
 
-/*static void threads_fifoCopyFrom(kFifoHandle_t fifo, void * item)
+static void threads_fifoCopyFrom(kFifoHandle_t fifo, void * item)
 {
 	memcpy(item, fifo->pointer + fifo->outputPosition, fifo->itemSize);
 	
@@ -29,7 +29,7 @@ static void threads_fifoCopyTo(kFifoHandle_t fifo, void *item)
 	if (fifo->inputPosition >= fifo->size) {
 		fifo->inputPosition = 0;
 	}
-}*/
+}
 
 uint8_t threads_fifoCreateStatic(kFifoHandle_t fifo, char* pointer, size_t itemSize, size_t totalSize)
 {
@@ -68,7 +68,7 @@ kFifoHandle_t threads_fifoCreate(size_t itemSize, size_t itemsTotal)
 	}
 	return fifo;
 }
-/*
+
 uint8_t threads_fifoWrite(kFifoHandle_t fifo, void* item)
 {
 	uint8_t exitcode = 1;
@@ -120,64 +120,4 @@ size_t threads_fifoFreeSpace(kFifoHandle_t fifo)
 size_t threads_fifoAvailable(kFifoHandle_t fifo)
 {
 	return fifo->currentPosition;
-}*/
-
-uint8_t threads_fifoAvailable(kFifo_t* fifo)
-{
-	uint8_t exitcode = 1;
-	if (fifo != NULL) {
-		kStatusRegister_t sreg = threads_startAtomicOperation();
-		if(fifo -> inputPosition == fifo -> outputPosition) {
-			exitcode = 0;
-		}
-		threads_endAtomicOperation(sreg);
-	}
-	return exitcode;
-}
-
-uint8_t threads_fifoWrite(kFifo_t* fifo, char data)
-{
-	uint8_t exitcode = 1;
-	if (fifo != NULL) {
-		kStatusRegister_t sreg = threads_startAtomicOperation();
-		
-		if (fifo -> inputPosition == ((fifo -> outputPosition - 1 + fifo -> size) % fifo -> size)) {
-			exitcode = 0;
-		}
-		else {
-			((char*)fifo -> pointer)[fifo -> inputPosition] = data;
-			fifo -> inputPosition = (fifo -> inputPosition + 1) % fifo -> size;
-		}
-		threads_endAtomicOperation(sreg);
-	}
-	return exitcode;
-}
-
-char threads_fifoRead(kFifo_t* fifo)
-{
-	char data = 0;
-	if (fifo != NULL) {
-		kStatusRegister_t sreg = threads_startAtomicOperation();
-		
-		if(!(fifo -> inputPosition == fifo -> outputPosition)) {
-			data = ((char*)fifo -> pointer)[fifo -> outputPosition];
-			fifo -> outputPosition = (fifo -> outputPosition + 1) % fifo -> size;
-		}
-		
-		threads_endAtomicOperation(sreg);
-	}
-	return data;
-}
-
-char threads_fifoPeek(kFifo_t* fifo)
-{
-	char data = 0;
-	if (fifo != NULL) {
-		kStatusRegister_t sreg = threads_startAtomicOperation();
-		
-		if(!(fifo -> inputPosition == fifo -> outputPosition)) data = ((char*)fifo -> pointer)[fifo -> outputPosition];
-		
-		threads_endAtomicOperation(sreg);
-	}
-	return data;
 }
