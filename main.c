@@ -127,7 +127,6 @@ void user_preinit()
 
 void user_init()
 {
-
 	/*
 	 * kernel_createTask - Create a task
 	 * simpleTask1 - task body

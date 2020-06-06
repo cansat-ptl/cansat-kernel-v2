@@ -181,7 +181,7 @@ uint8_t taskmgr_createTaskDynamic(kTaskHandle_t* handle, kTask_t entry, void* ar
 	uint8_t exitcode = 1;
 	kStatusRegister_t sreg = threads_startAtomicOperation();
 	
-	kStackPtr_t stackPointer = (kStackPtr_t)memmgr_heapAlloc(stackSize + kTaskStructSize);
+	kStackPtr_t stackPointer = (kStackPtr_t)memmgr_heapAlloc(stackSize + kTaskStructSize + 64);
 				
 	exitcode = taskmgr_createTaskStatic((kTaskHandle_t)stackPointer, stackPointer + kTaskStructSize, entry, args, stackSize, priority, type, name);
 	
