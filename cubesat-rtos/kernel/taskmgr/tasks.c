@@ -16,7 +16,7 @@ static volatile struct kLinkedListStruct_t kSuspendedTaskList;
 
 static const size_t kTaskStructSize	= (sizeof(struct kTaskStruct_t) + ((size_t)(CFG_PLATFORM_BYTE_ALIGNMENT - 1))) & ~((size_t)CFG_PLATFORM_BYTE_ALIGNMENT_MASK);
 
-static volatile struct kTaskStruct_t kIdleTaskStruct;
+static volatile kTaskHandle_t kIdleTaskHandle;
 
 void taskmgr_setKernelStackPointer(kStackPtr_t pointer); //TODO: add to header
 void taskmgr_setIdleTask(kTaskHandle_t idle);
@@ -39,26 +39,21 @@ volatile struct kLinkedListStruct_t* taskmgr_getSleepingTaskListPtr()
 
 kTaskHandle_t taskmgr_getIdleTaskHandle()
 {
-	return &kIdleTaskStruct;
+	return kIdleTaskHandle;
 }
 
 uint8_t taskmgr_init(kTask_t idle)
 {
-	kStackPtr_t rMemory = taskmgr_getReservedMemoryPointer();
+	kIdleTaskHandle = taskmgr_createTask(idle, NULL, CFG_KERNEL_RESERVED_MEMORY, KPRIO_IDLE, KTASK_SYSTEM, "idle");
 	
-	uint8_t result = taskmgr_createTaskStatic(&kIdleTaskStruct, rMemory, idle, NULL, CFG_KERNEL_RESERVED_MEMORY, KPRIO_IDLE, KTASK_SYSTEM, "idle");
-	
-	if (result != 0) {
+	if (kIdleTaskHandle == NULL) {
 		debug_logMessage(PGM_PUTS, L_FATAL, PSTR("\r\ntaskmgr: Startup failed, could not create idle task.\r\n"));
 		while(1);
 	}
-	
-	rMemory += CFG_KERNEL_RESERVED_MEMORY + CFG_KERNEL_STACK_FRAME_REGISTER_OFFSET + CFG_KERNEL_STACK_FRAME_END_OFFSET;
-	taskmgr_setKernelStackPointer(rMemory);
 		
-	taskmgr_initScheduler(&kIdleTaskStruct);
-	taskmgr_setCurrentTask(&kIdleTaskStruct);
-	taskmgr_setNextTask(&kIdleTaskStruct);
+	taskmgr_initScheduler(kIdleTaskHandle);
+	taskmgr_setCurrentTask(kIdleTaskHandle);
+	taskmgr_setNextTask(kIdleTaskHandle);
 	
 	return 0;
 }

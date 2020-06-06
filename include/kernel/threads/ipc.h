@@ -19,7 +19,7 @@ uint8_t threads_lifoPeek(kFifoHandle_t lifo, void* item);
 size_t threads_lifoFreeSpace(kFifoHandle_t lifo);
 size_t threads_lifoAvailable(kFifoHandle_t lifo);
 
-uint8_t threads_fifoCreateStatic(kFifoHandle_t fifo, void* pointer, size_t itemSize, size_t totalSize);
+uint8_t threads_fifoCreateStatic(kFifoHandle_t fifo, char* pointer, size_t itemSize, size_t totalSize);
 kFifoHandle_t threads_fifoCreate(size_t itemSize, size_t itemsTotal);
 /*
 uint8_t threads_fifoWrite(kFifoHandle_t fifo, void* item);

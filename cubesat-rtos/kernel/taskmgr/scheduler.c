@@ -69,15 +69,15 @@ void taskmgr_schedule()
 	if (!kTickRate) {
 		taskmgr_tickTasks();
 		kTickRate = CFG_TICKRATE_MS;
+		if (kTaskActiveTicks) {
+			kTaskActiveTicks--;
+		}
 	}
 	else {
 		kTickRate--;
 	}
 	
-	if (kTaskActiveTicks) {
-		kTaskActiveTicks--;
-	}
-	else {
+	if (!kTaskActiveTicks) {
 		if (utils_CHECK_BIT(_kflags, KFLAG_CSW_ALLOWED)) {
 			taskmgr_search();
 		}

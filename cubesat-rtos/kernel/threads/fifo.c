@@ -31,7 +31,7 @@ static void threads_fifoCopyTo(kFifoHandle_t fifo, void *item)
 	}
 }*/
 
-uint8_t threads_fifoCreateStatic(kFifoHandle_t fifo, void* pointer, size_t itemSize, size_t totalSize)
+uint8_t threads_fifoCreateStatic(kFifoHandle_t fifo, char* pointer, size_t itemSize, size_t totalSize)
 {
 	uint8_t exitcode = 1;
 	if (fifo != NULL && pointer != NULL && itemSize != 0 && totalSize != 0) {

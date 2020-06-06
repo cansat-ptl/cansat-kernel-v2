@@ -87,7 +87,6 @@ static inline void taskmgr_switchTask()
 void taskmgr_yield(uint16_t sleep) 
 {
 	kernel_saveContext();
-	
 	taskmgr_setActiveTicks(0);
 	
 	if (sleep != 0) {
@@ -96,6 +95,7 @@ void taskmgr_yield(uint16_t sleep)
 	}
 	
 	taskmgr_switchTask();
+	
 	kernel_restoreContext();
 	platform_RET();
 }
@@ -103,7 +103,6 @@ void taskmgr_yield(uint16_t sleep)
 void taskmgr_switchTo(kTaskHandle_t task)
 {
 	kernel_saveContext();
-	
 	if (task == NULL) {
 		kernel_restoreContext();
 		platform_RET();
@@ -111,7 +110,6 @@ void taskmgr_switchTo(kTaskHandle_t task)
 		
 	kNextTask = task;
 	if (kNextTask != kCurrentTask) kernel_switchContext();
-	
 	kernel_restoreContext();
 	platform_RET();
 }

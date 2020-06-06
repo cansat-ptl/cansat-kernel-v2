@@ -12,6 +12,8 @@ void user_postinit();
 
 kTask kernel_idle1(void* args)
 {
+	platform_ENABLE_INTERRUPTS();
+	threads_exitCriticalSection();
 	while(1) {
 		platform_NOP();
 		//debug_logMessage(PGM_PUTS, L_INFO, PSTR("idle: idle task debug output\r\n"));
@@ -72,11 +74,7 @@ uint8_t kernel_startScheduler()
 
 	debug_puts(L_INFO, PSTR("\x0C"));
 
-	platform_ENABLE_INTERRUPTS();
-	threads_exitCriticalSection();
-	
-	taskmgr_switchTo(taskmgr_getNextTaskHandle());
-
+	kernel_idle1(NULL);
 	return 0;
 }
 

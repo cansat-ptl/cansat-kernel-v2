@@ -103,7 +103,7 @@ struct kLockStruct_t
 
 struct kIPCStruct_t
 {
-	void* pointer;
+	char* pointer;
 	size_t itemSize;
 	size_t size;
 	size_t inputPosition;
