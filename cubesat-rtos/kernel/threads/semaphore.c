@@ -72,7 +72,7 @@ uint8_t threads_semaphoreWait(volatile struct kLockStruct_t* semaphore)
 				
 				threads_blockTask(semaphore, currentTask);
 				threads_spinlockRelease(&semaphoreOpLock);
-				taskmgr_yield(0);
+				taskmgr_sleep(0);
 			}
 		}
 	}

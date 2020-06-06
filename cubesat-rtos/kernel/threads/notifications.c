@@ -23,7 +23,7 @@ void threads_notificationWait()
 		else {
 			runningTask -> state = KSTATE_BLOCKED;
 			threads_spinlockRelease(&notificationOpLock);
-			taskmgr_yield(0);
+			taskmgr_sleep(0);
 		}
 	}
 	return;

@@ -74,8 +74,6 @@ uint8_t kernel_startScheduler()
 
 	platform_ENABLE_INTERRUPTS();
 	threads_exitCriticalSection();
-	
-	taskmgr_switchTo(taskmgr_getNextTaskHandle());
 
 	return 0;
 }

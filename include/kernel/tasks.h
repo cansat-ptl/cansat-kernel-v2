@@ -40,8 +40,9 @@ kStackPtr_t taskmgr_getReservedMemoryPointer();
 void taskmgr_setCurrentTask(kTaskHandle_t taskHandle);
 void taskmgr_setNextTask(kTaskHandle_t taskHandle);
 
+void taskmgr_sleep(uint16_t sleep);
+
 void taskmgr_tick()  __attribute__ ( ( naked, noinline ));
-void taskmgr_yield(uint16_t sleep) __attribute__ (( naked, noinline ));
 void taskmgr_switchTo(kTaskHandle_t handle) __attribute__ (( naked, noinline ));
 void taskmgr_stopTask(kTaskState_t exitState);
 
