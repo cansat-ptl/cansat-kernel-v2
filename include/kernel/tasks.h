@@ -42,8 +42,6 @@ void taskmgr_setNextTask(kTaskHandle_t taskHandle);
 
 void taskmgr_sleep(uint16_t sleep);
 
-void taskmgr_tick()  __attribute__ ( ( naked, noinline ));
-void taskmgr_switchTo(kTaskHandle_t handle) __attribute__ (( naked, noinline ));
 void taskmgr_stopTask(kTaskState_t exitState);
 
 #endif /* TASKMGR_H_ */

@@ -302,6 +302,14 @@
 #define platform_startSystemTimer() platform_startTimer1A();
 #define platform_stopSystemTimer() platform_stopTimer1A();
 
+kStatusRegister_t platform_startAtomicOperation();
+void platform_endAtomicOperation(kStatusRegister_t sreg);
+
+void platform_spinlockAcquire(kSpinlock_t* spinlock);
+void platform_spinlockRelease(kSpinlock_t* spinlock);
+
 kStackPtr_t platform_prepareStackFrame(kStackPtr_t regionPointer, kStackSize_t stackSize, kTask_t taskPointer, void* args);
+void __attribute__ (( naked, noinline )) platform_tick();
+void __attribute__ (( naked, noinline )) platform_yield(void);
 
 #endif /* AVR_H_ */

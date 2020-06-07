@@ -6,26 +6,14 @@
  */ 
 
 #include <kernel/threads/threads.h>
+#include <kernel/platform/platform.h>
 
 void threads_spinlockAcquire(kSpinlock_t* spinlock) 
 {
-	while(1) {
-		asm volatile("": : :"memory");
-		if(*spinlock == 0) {
-			kStatusRegister_t sreg = threads_startAtomicOperation();
-			if(*spinlock == 0) {
-				*spinlock = 1;
-				threads_endAtomicOperation(sreg);
-				return;
-			}
-			threads_endAtomicOperation(sreg);
-		}
-	}
+	platform_spinlockAcquire(spinlock);
 }
 
 void threads_spinlockRelease(kSpinlock_t* spinlock)
 {
-	kStatusRegister_t sreg = threads_startAtomicOperation();
-	*spinlock = 0;
-	threads_endAtomicOperation(sreg);
+	platform_spinlockRelease(spinlock);
 }
