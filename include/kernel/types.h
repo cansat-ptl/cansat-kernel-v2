@@ -115,7 +115,6 @@ struct kEventStruct_t
 {
 	kEventState_t state;
 	uint16_t eventFlags;
-	struct kLinkedListStruct_t blockedTasks;
 };
 
 struct kTaskStruct_t
@@ -126,7 +125,7 @@ struct kTaskStruct_t
 	kStackPtr_t stackBegin;
 	kStackSize_t stackSize;
 	volatile struct kLockStruct_t* lock;
-	volatile struct kEventStruct_t* notification;
+	volatile struct kEventStruct_t notification;
 	kTaskState_t state;
 	uint16_t sleepTime;
 	kTaskType_t type;

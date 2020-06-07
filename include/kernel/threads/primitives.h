@@ -20,7 +20,7 @@ void threads_endCriticalSection(uint16_t kflags);
 uint8_t threads_startAtomicOperation();
 void threads_endAtomicOperation(kStatusRegister_t sreg);
 
-void threads_notificationWait();
+uint16_t threads_notificationWait();
 uint8_t threads_notificationSend(kTaskHandle_t taskToNotify, uint16_t flags);
 
 struct kLockStruct_t threads_mutexInit();

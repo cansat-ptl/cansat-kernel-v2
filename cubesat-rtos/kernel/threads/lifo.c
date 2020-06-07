@@ -1,21 +1,5 @@
 /*
- * queue.c
- *
- * Created: 18.02.2020 18:11:55
- *  Author: Admin
- */ 
-
-#include <kernel/threads/threads.h>
-
-/*
- * fifo.c
- *
- * Created: 18.02.2020 21:54:55
- *  Author: Admin
- */ 
-
-/*
- * queue.c
+ * lifo.c
  *
  * Created: 18.02.2020 18:11:55
  *  Author: Admin
