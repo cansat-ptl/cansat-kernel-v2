@@ -17,7 +17,7 @@ void threads_enterCriticalSection(); //Deprecated
 uint16_t threads_startCriticalSection();
 void threads_endCriticalSection(uint16_t kflags);
 
-uint8_t threads_startAtomicOperation();
+kStatusRegister_t threads_startAtomicOperation();
 void threads_endAtomicOperation(kStatusRegister_t sreg);
 
 uint16_t threads_notificationWait();
