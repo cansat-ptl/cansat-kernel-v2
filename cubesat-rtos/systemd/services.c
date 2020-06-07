@@ -32,7 +32,9 @@ sdServiceHandle_t systemd_addService(uint8_t taskType, sdService_t t_ptr, uint16
 	
 	if (t_delay == 0) t_delay = 1;
 
-	debug_logMessage(PGM_ON, L_INFO, PSTR("systemd: Registering new service, t_ptr=0x%08X, type=%d, period=%d\r\n"), t_ptr, taskType, t_delay);
+	#if CFG_LOGGING == 1
+		debug_logMessage(PGM_ON, L_INFO, PSTR("systemd: Registering new service, t_ptr=0x%08X, type=%d, period=%d\r\n"), t_ptr, taskType, t_delay);
+	#endif
 	
 	dummyService.pointer = t_ptr;
 	dummyService.delay = t_delay - 1;

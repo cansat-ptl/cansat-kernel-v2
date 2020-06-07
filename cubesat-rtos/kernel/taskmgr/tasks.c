@@ -79,8 +79,9 @@ void taskmgr_setTaskState(kTaskHandle_t task, kTaskState_t state)
 				task->state = KSTATE_SLEEPING;
 			break;
 			case KSTATE_BLOCKED:
-				//Do nothing, blocking is handled by threads module
-				//This should also be logged
+				#if CFG_LOGGING == 1
+				debug_logMessage(PGM_PUTS, L_WARN, PSTR("taskmgr: setTaskState does not support KSTATE_BLOCKED state. Task state has not been changed.\r\n"));
+				#endif
 			break;
 			case KSTATE_READY:
 				taskmgr_listDeleteAny(task->taskList.list, task);
@@ -91,8 +92,9 @@ void taskmgr_setTaskState(kTaskHandle_t task, kTaskState_t state)
 				task->state = KSTATE_RUNNING;
 			break;
 			default:
-				//Unknown state, should be logged
-				//TODO: log state error
+				#if CFG_LOGGING == 1
+				debug_logMessage(PGM_PUTS, L_ERROR, PSTR("taskmgr: Invalid parameter in setTaskState.\r\n"));
+				#endif
 			break;
 		}
 	}

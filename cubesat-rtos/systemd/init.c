@@ -12,21 +12,29 @@ void systemd_tick();
 
 void systemd_init()
 {
-	debug_puts(L_INFO, PSTR("systemd: Startup\r\n"));
-	debug_puts(L_INFO, PSTR("systemd: Preparing service lists"));
+	#if CFG_LOGGING == 1
+		debug_puts(L_INFO, PSTR("systemd: Startup\r\n"));
+		debug_puts(L_INFO, PSTR("systemd: Preparing service lists"));
+	#endif
 
 	systemd_clearServiceQueue();
 	systemd_clearCallQueue();
 
-	debug_puts(L_NONE, PSTR("                      [OK]\r\n"));
-	debug_puts(L_INFO, PSTR("systemd: Setting up software timer"));
+	#if CFG_LOGGING == 1
+		debug_puts(L_NONE, PSTR("                      [OK]\r\n"));
+		debug_puts(L_INFO, PSTR("systemd: Setting up software timer"));
+	#endif
 
 	kernel_setTimer(systemd_tick, CFG_SYSTEMD_TIMER_TICKS);
 
-	debug_puts(L_NONE, PSTR("                    [OK]\r\n"));
-	debug_puts(L_INFO, PSTR("systemd: Creating host task\r\n"));
+	#if CFG_LOGGING == 1
+		debug_puts(L_NONE, PSTR("                    [OK]\r\n"));
+		debug_puts(L_INFO, PSTR("systemd: Creating host task\r\n"));
+	#endif
 
 	taskmgr_createTask(systemd_main, NULL, 256, CFG_SYSTEMD_TASK_PRIORITY, KTASK_SYSTEM, "systemd");
 
-	debug_puts(L_INFO, PSTR("systemd: Startup complete\r\n"));
+	#if CFG_LOGGING == 1
+		debug_puts(L_INFO, PSTR("systemd: Startup complete\r\n"));
+	#endif
 }
