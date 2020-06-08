@@ -9,7 +9,7 @@
 #include <kernel/kernel.h>
 #include <kernel/types.h>
 
-static uint8_t kHeapRegion[CFG_HEAP_SIZE];
+static byte kHeapRegion[CFG_HEAP_SIZE];
 
 static const size_t kHeapStructSize	= (sizeof(struct kMemoryBlockStruct_t) + ((size_t)(CFG_PLATFORM_BYTE_ALIGNMENT - 1))) & ~((size_t)CFG_PLATFORM_BYTE_ALIGNMENT_MASK); //What the hell is this I shouldn't have copied FreeRTOS code
 

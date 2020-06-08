@@ -42,9 +42,9 @@ static void threads_unblockTask(kTaskHandle_t task)
 	return;
 }
 
-uint8_t threads_semaphoreWait(volatile struct kLockStruct_t* semaphore)
+kReturnValue_t threads_semaphoreWait(volatile struct kLockStruct_t* semaphore)
 {
-	uint8_t exitcode = 1;
+	kReturnValue_t exitcode = ERR_GENERIC;
 	if (semaphore != NULL) {
 		while (1) {
 			threads_spinlockAcquire(&semaphoreOpLock);
@@ -76,12 +76,15 @@ uint8_t threads_semaphoreWait(volatile struct kLockStruct_t* semaphore)
 			}
 		}
 	}
+	else {
+		exitcode = ERR_NULLPTR;
+	}
 	return exitcode;
 }
 
-uint8_t threads_semaphoreSignal(volatile struct kLockStruct_t* semaphore)
+kReturnValue_t threads_semaphoreSignal(volatile struct kLockStruct_t* semaphore)
 {
-	uint8_t exitcode = 1;
+	kReturnValue_t exitcode = ERR_GENERIC;
 	if (semaphore != NULL) {
 		threads_spinlockAcquire(&semaphoreOpLock);
 
@@ -104,6 +107,9 @@ uint8_t threads_semaphoreSignal(volatile struct kLockStruct_t* semaphore)
 
 		exitcode = 0;
 		threads_spinlockRelease(&semaphoreOpLock);
+	}
+	else {
+		exitcode = ERR_NULLPTR;
 	}
 	return exitcode;
 }

@@ -34,7 +34,7 @@ kStackSize_t kernel_getUserTaskStackUsage();
 kStackSize_t kernel_getSystemTaskStackUsage();
 
 void kernel_prepareMemoryBarrier(kStackPtr_t sptr, uint8_t size, uint8_t filler);
-uint8_t kernel_checkStackProtectionRegion(kTaskHandle_t checkedTask);
+kReturnValue_t kernel_checkStackProtectionRegion(kTaskHandle_t checkedTask);
 
 void kernel_setFlag(uint8_t flag, uint8_t value);
 uint8_t kernel_checkFlag(uint8_t flag);
@@ -44,7 +44,7 @@ void kernel_checkMCUCSR();
 uint8_t kernel_getSystemStatus();
 void kernel_setSystemStatus(uint8_t status);
 
-uint8_t kernel_startScheduler();
+kReturnValue_t kernel_startScheduler();
 void kernel_preinit();
 
 #endif /* KERNEL_H_ */

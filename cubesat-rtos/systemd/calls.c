@@ -17,7 +17,7 @@ void systemd_idle()
 
 uint8_t systemd_addCall(sdServiceHandle_t handle)
 {
-	uint8_t exitcode = 1u;
+	uint8_t exitcode = 1;
 	kStatusRegister_t sreg = threads_startAtomicOperation();
 
 	if (sdCallIndex < CFG_SYSTEMD_MAX_SERVICES) {
@@ -34,12 +34,12 @@ uint8_t systemd_addCall(sdServiceHandle_t handle)
 uint8_t systemd_removeCall()
 {
 	kStatusRegister_t sreg = threads_startAtomicOperation();
-	if (sdCallIndex != 0u) {
+	if (sdCallIndex != 0) {
 		sdCallIndex--;
-		for (uint16_t i = 0u; i < CFG_SYSTEMD_MAX_SERVICES-1u; i++) {
-			sdCallQueue[i] = sdCallQueue[i+1u];
+		for (kIterator_t i = 0; i < CFG_SYSTEMD_MAX_SERVICES-1; i++) {
+			sdCallQueue[i] = sdCallQueue[i+1];
 		}
-		sdCallQueue[CFG_SYSTEMD_MAX_SERVICES-1u] = NULL;
+		sdCallQueue[CFG_SYSTEMD_MAX_SERVICES-1] = NULL;
 	}
 	else {
 		sdCallQueue[0] = NULL;
@@ -52,7 +52,7 @@ uint8_t systemd_removeCall()
 void systemd_clearCallQueue()
 {
 	kStatusRegister_t sreg = threads_startAtomicOperation();
-	for (uint16_t i = 0; i < CFG_SYSTEMD_MAX_SERVICES; i++) {
+	for (kIterator_t i = 0; i < CFG_SYSTEMD_MAX_SERVICES; i++) {
 		sdCallQueue[i] = NULL;
 	}
 	sdCallIndex = 0u;

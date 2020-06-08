@@ -14,7 +14,7 @@ kTimerHandle_t kernel_setTimer(kTimerISR_t t_pointer, uint32_t t_period)
 	kTimerHandle_t dummyHandle = NULL;
 	kStatusRegister_t sreg = threads_startAtomicOperation();
 
-	for (int i = 0; i < CFG_MAX_TIMER_COUNT; i++) {
+	for (kIterator_t i = 0; i < CFG_MAX_TIMER_COUNT; i++) {
 		if (kTimerList[i].tsrPointer == t_pointer || kTimerList[i].tsrPointer == NULL) {
 			kTimerList[i].tsrPointer = t_pointer;
 			kTimerList[i].period = t_period;

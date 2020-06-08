@@ -9,18 +9,16 @@
 #include <kernel/kernel.h>
 #include <kernel/hal/hal.h>
 #include "../kernel_config.h"
-#include "listutils.h"
 
-static volatile struct kTaskStruct_t *kCurrentTask;
-static volatile struct kTaskStruct_t *kNextTask;
+kTaskHandle_t kCurrentTask;
+static kTaskHandle_t kNextTask;
 volatile uint64_t __e_time = 0;
 extern volatile uint16_t _kflags;
 static volatile uint8_t kInterruptDepth = 0;
 
-static volatile uint8_t kReservedMemory[CFG_KERNEL_RESERVED_MEMORY];
-static volatile kStackPtr_t kStackPointer = &kReservedMemory[CFG_KERNEL_RESERVED_MEMORY-1];
+extern volatile byte kReservedMemory[CFG_KERNEL_RESERVED_MEMORY];
+extern kStackPtr_t kStackPointer;
 
-static inline void taskmgr_switchTask();
 void taskmgr_schedule();
 void taskmgr_setActiveTicks(uint16_t activeTicks);
 void taskmgr_setKernelTicks(uint16_t activeTicks);
@@ -68,38 +66,13 @@ void taskmgr_setKernelStackPointer(kStackPtr_t pointer)
 	kStackPointer = pointer;
 }
 
-static inline void taskmgr_switchTask()
+void taskmgr_switchTask()
 {	
 	taskmgr_schedule();
 	if (kNextTask != kCurrentTask) kernel_switchContext();
 }
 
-void __attribute__ (( naked, noinline )) taskmgr_yield(void) 
-{
-	platform_SAVE_CONTEXT();
-	taskmgr_switchTask();
-	platform_RESTORE_CONTEXT();
-	platform_RET();
-}
-
-void __attribute__ (( naked, noinline )) taskmgr_tick()
-{
-	platform_SAVE_CONTEXT();
-	
-	hal_SET_BIT(_kflags, KFLAG_TIMER_ISR);
-	
-	taskmgr_switchTask();
-	
-	kernel_timerService();
-	
-	__e_time++;
-	
-	hal_CLEAR_BIT(_kflags, KFLAG_TIMER_ISR);
-	platform_RESTORE_CONTEXT();
-	platform_RET();
-}
-
-void taskmgr_sleep(uint16_t sleep)
+void taskmgr_sleep(kTaskTicks_t sleep)
 {
 	taskmgr_setActiveTicks(0);
 	
@@ -107,5 +80,14 @@ void taskmgr_sleep(uint16_t sleep)
 		taskmgr_setTaskState(kCurrentTask, KSTATE_SLEEPING);
 		kCurrentTask -> sleepTime = sleep;
 	}
-	taskmgr_yield();
+	platform_yield();
+}
+
+void taskmgr_tick()
+{
+	taskmgr_switchTask();
+	
+	kernel_timerService();
+	
+	__e_time++;
 }

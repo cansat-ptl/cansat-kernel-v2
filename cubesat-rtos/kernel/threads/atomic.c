@@ -6,22 +6,15 @@
  */ 
 
 #include <kernel/threads/threads.h>
+#include <kernel/platform/platform.h>
 
-uint8_t threads_startAtomicOperation()
+kStatusRegister_t threads_startAtomicOperation()
 {
-	#if CFG_ALLOW_INTERRUPTS_IN_ATOMIC_SECTIONS == 0
-		kStatusRegister_t sreg = platform_STATUS_REG;
-		platform_DISABLE_INTERRUPTS();
-		return sreg;
-	#else
-		return 0;
-	#endif
+	kStatusRegister_t sreg = platform_startAtomicOperation();
+	return sreg;
 }
 
 void threads_endAtomicOperation(kStatusRegister_t sreg)
 {
-	#if CFG_ALLOW_INTERRUPTS_IN_ATOMIC_SECTIONS == 0
-		platform_ENABLE_INTERRUPTS();
-		platform_STATUS_REG = sreg;
-	#endif
+	platform_endAtomicOperation(sreg);
 }
