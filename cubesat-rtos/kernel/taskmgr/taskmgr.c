@@ -16,7 +16,7 @@ volatile uint64_t __e_time = 0;
 extern volatile uint16_t _kflags;
 static volatile uint8_t kInterruptDepth = 0;
 
-extern volatile uint8_t kReservedMemory[CFG_KERNEL_RESERVED_MEMORY];
+extern volatile byte kReservedMemory[CFG_KERNEL_RESERVED_MEMORY];
 extern kStackPtr_t kStackPointer;
 
 void taskmgr_schedule();
@@ -72,7 +72,7 @@ void taskmgr_switchTask()
 	if (kNextTask != kCurrentTask) kernel_switchContext();
 }
 
-void taskmgr_sleep(uint16_t sleep)
+void taskmgr_sleep(kTaskTicks_t sleep)
 {
 	taskmgr_setActiveTicks(0);
 	

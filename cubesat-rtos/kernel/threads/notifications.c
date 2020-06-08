@@ -31,9 +31,9 @@ uint16_t threads_notificationWait()
 	return returnValue;
 }
 
-uint8_t threads_notificationSend(kTaskHandle_t taskToNotify, uint16_t flags)
+kReturnValue_t threads_notificationSend(kTaskHandle_t taskToNotify, uint16_t flags)
 {
-	uint8_t exitcode = 1;
+	kReturnValue_t exitcode = ERR_GENERIC;
 	if (taskToNotify != NULL) {
 		threads_spinlockAcquire(&notificationOpLock);
 	
@@ -46,6 +46,9 @@ uint8_t threads_notificationSend(kTaskHandle_t taskToNotify, uint16_t flags)
 		
 		exitcode = 0;
 		threads_spinlockRelease(&notificationOpLock);
+	}
+	else {
+		exitcode = ERR_NULLPTR;
 	}
 	return exitcode;
 }

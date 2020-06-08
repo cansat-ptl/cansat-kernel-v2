@@ -37,7 +37,7 @@ void kernel_preinit()
 	taskmgr_init(kernel_idle1);
 }
 
-uint8_t kernel_startScheduler()
+kReturnValue_t kernel_startScheduler()
 {
 	#if CFG_LOGGING == 1
 		debug_puts(L_INFO, PSTR("kernel: Setting up system timer"));

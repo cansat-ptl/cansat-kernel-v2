@@ -9,9 +9,9 @@
 
 static const size_t kFifoStructSize	= (sizeof(struct kIPCStruct_t) + ((size_t)(CFG_PLATFORM_BYTE_ALIGNMENT - 1))) & ~((size_t)CFG_PLATFORM_BYTE_ALIGNMENT_MASK);
 
-uint8_t threads_fifoCreateStatic(kFifoHandle_t fifo, char* pointer, size_t itemSize, size_t totalSize)
+kReturnValue_t threads_fifoCreateStatic(kFifoHandle_t fifo, char* pointer, size_t itemSize, size_t totalSize)
 {
-	uint8_t exitcode = 1;
+	kReturnValue_t exitcode = ERR_GENERIC;
 	if (fifo != NULL && pointer != NULL && itemSize != 0 && totalSize != 0) {
 		fifo->itemSize = itemSize;
 		fifo->size = totalSize;
@@ -20,6 +20,9 @@ uint8_t threads_fifoCreateStatic(kFifoHandle_t fifo, char* pointer, size_t itemS
 		fifo->outputPosition = 0;
 		fifo->currentPosition = 0;
 		exitcode = 0;
+	}
+	else {
+		exitcode = ERR_NULLPTR;
 	}
 	return exitcode;
 }
@@ -47,9 +50,9 @@ kFifoHandle_t threads_fifoCreate(size_t itemSize, size_t itemsTotal)
 	return fifo;
 }
 
-uint8_t threads_fifoWrite(kFifoHandle_t fifo, void* item)
+kReturnValue_t threads_fifoWrite(kFifoHandle_t fifo, void* item)
 {
-	uint8_t exitcode = 1;
+	kReturnValue_t exitcode = ERR_GENERIC;
 	if (fifo != NULL) {
 		if (threads_fifoFreeSpace(fifo)) {
 			memcpy(fifo->pointer + fifo->inputPosition, item, fifo->itemSize);
@@ -64,12 +67,15 @@ uint8_t threads_fifoWrite(kFifoHandle_t fifo, void* item)
 			exitcode = 0;
 		}
 	}
+	else {
+		exitcode = ERR_NULLPTR;
+	}
 	return exitcode;
 }
 
-uint8_t threads_fifoRead(kFifoHandle_t fifo, void* item)
+kReturnValue_t threads_fifoRead(kFifoHandle_t fifo, void* item)
 {
-	uint8_t exitcode = 1;
+	kReturnValue_t exitcode = ERR_GENERIC;
 	if (fifo != NULL) {
 		if (threads_fifoAvailable(fifo)) {
 			memcpy(item, fifo->pointer + fifo->outputPosition, fifo->itemSize);
@@ -84,16 +90,22 @@ uint8_t threads_fifoRead(kFifoHandle_t fifo, void* item)
 			exitcode = 0;
 		} 
 	}
+	else {
+		exitcode = ERR_NULLPTR;
+	}
 	return exitcode;
 }
 
-uint8_t threads_fifoPeek(kFifoHandle_t fifo, void* item)
+kReturnValue_t threads_fifoPeek(kFifoHandle_t fifo, void* item)
 {
-	uint8_t exitcode = 1;
+	kReturnValue_t exitcode = ERR_GENERIC;
 	if (fifo != NULL) {
 		if (threads_fifoAvailable(fifo)) {
 			memcpy(item, fifo->pointer + fifo->outputPosition, fifo->itemSize);
 		}
+	}
+	else {
+		exitcode = ERR_NULLPTR;
 	}
 	return exitcode;
 }

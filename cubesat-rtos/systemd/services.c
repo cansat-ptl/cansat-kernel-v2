@@ -41,7 +41,7 @@ sdServiceHandle_t systemd_addService(uint8_t taskType, sdService_t t_ptr, uint16
 	dummyService.state = startupState;
 	if (taskType == SDSERVICE_REPEATED) dummyService.repeatPeriod = t_delay - 1;
 	
-	for (int i = 0; i < CFG_SYSTEMD_MAX_SERVICES; i++) {
+	for (kIterator_t i = 0; i < CFG_SYSTEMD_MAX_SERVICES; i++) {
 		if (sdServiceList[i].pointer == t_ptr || sdServiceList[i].pointer == systemd_idle || sdServiceList[i].pointer == NULL) {
 			sdServiceList[i] = dummyService;
 			handle = &sdServiceList[i];
@@ -59,7 +59,7 @@ uint8_t systemd_removeServiceByPosition(uint8_t position)
 	kStatusRegister_t sreg = threads_startAtomicOperation();
 	sdServiceIndex--;
 	systemd_resetServiceByPosition(position);
-	for (int j = position; j < CFG_SYSTEMD_MAX_SERVICES-1; j++) {
+	for (kIterator_t j = position; j < CFG_SYSTEMD_MAX_SERVICES-1; j++) {
 		sdServiceList[j] = sdServiceList[j+1];
 	}
 	systemd_resetServiceByPosition(CFG_SYSTEMD_MAX_SERVICES-1);
@@ -79,7 +79,7 @@ uint8_t systemd_removeService(sdServiceHandle_t handle)
 
 	if (position != CFG_SYSTEMD_MAX_SERVICES-1) {
 		systemd_resetServiceByPosition(position);
-		for (int j = position; j < CFG_SYSTEMD_MAX_SERVICES-1; j++) {
+		for (kIterator_t j = position; j < CFG_SYSTEMD_MAX_SERVICES-1; j++) {
 			sdServiceList[j] = sdServiceList[j+1];
 		}
 		systemd_resetServiceByPosition(CFG_SYSTEMD_MAX_SERVICES-1);
@@ -93,7 +93,7 @@ uint8_t systemd_removeService(sdServiceHandle_t handle)
 void systemd_clearServiceQueue()
 {
 	kStatusRegister_t sreg = threads_startAtomicOperation();
-	for (int i = 0; i < CFG_SYSTEMD_MAX_SERVICES; i++) {
+	for (kIterator_t i = 0; i < CFG_SYSTEMD_MAX_SERVICES; i++) {
 		systemd_resetServiceByPosition(i);
 	}
 	sdServiceIndex = 0;

@@ -9,7 +9,7 @@
 #include <kernel/hal/hal.h>
 
 extern kTaskHandle_t kCurrentTask;
-volatile uint8_t kReservedMemory[CFG_KERNEL_RESERVED_MEMORY];
+volatile byte kReservedMemory[CFG_KERNEL_RESERVED_MEMORY];
 kStackPtr_t kStackPointer = &kReservedMemory[CFG_KERNEL_RESERVED_MEMORY-1];
 
 void taskmgr_tick();

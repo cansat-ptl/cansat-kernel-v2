@@ -26,7 +26,7 @@ kStackPtr_t platform_prepareStackFrame(kStackPtr_t regionPointer, kStackSize_t s
 	regionPointer[-4] = 0;							// R0 initial value, overwritten by SREG during context switch, should be initialized separately
 	regionPointer[-5] = 0x80;						// SREG initial value - interrupts enabled
 	
-	for (int16_t i = CFG_KERNEL_STACK_FRAME_REGISTER_OFFSET; i > (CFG_KERNEL_STACK_FRAME_REGISTER_OFFSET + CFG_KERNEL_STACK_FRAME_END_OFFSET); i--)
+	for (kIterator_t i = CFG_KERNEL_STACK_FRAME_REGISTER_OFFSET; i > (CFG_KERNEL_STACK_FRAME_REGISTER_OFFSET + CFG_KERNEL_STACK_FRAME_END_OFFSET); i--)
 		regionPointer[i] = 0;						// R1-R31 initial values
 	
 	regionPointer[CFG_KERNEL_STACK_FRAME_REGISTER_OFFSET - 23] = (uint16_t)args & 0xFF;
