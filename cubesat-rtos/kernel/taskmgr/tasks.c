@@ -42,7 +42,7 @@ kTaskHandle_t taskmgr_getIdleTaskHandle()
 	return kIdleTaskHandle;
 }
 
-uint8_t taskmgr_init(kTask_t idle)
+kReturnValue_t taskmgr_init(kTask_t idle)
 {
 	kIdleTaskHandle = taskmgr_createTask(idle, NULL, CFG_KERNEL_RESERVED_MEMORY, KPRIO_IDLE, KTASK_SYSTEM, "idle");
 	
@@ -102,9 +102,9 @@ void taskmgr_setTaskState(kTaskHandle_t task, kTaskState_t state)
 	threads_endAtomicOperation(sreg);
 }
 
-uint8_t taskmgr_setTaskPriority(kTaskHandle_t task, uint8_t priority)
+kReturnValue_t taskmgr_setTaskPriority(kTaskHandle_t task, uint8_t priority)
 {
-	uint8_t exitcode = 0;
+	kReturnValue_t exitcode = ERR_GENERIC;
 	kStatusRegister_t sreg = threads_startAtomicOperation();
 	
 	if (task != NULL) {
@@ -149,9 +149,9 @@ static inline void taskmgr_setupTaskStructure(kTaskHandle_t task, \
 	task -> taskList.prev = NULL;
 }
 
-uint8_t taskmgr_createTaskStatic(kTaskHandle_t taskStruct, kStackPtr_t stack, kTask_t entry, void* args, kStackSize_t stackSize, uint8_t priority, kTaskType_t type, char* name)
+kReturnValue_t taskmgr_createTaskStatic(kTaskHandle_t taskStruct, kStackPtr_t stack, kTask_t entry, void* args, kStackSize_t stackSize, uint8_t priority, kTaskType_t type, char* name)
 {
-	uint8_t exitcode = 1;
+	kReturnValue_t exitcode = ERR_GENERIC;
 	kStatusRegister_t sreg = threads_startAtomicOperation();
 
 	if (entry != NULL) {
@@ -166,11 +166,11 @@ uint8_t taskmgr_createTaskStatic(kTaskHandle_t taskStruct, kStackPtr_t stack, kT
 				exitcode = 0;
 			}
 			else {
-				exitcode = 2;
+				exitcode = -2;
 			}
 		}
 		else {
-			exitcode = 3;
+			exitcode = -3;
 		}	
 	}
 	
@@ -178,12 +178,12 @@ uint8_t taskmgr_createTaskStatic(kTaskHandle_t taskStruct, kStackPtr_t stack, kT
 	return exitcode;
 }
 
-uint8_t taskmgr_createTaskDynamic(kTaskHandle_t* handle, kTask_t entry, void* args, kStackSize_t stackSize, uint8_t priority, kTaskType_t type, char* name)
+kReturnValue_t taskmgr_createTaskDynamic(kTaskHandle_t* handle, kTask_t entry, void* args, kStackSize_t stackSize, uint8_t priority, kTaskType_t type, char* name)
 {
-	uint8_t exitcode = 1;
+	kReturnValue_t exitcode = ERR_GENERIC;
 	kStatusRegister_t sreg = threads_startAtomicOperation();
 	
-	kStackPtr_t stackPointer = (kStackPtr_t)memmgr_heapAlloc(stackSize + kTaskStructSize + 64);
+	kStackPtr_t stackPointer = (kStackPtr_t)memmgr_heapAlloc(stackSize + kTaskStructSize);
 				
 	exitcode = taskmgr_createTaskStatic((kTaskHandle_t)stackPointer, stackPointer + kTaskStructSize, entry, args, stackSize, priority, type, name);
 	
@@ -201,19 +201,19 @@ uint8_t taskmgr_createTaskDynamic(kTaskHandle_t* handle, kTask_t entry, void* ar
 kTaskHandle_t taskmgr_createTask(kTask_t entry, void* args, kStackSize_t stackSize, uint8_t priority, kTaskType_t type, char* name)
 {
 	kTaskHandle_t returnValue = NULL;
-	uint8_t ret = taskmgr_createTaskDynamic(&returnValue, entry, args, stackSize, priority, type, name);
+	kReturnValue_t ret = taskmgr_createTaskDynamic(&returnValue, entry, args, stackSize, priority, type, name);
 	#if CFG_LOGGING == 1
 	switch (ret) {
 		case 0:
 			debug_logMessage(PGM_PUTS, L_INFO, PSTR("taskmgr: Successfully created a new task\r\n"));
 			break;
-		case 1:
+		case -1:
 			debug_logMessage(PGM_PUTS, L_INFO, PSTR("taskmgr: Task creation error[1]: entryPoint is NULL\r\n"));
 			break;
-		case 2:
+		case -2:
 			debug_logMessage(PGM_PUTS, L_INFO, PSTR("taskmgr: Task creation error[2]: failed to allocate task heap\r\n"));
 			break;
-		case 3:
+		case -3:
 			debug_logMessage(PGM_PUTS, L_INFO, PSTR("taskmgr: Task creation error[3]: failed to allocate task structure\r\n"));
 			break;
 		default:
@@ -224,7 +224,7 @@ kTaskHandle_t taskmgr_createTask(kTask_t entry, void* args, kStackSize_t stackSi
 	return returnValue;
 }
 
-uint8_t taskmgr_removeTask(kTaskHandle_t handle)
+kReturnValue_t taskmgr_removeTask(kTaskHandle_t handle)
 {
 	kStatusRegister_t sreg = threads_startAtomicOperation();
 	
