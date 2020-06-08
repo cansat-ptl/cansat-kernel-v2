@@ -34,7 +34,7 @@
 	#define CFG_TICKRATE_MS 1
 
 	//Debug logging options
-	#define CFG_LOGGING 1
+	#define CFG_LOGGING 0
 	#define CFG_VERBOSE 0
 	#define CFG_PROFILING 0
 	#define CFG_DEBUG_PRINT_STAGES 1
