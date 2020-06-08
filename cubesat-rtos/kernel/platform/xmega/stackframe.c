@@ -12,7 +12,7 @@
 #include <kernel/types.h>
 #include "../kernel_config.h"
 
-#ifdef PLATFORM_AVR
+#ifdef PLATFORM_XMEGA
 
 void kernel_taskReturnHook();
 void kernel_stackCorruptionHook();

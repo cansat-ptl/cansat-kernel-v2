@@ -8,7 +8,7 @@
 #include <kernel/platform/platform.h>
 #include <kernel/hal/hal.h>
 
-#ifdef PLATFORM_AVR
+#ifdef PLATFORM_XMEGA
 
 extern kTaskHandle_t kCurrentTask;
 volatile byte kReservedMemory[CFG_KERNEL_RESERVED_MEMORY];

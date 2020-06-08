@@ -7,7 +7,7 @@
 #include <kernel/platform/platform.h>
 #include <kernel/kernel.h>
 
-#ifdef PLATFORM_AVR
+#ifdef PLATFORM_XMEGA
 
 void platform_setupTimer1A(uint8_t prescaler)
 {
@@ -74,4 +74,3 @@ ISR(TIMER1_COMPA_vect, ISR_NAKED)
 }
 
 #endif
-
