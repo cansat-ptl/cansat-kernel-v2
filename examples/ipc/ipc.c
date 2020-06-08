@@ -7,12 +7,10 @@
 #include <math.h>
 #include <avr/io.h>
 #include <systemd/systemd.h>
-#include <initd/initd.h>
 #include <kernel/kernel.h>
 #include <kernel/types.h>
 
-char exampleBuffer[32]; //Declare a buffer to hold FIFO data
-kFifo_t exampleFifo; //Declare the FIFO itself
+kFifoHandle_t exampleFifo; //Declare FIFO handle
 kMutex_t exampleMutex; //Mutex declaration - not required, but recommended
 
 kTask simpleTask1(void* args)
@@ -31,19 +29,20 @@ kTask simpleTask1(void* args)
 		 * exampleFifo - pointer (handle) to the FIFO
 		 * Returns: 1 if FIFO is not empty, otherwise 0
 		 */
-		while (threads_fifoAvailable(&exampleFifo)) {
+		while (threads_fifoAvailable(exampleFifo)) {
 			/*
-			 * threads_fifoRead - read a byte from FIFO
+			 * threads_fifoRead - read data of size exampleFifo->itemSize from FIFO
 			 * exampleFifo - pointer (handle) to the FIFO
-			 * Returns: byte from FIFO if read was successful, otherwise 0
+			 * (void*)&receiveBuffer[receiveBufferIndex] - pointer to receive buffer
+			 * Returns: 0 if reading was successful, ERR_GENERIC or ERR_NULLPTR otherwise
 			 */
-			receiveBuffer[receiveBufferIndex] = threads_fifoRead(&exampleFifo);
+			threads_fifoRead(exampleFifo, (void*)&receiveBuffer[receiveBufferIndex]);
 			receiveBufferIndex++;
 		}
 		debug_logMessage(PGM_ON, L_INFO, PSTR("task1: Fifo contents: %s\r\n"), receiveBuffer);
 		threads_mutexUnlock(&exampleMutex);
 
-		kernel_yield(200);
+		taskmgr_sleep(200);
 	}
 }
 
@@ -63,19 +62,20 @@ kTask simpleTask2(void* args)
 		 * exampleFifo - pointer (handle) to the FIFO
 		 * Returns: 1 if FIFO is not empty, otherwise 0
 		 */
-		while (threads_fifoAvailable(&exampleFifo)) {
+		while (threads_fifoAvailable(exampleFifo)) {
 			/*
-			 * threads_fifoRead - read a byte from FIFO
+			 * threads_fifoRead - read data of size exampleFifo->itemSize from FIFO
 			 * exampleFifo - pointer (handle) to the FIFO
-			 * Returns: byte from FIFO if read was successful, otherwise 0
+			 * (void*)&receiveBuffer[receiveBufferIndex] - pointer to receive buffer
+			 * Returns: 0 if reading was successful, ERR_GENERIC or ERR_NULLPTR otherwise
 			 */
-			receiveBuffer[receiveBufferIndex] = threads_fifoRead(&exampleFifo);
+			threads_fifoRead(exampleFifo, (void*)&receiveBuffer[receiveBufferIndex]);
 			receiveBufferIndex++;
 		}
 		debug_logMessage(PGM_ON, L_INFO, PSTR("task2: Fifo contents: %s\r\n"), receiveBuffer);
 		threads_mutexUnlock(&exampleMutex);
 
-		kernel_yield(200);
+		taskmgr_sleep(200);
 	}
 }
 
@@ -90,18 +90,18 @@ kTask simpleTask3(void* args)
 		threads_mutexLock(&exampleMutex);
 		for (int i = 0; i < strlen((char*)args); i++) {
 			/*
-			 * threads_fifoWrite - write a byte to FIFO
+			 * threads_fifoRead - read data of size exampleFifo->itemSize from FIFO
 			 * exampleFifo - pointer (handle) to the FIFO
-			 * (char*)args[i] - character to send
-			 * Returns: 1 if write was successful, otherwise 0
+			 * (void*)&receiveBuffer[receiveBufferIndex] - pointer to receive buffer
+			 * Returns: 0 if reading was successful, ERR_GENERIC or ERR_NULLPTR 
 			 */
-			if (!threads_fifoWrite(&exampleFifo, ((char*)args)[i])) {
+			if (threads_fifoWrite(exampleFifo, args+i) == ERR_GENERIC) {
 				debug_logMessage(PGM_ON, L_INFO, PSTR("task3: Fifo write error\r\n"));
 			}
 		}
 		threads_mutexUnlock(&exampleMutex);
 
-		kernel_yield(200);
+		taskmgr_sleep(100);
 	}
 }
 
@@ -115,11 +115,11 @@ void user_preinit()
 {
 	/*
 	 * threads_fifoInit - Initialize FIFO (pipe)
-	 * exampleBuffer - buffer to store FIFO data
-	 * 32 - size of that buffer
+	 * 1 - size of single data item
+	 * 32 - size of buffer
 	 * Returns: kFifo_t (a structure with all required fields set)
 	 */
-	exampleFifo = threads_fifoInit(exampleBuffer, 32);
+	exampleFifo = threads_fifoCreate(1, 32);
 	exampleMutex = threads_mutexInit(); //Initializes mutex
 	return;
 }
@@ -128,7 +128,7 @@ void user_init()
 {
 
 	/*
-	 * kernel_createTask - Create a task
+	 * taskmgr_createTask - Create a task
 	 * simpleTask1 - task body
 	 * NULL - pointer to parameter array (this task takes no parameters)
 	 * 250 - amount of allocated memory in bytes
@@ -136,10 +136,10 @@ void user_init()
 	 * KTASK_USER - task type, may be either KTASK_USER or KTASK_SYSTEM, defines memory protection rules
 	 * "task1" - task name
 	 */
-	kernel_createTask(simpleTask1, NULL, 250, 1, KTASK_USER, "task1");
+	taskmgr_createTask(simpleTask1, NULL, 250, 1, KTASK_USER, "task1");
 
 	/*
-	 * kernel_createTask - Create a task
+	 * taskmgr_createTask - Create a task
 	 * simpleTask2 - task body
 	 * NULL - pointer to parameter array (this task takes no parameters)
 	 * 250 - amount of allocated memory in bytes
@@ -147,10 +147,10 @@ void user_init()
 	 * KTASK_USER - task type, may be either KTASK_USER or KTASK_SYSTEM, defines memory protection rules
 	 * "task2" - task name
 	 */
-	kernel_createTask(simpleTask2, NULL, 250, 2, KTASK_USER, "task2");
+	taskmgr_createTask(simpleTask2, NULL, 250, 2, KTASK_USER, "task2");
 
 	/*
-	 * kernel_createTask - Create a task
+	 * taskmgr_createTask - Create a task
 	 * simpleTask2 - task body
 	 * (void*)exampleParameter - pointer to parameter array (this task takes string exampleParameter as a parameter)
 	 * 250 - amount of allocated memory in bytes
@@ -159,7 +159,7 @@ void user_init()
 	 * "task3" - task name
 	 */
 	static char exampleParameter[] = "Spaghetti and meatballs";
-	kernel_createTask(simpleTask3, (void*)exampleParameter, 250, 3, KTASK_USER, "task3");
+	taskmgr_createTask(simpleTask3, (void*)exampleParameter, 250, 3, KTASK_USER, "task3");
 	return;
 }
 
@@ -171,6 +171,6 @@ void user_postinit()
 
 int main()
 {
-	initd_startup(); //Call initd_startup to run the kernel
+	kernel_startup(); //Call kernel_startup to run the kernel
 	while (1);
 }
