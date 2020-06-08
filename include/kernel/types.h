@@ -9,6 +9,8 @@
 #define TYPES_H_
 
 #include <stdint.h>
+#include <stddef.h>
+#include <kernel/platform/types.h>
 
 #define ERR_GENERIC -1
 #define ERR_NULLPTR -2
@@ -29,31 +31,9 @@
 #define KOSSTATUS_HALTED 2
 #define KOSSTATUS_ERRORED 3
 
-#ifndef _SIZE_T
-#define _SIZE_T
-typedef uint32_t size_t;
-#endif
-
-#include <stddef.h>
-
 typedef void kTask;
 typedef void (*kTask_t)(void*);
 typedef void (*kTimerISR_t)(void);
-
-typedef uint32_t kPointerValue_t;
-typedef volatile uint8_t *kStackPtr_t;
-
-typedef int16_t kIterator_t;
-typedef int16_t kReturnValue_t;
-typedef int16_t kError_t;
-
-typedef uint8_t byte;
-typedef uint8_t kRegister_t;
-typedef uint8_t kStatusRegister_t;
-
-typedef uint16_t kStackSize_t;
-typedef uint16_t kTaskTicks_t;
-typedef uint16_t kPid_t;
 
 typedef enum {KSTATE_UNINIT, KSTATE_SUSPENDED, KSTATE_SLEEPING, KSTATE_BLOCKED, KSTATE_READY, KSTATE_RUNNING} kTaskState_t;
 typedef enum {KEVENT_NONE, KEVENT_FIRED} kEventState_t;
