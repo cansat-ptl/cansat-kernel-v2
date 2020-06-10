@@ -14,6 +14,7 @@
 
 #define ERR_GENERIC -1
 #define ERR_NULLPTR -2
+#define ERR_MEMORY_VIOLATION -3
 
 #define KFLAG_INIT 0
 #define KFLAG_TIMER_SET 1

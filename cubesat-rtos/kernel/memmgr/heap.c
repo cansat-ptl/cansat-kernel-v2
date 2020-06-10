@@ -177,3 +177,20 @@ void memmgr_heapFree(void* pointer)
 	threads_endAtomicOperation(sreg);
 	return;
 }
+
+kReturnValue_t memmgr_pointerSanityCheck(void* pointer)
+{
+	kReturnValue_t exitcode = ERR_MEMORY_VIOLATION;
+	if (pointer != NULL) {
+		#if CFG_ALLOW_STATIC_TASK_ALLOCATION == 0
+			if (pointer >= (void*)kHeapRegion) {
+				if (pointer <= (void*)(kHeapRegion + CFG_HEAP_SIZE-1)) {
+					exitcode = 0;
+				}
+			}
+		#else
+			exitcode = 0;
+		#endif
+	}
+	return exitcode;
+}

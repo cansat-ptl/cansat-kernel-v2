@@ -24,10 +24,10 @@ kReturnValue_t taskmgr_createTaskStatic(kTaskHandle_t taskStruct, kStackPtr_t st
 kReturnValue_t taskmgr_createTaskDynamic(kTaskHandle_t* handle, kTask_t entry, void* args, kStackSize_t stackSize, uint8_t priority, kTaskType_t type, char* name);
 kTaskHandle_t taskmgr_createTask(kTask_t entry, void* args, kStackSize_t stackSize, uint8_t priority, kTaskType_t type, char* name);
 
-kReturnValue_t taskmgr_removeTask(kTaskHandle_t handle);
+kReturnValue_t taskmgr_removeTask(kTaskHandle_t task);
 
 kReturnValue_t taskmgr_setTaskPriority(kTaskHandle_t task, uint8_t priority);
-void taskmgr_setTaskState(kTaskHandle_t t_handle, kTaskState_t t_state);
+void taskmgr_setTaskState(kTaskHandle_t handle, kTaskState_t newState);
 
 kTaskHandle_t taskmgr_getCurrentTaskHandle();
 kTaskHandle_t taskmgr_getNextTaskHandle();
