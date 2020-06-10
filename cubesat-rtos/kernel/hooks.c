@@ -7,7 +7,15 @@
 
 #include <kernel/kernel.h>
 
-//TODO: Fix these
+void kernel_panic(const char * message) {
+	#if CFG_LOGGING == 1
+		debug_puts(L_FATAL, PSTR("kernel: PANIC - "));
+		debug_puts(L_NONE, message);
+	#endif
+	while (1) { //TODO: reboot
+		;//Do nothing
+	}
+}
 
 void kernel_taskReturnHook()
 {
@@ -16,7 +24,7 @@ void kernel_taskReturnHook()
 		debug_puts(L_WARN, PSTR("kernel: Task return detected.\r\n"));
 		debug_puts(L_WARN, PSTR("kernel: Returning task will be terminated.\r\n"));
 		debug_logMessage(PGM_ON, L_WARN, PSTR("kernel: Task info:\r\n"));
-		debug_logMessage(PGM_ON, L_WARN, PSTR("kernel: PID: %d; Name: %s; Entry: 0x%08X; StackBegin: 0x%08X;\r\n"), runningTask->pid, runningTask->name, runningTask->taskPtr, runningTask->stackBegin);
+		debug_logMessage(PGM_ON, L_WARN, PSTR("PID: %d; Name: %s; Entry: 0x%08X; StackBegin: 0x%08X;\r\n"), runningTask->pid, runningTask->name, runningTask->taskPtr, runningTask->stackBegin);
 	#endif
 	taskmgr_removeTask(runningTask);
 	while (1) {
@@ -24,16 +32,16 @@ void kernel_taskReturnHook()
 	}
 }
 
-void kernel_stackCorruptionHook()
+void kernel_stackCorruptionHook(kTaskHandle_t task)
 {
-	
-}
-
-void kernel_panic(const char * message) {
 	#if CFG_LOGGING == 1
-		debug_puts(L_FATAL, message);
+		debug_puts(L_ERROR, PSTR("kernel: Task memory corruption detected.\r\n"));
+		debug_puts(L_ERROR, PSTR("kernel: Corrupted task will be terminated.\r\n"));
+		debug_logMessage(PGM_ON, L_ERROR, PSTR("kernel: Task info:\r\n"));
+		debug_logMessage(PGM_ON, L_ERROR, PSTR("PID: %d; Name: %s; Entry: 0x%08X; StackBegin: 0x%08X;\r\n"), task->pid, task->name, task->taskPtr, task->stackBegin);
 	#endif
-	while (1) { //TODO: reboot
-		;//Do nothing
+	taskmgr_removeTask(task);
+	if (task->type == KTASK_SYSTEM) {
+		kernel_panic(PSTR("System-critical task stack corruption\r\n"));
 	}
 }

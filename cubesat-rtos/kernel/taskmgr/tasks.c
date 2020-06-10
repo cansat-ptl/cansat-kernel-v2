@@ -42,7 +42,7 @@ kTaskHandle_t taskmgr_getIdleTaskHandle()
 
 kReturnValue_t taskmgr_init(kTask_t idle)
 {
-	kIdleTaskHandle = taskmgr_createTask(idle, NULL, CFG_KERNEL_RESERVED_MEMORY, KPRIO_IDLE, KTASK_SYSTEM, "idle");
+	kIdleTaskHandle = taskmgr_createTask(idle, NULL, 100, KPRIO_IDLE, KTASK_SYSTEM, "idle");
 	
 	if (kIdleTaskHandle == NULL) {
 		debug_logMessage(PGM_PUTS, L_FATAL, PSTR("\r\ntaskmgr: Startup failed, could not create idle task.\r\n"));
@@ -161,7 +161,11 @@ kReturnValue_t taskmgr_createTaskStatic(kTaskHandle_t taskStruct, kStackPtr_t st
 			if (stack != NULL) {
 				kStackPtr_t stackPrepared = platform_prepareStackFrame(stack, stackSize, entry, args);
 				taskmgr_setupTaskStructure(taskStruct, entry, stackPrepared, stack, stackSize, args, priority, KSTATE_READY, type, name);
-
+				
+				#if CFG_MEMORY_PROTECTION_MODE == 2 || CFG_MEMORY_PROTECTION_MODE == 3
+					memmgr_prepareProtectionRegion((void*)(stack + stackSize), CFG_STACK_SAFETY_MARGIN);
+				#endif
+				
 				taskmgr_setTaskState(taskStruct, KSTATE_READY);
 
 				kGlobalPid++;
@@ -185,7 +189,15 @@ kReturnValue_t taskmgr_createTaskDynamic(kTaskHandle_t* handle, kTask_t entry, v
 	kReturnValue_t exitcode = ERR_GENERIC;
 	kStatusRegister_t sreg = threads_startAtomicOperation();
 	
-	kStackPtr_t stackPointer = (kStackPtr_t)memmgr_heapAlloc(stackSize + kTaskStructSize);
+	if (stackSize < CFG_MIN_STACK_SIZE) {
+		stackSize = CFG_MIN_STACK_SIZE;
+	}
+	
+	#if CFG_MEMORY_PROTECTION_MODE == 2 || CFG_MEMORY_PROTECTION_MODE == 3
+		kStackPtr_t stackPointer = (kStackPtr_t)memmgr_heapAlloc(stackSize + kTaskStructSize + CFG_STACK_SAFETY_MARGIN);
+	#else
+		kStackPtr_t stackPointer = (kStackPtr_t)memmgr_heapAlloc(stackSize + kTaskStructSize);
+	#endif
 				
 	exitcode = taskmgr_createTaskStatic((kTaskHandle_t)stackPointer, stackPointer + kTaskStructSize, entry, args, stackSize, priority, type, name);
 	

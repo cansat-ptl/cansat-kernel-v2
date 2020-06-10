@@ -52,6 +52,7 @@ kTask simpleTask4(void* args)
 		debug_logMessage(PGM_PUTS, L_INFO, PSTR("task4: Waiting for notification\r\n"));
 		uint16_t flags = threads_notificationWait();
 		debug_logMessage(PGM_ON, L_INFO, PSTR("task4: Notification received, flags = 0x%04X\r\n"), flags);
+		break;
 	}
 }
 
