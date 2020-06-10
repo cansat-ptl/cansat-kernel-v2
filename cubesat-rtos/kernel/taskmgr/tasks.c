@@ -18,8 +18,6 @@ static const size_t kTaskStructSize	= (sizeof(struct kTaskStruct_t) + ((size_t)(
 
 static volatile kTaskHandle_t kIdleTaskHandle;
 
-void taskmgr_setKernelStackPointer(kStackPtr_t pointer); //TODO: add to header
-void taskmgr_setIdleTask(kTaskHandle_t idle);
 void taskmgr_initScheduler(kTaskHandle_t idle);
 
 volatile struct kLinkedListStruct_t* taskmgr_getReadyTaskListArray()
@@ -62,7 +60,9 @@ void taskmgr_setTaskState(kTaskHandle_t task, kTaskState_t state)
 {
 	kStatusRegister_t sreg = threads_startAtomicOperation();
 	
-	if (task != NULL) {
+	kReturnValue_t sanityCheck = memmgr_pointerSanityCheck((void*)task);
+	
+	if (sanityCheck == 0) {
 		switch (state) {
 			case KSTATE_UNINIT:
 				taskmgr_listDeleteAny(task->taskList.list, task);
@@ -107,7 +107,9 @@ kReturnValue_t taskmgr_setTaskPriority(kTaskHandle_t task, uint8_t priority)
 	kReturnValue_t exitcode = ERR_GENERIC;
 	kStatusRegister_t sreg = threads_startAtomicOperation();
 	
-	if (task != NULL) {
+	kReturnValue_t sanityCheck = memmgr_pointerSanityCheck((void*)task);
+	
+	if (sanityCheck == 0) {
 		if (priority <= CFG_NUMBER_OF_PRIORITIES) {
 			task->priority = priority;
 			if (task->state == KSTATE_READY) {
@@ -201,20 +203,20 @@ kReturnValue_t taskmgr_createTaskDynamic(kTaskHandle_t* handle, kTask_t entry, v
 kTaskHandle_t taskmgr_createTask(kTask_t entry, void* args, kStackSize_t stackSize, uint8_t priority, kTaskType_t type, char* name)
 {
 	kTaskHandle_t returnValue = NULL;
-	kReturnValue_t ret = taskmgr_createTaskDynamic(&returnValue, entry, args, stackSize, priority, type, name);
+	kReturnValue_t result = taskmgr_createTaskDynamic(&returnValue, entry, args, stackSize, priority, type, name);
 	#if CFG_LOGGING == 1
-	switch (ret) {
+	switch (result) {
 		case 0:
 			debug_logMessage(PGM_PUTS, L_INFO, PSTR("taskmgr: Successfully created a new task\r\n"));
 			break;
 		case -1:
-			debug_logMessage(PGM_PUTS, L_INFO, PSTR("taskmgr: Task creation error[1]: entryPoint is NULL\r\n"));
+			debug_logMessage(PGM_PUTS, L_INFO, PSTR("taskmgr: Task creation error[-1]: entryPoint is NULL\r\n"));
 			break;
 		case -2:
-			debug_logMessage(PGM_PUTS, L_INFO, PSTR("taskmgr: Task creation error[2]: failed to allocate task heap\r\n"));
+			debug_logMessage(PGM_PUTS, L_INFO, PSTR("taskmgr: Task creation error[-2]: failed to allocate task heap\r\n"));
 			break;
 		case -3:
-			debug_logMessage(PGM_PUTS, L_INFO, PSTR("taskmgr: Task creation error[3]: failed to allocate task structure\r\n"));
+			debug_logMessage(PGM_PUTS, L_INFO, PSTR("taskmgr: Task creation error[-3]: failed to allocate task structure\r\n"));
 			break;
 		default:
 			debug_logMessage(PGM_PUTS, L_INFO, PSTR("taskmgr: Task creation error[]: unknown error\r\n"));
@@ -224,13 +226,15 @@ kTaskHandle_t taskmgr_createTask(kTask_t entry, void* args, kStackSize_t stackSi
 	return returnValue;
 }
 
-kReturnValue_t taskmgr_removeTask(kTaskHandle_t handle)
+kReturnValue_t taskmgr_removeTask(kTaskHandle_t task)
 {
 	kStatusRegister_t sreg = threads_startAtomicOperation();
 	
-	if (handle != NULL) {
-		taskmgr_setTaskState(handle, KSTATE_UNINIT);
-		memmgr_heapFree((void*)handle);
+	kReturnValue_t sanityCheck = memmgr_pointerSanityCheck((void*)task);
+	
+	if (sanityCheck == 0) {
+		taskmgr_setTaskState(task, KSTATE_UNINIT);
+		memmgr_heapFree((void*)task);
 	}
 	
 	threads_endAtomicOperation(sreg);

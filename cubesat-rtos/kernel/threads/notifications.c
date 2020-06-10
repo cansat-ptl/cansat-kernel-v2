@@ -34,6 +34,7 @@ uint16_t threads_notificationWait()
 kReturnValue_t threads_notificationSend(kTaskHandle_t taskToNotify, uint16_t flags)
 {
 	kReturnValue_t exitcode = ERR_GENERIC;
+	
 	if (taskToNotify != NULL) {
 		threads_spinlockAcquire(&notificationOpLock);
 	

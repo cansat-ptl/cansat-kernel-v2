@@ -12,7 +12,7 @@ kSpinlock_t semaphoreOpLock = 0;
 void taskmgr_listAddBack(volatile struct kLinkedListStruct_t* list, kTaskHandle_t task);
 void taskmgr_listDeleteAny(volatile struct kLinkedListStruct_t* list, kTaskHandle_t task);
 
-struct kLockStruct_t threads_semaphoreInit(uint8_t resourceAmount)  //TODO: this function is a stub. You can help by improving it
+struct kLockStruct_t threads_semaphoreInit(uint8_t resourceAmount)
 {
 	kSemaphore_t semaphore;
 	semaphore.type = KLOCK_SEMAPHORE;

@@ -22,4 +22,6 @@ void memmgr_heapFree(void* pointer);
 size_t memmgr_getFreeHeap();
 size_t memmgr_getFreeHeapMin();
 
+kReturnValue_t memmgr_pointerSanityCheck(void* pointer);
+
 #endif /* MEMORY_H_ */

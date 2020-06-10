@@ -26,7 +26,10 @@ void taskmgr_setKernelTicks(uint16_t activeTicks);
 static void kernel_switchContext()
 {
 	#if CFG_ENABLE_MEMORY_PROTETCTION == 1
-		kernel_checkStackProtectionRegion(taskmgr_getCurrentTaskHandle());
+	//	kernel_checkStackProtectionRegion(taskmgr_getCurrentTaskHandle()); //TODO: Fix this
+		if (memmgr_pointerSanityCheck((void*)kNextTask) != 0) {
+			kernel_panic(PSTR("kernel: PANIC - memory access violation in task manager: kNextTask is out of bounds\r\n"));
+		}
 	#endif
 	kCurrentTask = kNextTask;
 }
