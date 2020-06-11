@@ -32,7 +32,7 @@ const char * const levels[] PROGMEM = {
 const char log_stageInit[] PROGMEM = "<INIT>";
 const char log_stageRun[] PROGMEM = "<EXEC>";
 const char log_stageHalt[] PROGMEM = "<HALT>";
-const char log_stageErr[] PROGMEM = "<ERROR>";
+const char log_stageErr[] PROGMEM = "<ERRD>";
 
 const char * const stages[] PROGMEM = {
 	log_stageInit,

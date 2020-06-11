@@ -23,6 +23,8 @@
 	#define CFG_STACK_SAFETY_MARGIN 16
 	#define CFG_KERNEL_RESERVED_MEMORY 300
 	#define CFG_MIN_STACK_SIZE 40
+	
+	#define CFG_KERNEL_PANIC_ACTION 1
 
 	//Memory manager settings
 	#define CFG_HEAP_SIZE 2500

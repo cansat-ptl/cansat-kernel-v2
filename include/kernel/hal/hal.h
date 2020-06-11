@@ -70,4 +70,8 @@
 	#define hal_READ_DWORD_FROM_FLASH(x) pgm_read_dword(x)
 #endif
 
+#ifndef hal_REBOOT
+	#define hal_REBOOT() while (1){;}
+#endif
+
 #endif /* HAL_H_ */
