@@ -29,6 +29,8 @@
 
 void kernel_startup();
 
+void kernel_panic();
+
 kStackPtr_t kernel_getStackPtr();
 kStackSize_t kernel_getUserTaskStackUsage();
 kStackSize_t kernel_getSystemTaskStackUsage();

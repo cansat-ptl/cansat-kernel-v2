@@ -21,12 +21,33 @@ extern kStackPtr_t kStackPointer;
 
 void taskmgr_schedule();
 void taskmgr_setActiveTicks(uint16_t activeTicks);
-void taskmgr_setKernelTicks(uint16_t activeTicks);
 
-static void kernel_switchContext()
+void kernel_stackCorruptionHook(kTaskHandle_t task);
+
+static void taskmgr_switchContext()
 {
-	#if CFG_ENABLE_MEMORY_PROTETCTION == 1
-		kernel_checkStackProtectionRegion(taskmgr_getCurrentTaskHandle());
+	#if CFG_MEMORY_PROTECTION_MODE == 1
+		if (platform_checkStackBounds(kCurrentTask)) {
+			kernel_stackCorruptionHook(kCurrentTask);
+		}
+	#endif
+	
+	#if CFG_MEMORY_PROTECTION_MODE == 2
+		if (memmgr_checkProtectionRegion((void*)(kCurrentTask->stackBegin + kCurrentTask->stackSize), CFG_STACK_SAFETY_MARGIN)) {
+			kernel_stackCorruptionHook(kCurrentTask);
+		}
+	#endif
+	
+	#if CFG_MEMORY_PROTECTION_MODE == 3
+		if (platform_checkStackBounds(kCurrentTask) || memmgr_checkProtectionRegion((void*)(kCurrentTask->stackBegin + kCurrentTask->stackSize), CFG_STACK_SAFETY_MARGIN)) {
+			kernel_stackCorruptionHook(kCurrentTask);
+		}
+	#endif
+	
+	#if CFG_MEMORY_PROTECTION_MODE != 0
+		if (memmgr_pointerSanityCheck((void*)kNextTask) != 0) {
+			kernel_panic(PSTR("Memory access violation in task manager: kNextTask is out of bounds\r\n"));
+		}
 	#endif
 	kCurrentTask = kNextTask;
 }
@@ -69,7 +90,7 @@ void taskmgr_setKernelStackPointer(kStackPtr_t pointer)
 void taskmgr_switchTask()
 {	
 	taskmgr_schedule();
-	if (kNextTask != kCurrentTask) kernel_switchContext();
+	if (kNextTask != kCurrentTask) taskmgr_switchContext();
 }
 
 void taskmgr_sleep(kTaskTicks_t sleep)

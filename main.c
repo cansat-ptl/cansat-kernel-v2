@@ -14,9 +14,12 @@ char exampleBuffer[32];
 static char exampleParameter[] = "Spaghetti and meatballs\0";
 kFifoHandle_t exampleFifo;
 kMutex_t exampleMutex;
+kTaskHandle_t handles[4];
 
 kTask simpleTask1(void* args)
 {
+	kTaskHandle_t handle = taskmgr_getCurrentTaskHandle();
+
 	while (1) {
 		debug_logMessage(PGM_PUTS, L_INFO, PSTR("task1: Waiting for notification\r\n"));
 		uint16_t flags = threads_notificationWait();
@@ -64,7 +67,6 @@ void user_preinit()
 
 void user_init()
 {
-	static kTaskHandle_t handles[4];
 	handles[0] = taskmgr_createTask(simpleTask1, NULL, 250, 2, KTASK_USER, "task1");
 	handles[1] = taskmgr_createTask(simpleTask2, (void*)handles, 250, 2, KTASK_USER, "task2");
 	handles[2] = taskmgr_createTask(simpleTask3, NULL, 250, 2, KTASK_USER, "task3");

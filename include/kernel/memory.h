@@ -22,4 +22,9 @@ void memmgr_heapFree(void* pointer);
 size_t memmgr_getFreeHeap();
 size_t memmgr_getFreeHeapMin();
 
+kReturnValue_t memmgr_pointerSanityCheck(void* pointer);
+
+void memmgr_prepareProtectionRegion(void* pointer, int16_t size);
+uint8_t memmgr_checkProtectionRegion(void* pointer, int16_t size);
+
 #endif /* MEMORY_H_ */
