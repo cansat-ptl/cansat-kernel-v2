@@ -8,23 +8,46 @@
 #include <kernel/kernel.h>
 
 void kernel_panic(const char * message) {
+	kernel_setSystemStatus(KOSSTATUS_ERRORED);
 	#if CFG_LOGGING == 1
 		debug_puts(L_FATAL, PSTR("kernel: PANIC - "));
 		debug_puts(L_NONE, message);
+		
+		kTaskHandle_t runningTask = taskmgr_getCurrentTaskHandle();
+		
+		debug_puts(L_FATAL, PSTR("kernel: Last executed task info:\r\n"));
+		debug_logMessage(PGM_ON, L_FATAL, PSTR("    PID: %d; Name: %s; Entry: 0x%08X; Stack: 0x%08X; State: %d; Priority: %d;\r\n"), runningTask->pid, runningTask->name, runningTask->taskPtr, runningTask->stackPtr, runningTask->state, runningTask->priority);
+		
+		debug_puts(L_FATAL, PSTR("kernel: Memory info:\r\n"));
+		debug_logMessage(PGM_ON, L_FATAL, PSTR("    HeapSize: %d; Free: %d; FreeWorst: %d; ProtectionMargin: %d; Reserved: %d;\r\n"), CFG_HEAP_SIZE, memmgr_getFreeHeap(), memmgr_getFreeHeapMin(), CFG_STACK_SAFETY_MARGIN, CFG_KERNEL_RESERVED_MEMORY);
 	#endif
-	while (1) { //TODO: reboot
-		;//Do nothing
-	}
+	
+	#if CFG_KERNEL_PANIC_ACTION == 0
+		#if CFG_LOGGING == 1
+			debug_puts(L_FATAL, PSTR("kernel: Rebooting\r\n"));
+		#endif
+		hal_REBOOT();
+	#endif
+	
+	#if CFG_KERNEL_PANIC_ACTION == 1
+		kernel_setSystemStatus(KOSSTATUS_HALTED);
+		#if CFG_LOGGING == 1
+			debug_puts(L_FATAL, PSTR("kernel: System halted\r\n"));
+		#endif
+		while (1) { //TODO: reboot
+			;//Do nothing
+		}
+	#endif
 }
 
 void kernel_taskReturnHook()
-{
+{	
 	kTaskHandle_t runningTask = taskmgr_getCurrentTaskHandle();
 	#if CFG_LOGGING == 1
 		debug_puts(L_WARN, PSTR("kernel: Task return detected.\r\n"));
 		debug_puts(L_WARN, PSTR("kernel: Returning task will be terminated.\r\n"));
 		debug_logMessage(PGM_ON, L_WARN, PSTR("kernel: Task info:\r\n"));
-		debug_logMessage(PGM_ON, L_WARN, PSTR("PID: %d; Name: %s; Entry: 0x%08X; StackBegin: 0x%08X;\r\n"), runningTask->pid, runningTask->name, runningTask->taskPtr, runningTask->stackBegin);
+		debug_logMessage(PGM_ON, L_WARN, PSTR("PID: %d; Name: %s; Entry: 0x%08X; Stack: 0x%08X; State: %d; Priority: %d;\r\n"), runningTask->pid, runningTask->name, runningTask->taskPtr, runningTask->stackPtr, runningTask->state, runningTask->priority);
 	#endif
 	taskmgr_removeTask(runningTask);
 	while (1) {
@@ -38,7 +61,7 @@ void kernel_stackCorruptionHook(kTaskHandle_t task)
 		debug_puts(L_ERROR, PSTR("kernel: Task memory corruption detected.\r\n"));
 		debug_puts(L_ERROR, PSTR("kernel: Corrupted task will be terminated.\r\n"));
 		debug_logMessage(PGM_ON, L_ERROR, PSTR("kernel: Task info:\r\n"));
-		debug_logMessage(PGM_ON, L_ERROR, PSTR("PID: %d; Name: %s; Entry: 0x%08X; StackBegin: 0x%08X;\r\n"), task->pid, task->name, task->taskPtr, task->stackBegin);
+		debug_logMessage(PGM_ON, L_WARN, PSTR("PID: %d; Name: %s; Entry: 0x%08X; Stack: 0x%08X; State: %d; Priority: %d;\r\n"), task->pid, task->name, task->taskPtr, task->stackPtr, task->state, task->priority);
 	#endif
 	taskmgr_removeTask(task);
 	if (task->type == KTASK_SYSTEM) {

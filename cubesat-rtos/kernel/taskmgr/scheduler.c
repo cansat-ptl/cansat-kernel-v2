@@ -58,7 +58,7 @@ static inline void taskmgr_search()
 			
 			#if CFG_MEMORY_PROTECTION_MODE != 0
 				if (memmgr_pointerSanityCheck((void*)priorityQueues[i].head) != 0) {
-					kernel_panic(PSTR("kernel: PANIC - memory access violation in scheduler: priorityQueues.head is out of bounds\r\n"));
+					kernel_panic(PSTR("Memory access violation in scheduler: priorityQueues.head is out of bounds\r\n"));
 				}
 			#endif
 			
