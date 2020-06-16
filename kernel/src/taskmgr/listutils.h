@@ -9,7 +9,7 @@
 #ifndef LISTUTILS_H_
 #define LISTUTILS_H_
 
-#include <kernel/kernel.h>
+#include <tasks.h>
 
 void taskmgr_listAddBack(volatile struct kLinkedListStruct_t* list, kTaskHandle_t task);
 void taskmgr_listDropBack(volatile struct kLinkedListStruct_t* list);

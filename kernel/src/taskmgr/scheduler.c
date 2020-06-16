@@ -5,7 +5,7 @@
  *  Author: Admin
  */
 
-#include <kernel/kernel.h>
+#include "../kerneldefs.h"
 #include "listutils.h"
 
 static volatile uint8_t kTickRate = 0;

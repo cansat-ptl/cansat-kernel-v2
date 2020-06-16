@@ -5,10 +5,10 @@
  *  Author: ThePetrovich
  */ 
 
-#include <kernel/platform/platform.h>
-#include <kernel/kernel.h>
-#include <kernel/hal/hal.h>
-#include "../kernel_config.h"
+#include "../kerneldefs.h"
+#include "../hooks.h"
+#include "taskmgr.h"
+#include "scheduler.h"
 
 kTaskHandle_t kCurrentTask;
 static kTaskHandle_t kNextTask;
@@ -18,11 +18,6 @@ static volatile uint8_t kInterruptDepth = 0;
 
 extern volatile byte kReservedMemory[CFG_KERNEL_RESERVED_MEMORY];
 extern kStackPtr_t kStackPointer;
-
-void taskmgr_schedule();
-void taskmgr_setActiveTicks(uint16_t activeTicks);
-
-void kernel_stackCorruptionHook(kTaskHandle_t task);
 
 static void taskmgr_switchContext()
 {

@@ -5,7 +5,10 @@
  *  Author: ThePetrovich
  */
 
-#include <kernel/kernel.h>
+#include "../kerneldefs.h"
+#include "tasks.h"
+#include "scheduler.h"
+#include "taskmgr.h"
 #include "listutils.h"
 
 static volatile uint16_t kGlobalPid = 0;
@@ -17,8 +20,6 @@ static volatile struct kLinkedListStruct_t kSuspendedTaskList;
 static const size_t kTaskStructSize	= (sizeof(struct kTaskStruct_t) + ((size_t)(CFG_PLATFORM_BYTE_ALIGNMENT - 1))) & ~((size_t)CFG_PLATFORM_BYTE_ALIGNMENT_MASK);
 
 static volatile kTaskHandle_t kIdleTaskHandle;
-
-void taskmgr_initScheduler(kTaskHandle_t idle);
 
 volatile struct kLinkedListStruct_t* taskmgr_getReadyTaskListArray()
 {

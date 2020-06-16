@@ -51,7 +51,7 @@ kReturnValue_t threads_semaphoreWait(volatile struct kLockStruct_t* semaphore)
 
 			if (semaphore->lockCount != 0) {
 				semaphore->lockCount--;
-				
+
 				if (semaphore->type == KLOCK_MUTEX) {
 					semaphore->lockOwner = taskmgr_getCurrentTaskHandle();
 					semaphore->basePriority = semaphore->lockOwner->priority;
@@ -63,13 +63,13 @@ kReturnValue_t threads_semaphoreWait(volatile struct kLockStruct_t* semaphore)
 			}
 			else {
 				kTaskHandle_t currentTask = taskmgr_getCurrentTaskHandle();
-				
+
 				if (semaphore->type == KLOCK_MUTEX) {
 					if (semaphore->lockOwner->priority < currentTask->priority) {
 						taskmgr_setTaskPriority(semaphore->lockOwner, currentTask->priority);
 					}
 				}
-				
+
 				threads_blockTask(semaphore, currentTask);
 				threads_spinlockRelease(&semaphoreOpLock);
 				taskmgr_sleep(0);
@@ -89,7 +89,7 @@ kReturnValue_t threads_semaphoreSignal(volatile struct kLockStruct_t* semaphore)
 		threads_spinlockAcquire(&semaphoreOpLock);
 
 		kTaskHandle_t temp = semaphore->blockedTasks.head;
-		
+
 		if (semaphore->type == KLOCK_MUTEX) {
 			if (semaphore->lockOwner->priority != semaphore->basePriority) {
 				taskmgr_setTaskPriority(semaphore->lockOwner, semaphore->basePriority);
@@ -111,5 +111,28 @@ kReturnValue_t threads_semaphoreSignal(volatile struct kLockStruct_t* semaphore)
 	else {
 		exitcode = ERR_NULLPTR;
 	}
+	return exitcode;
+}
+
+struct kLockStruct_t threads_mutexInit()
+{
+	struct kLockStruct_t mutex;
+	mutex.type = KLOCK_MUTEX;
+	mutex.lockCount = 1;
+	mutex.blockedTasks.head = NULL;
+	mutex.blockedTasks.tail = NULL;
+	return mutex;
+}
+
+
+kReturnValue_t threads_mutexLock(volatile struct kLockStruct_t* mutex)
+{
+	kReturnValue_t exitcode = threads_semaphoreWait(mutex);
+	return exitcode;
+}
+
+kReturnValue_t threads_mutexUnlock(volatile struct kLockStruct_t* mutex)
+{
+	kReturnValue_t exitcode = threads_semaphoreSignal(mutex);
 	return exitcode;
 }

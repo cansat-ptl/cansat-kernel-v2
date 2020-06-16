@@ -9,8 +9,11 @@
 #ifndef MEMMGR_H_
 #define MEMMGR_H_
 
-
-
-
+struct kMemoryBlockStruct_t
+{
+	struct kMemoryBlockStruct_t* next;
+	size_t blockSize;
+	uint8_t state;
+};
 
 #endif /* MEMMGR_H_ */

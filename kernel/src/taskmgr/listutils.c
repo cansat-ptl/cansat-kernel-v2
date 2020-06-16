@@ -5,6 +5,7 @@
  *  Author: Admin
  */ 
 
+#include "../kerneldefs.h"
 #include "listutils.h"
 
 void taskmgr_listAddBack(volatile struct kLinkedListStruct_t* list, kTaskHandle_t task)
