@@ -29,7 +29,7 @@ const char boot_msg_int[] PROGMEM = "\r\nboot: Interrupted\r\n";
 const char boot_msg_crc[] PROGMEM = "\r\nboot: CRC error, 0x%04X != 0x%04X\r\n";
 const char boot_msg_ok[] PROGMEM = "\r\nok\r\n";
 
-void boot_resetVariables() 
+void boot_resetVariables()
 {
 	cnt = 0;
 	tmp = 0;
