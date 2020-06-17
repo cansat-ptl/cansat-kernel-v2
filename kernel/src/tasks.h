@@ -16,11 +16,7 @@
 typedef void kTask;
 typedef void (*kTask_t)(void*);
 
-typedef enum {KSTATE_UNINIT, KSTATE_SUSPENDED, KSTATE_SLEEPING, KSTATE_BLOCKED, KSTATE_READY, KSTATE_RUNNING} kTaskState_t;
-typedef enum {KEVENT_NONE, KEVENT_FIRED} kEventState_t;
-typedef enum {KTASK_USER, KTASK_SYSTEM} kTaskType_t;
-typedef enum {KTIMER_SINGLERUN, KTASK_REPEATED} kTimerType_t;
-typedef enum {KLOCK_SEMAPHORE, KLOCK_MUTEX, KLOCK_SEMAPHORE_RECURSIVE} kLockType_t;
+typedef volatile struct kTaskStruct_t* kTaskHandle_t;
 	
 struct kLinkedListStruct_t
 {
@@ -66,5 +62,16 @@ kReturnValue_t taskmgr_createTaskDynamic(kTaskHandle_t* handle, kTask_t entry, v
 volatile struct kLinkedListStruct_t* taskmgr_getReadyTaskListPtr(uint8_t priority);
 volatile struct kLinkedListStruct_t* taskmgr_getSleepingTaskListPtr();
 
-kTaskHandle_t taskmgr_getIdleTaskHandle();
+kReturnValue_t taskmgr_init(kTask_t idle);
+
+kTaskHandle_t taskmgr_createTask(kTask_t entry, void* args, kStackSize_t stackSize, uint8_t priority, kTaskType_t type, char* name);
+kReturnValue_t taskmgr_removeTask(kTaskHandle_t task);
+kTaskHandle_t taskmgr_forkTask(kTaskHandle_t task);
+kReturnValue_t taskmgr_replaceTask(kTaskHandle_t taskToReplace, kTask_t entry, void* args);
+void taskmgr_restartTask(kTaskHandle_t task);
+
+kReturnValue_t taskmgr_setTaskPriority(kTaskHandle_t task, uint8_t priority);
+void taskmgr_setTaskState(kTaskHandle_t handle, kTaskState_t newState);
+
+void taskmgr_sleep(kTaskTicks_t sleep);
 #endif /* TASKS_H_ */
