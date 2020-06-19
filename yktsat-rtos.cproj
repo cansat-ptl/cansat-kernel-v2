@@ -259,10 +259,10 @@
     <Compile Include="kernel\init.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="kernel\memmgr\heap.c">
+    <Compile Include="kernel\memory\heap.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="kernel\memmgr\protection.c">
+    <Compile Include="kernel\memory\protection.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="kernel\platform\avr\platform.c">
@@ -277,12 +277,6 @@
     <Compile Include="kernel\softtimers.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="kernel\taskmgr\listutils.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="kernel\taskmgr\listutils.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="kernel\taskmgr\scheduler.c">
       <SubType>compile</SubType>
     </Compile>
@@ -290,6 +284,9 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="kernel\taskmgr\tasks.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\taskmgr\taskutils.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="kernel\threads\atomic.c">
@@ -311,6 +308,12 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="kernel\threads\spinlock.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\utils\linkedlists.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\utils\linkedlists.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="kernel\utils\time.c">
@@ -352,7 +355,8 @@
     <Folder Include="include\kernel\utils" />
     <Folder Include="include\systemd" />
     <Folder Include="kernel" />
-    <Folder Include="kernel\memmgr" />
+    <Folder Include="kernel\memory" />
+    <Folder Include="kernel\tasks" />
     <Folder Include="kernel\platform" />
     <Folder Include="kernel\platform\avr" />
     <Folder Include="kernel\taskmgr" />

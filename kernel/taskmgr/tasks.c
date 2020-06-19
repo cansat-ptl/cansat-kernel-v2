@@ -6,7 +6,7 @@
  */
 
 #include <kernel/kernel.h>
-#include "listutils.h"
+#include "../utils/linkedlists.h"
 
 static volatile uint16_t kGlobalPid = 0;
 
@@ -43,49 +43,47 @@ kTaskHandle_t taskmgr_getIdleTaskHandle()
 kReturnValue_t taskmgr_init(kTask_t idle)
 {
 	kIdleTaskHandle = taskmgr_createTask(idle, NULL, 100, KPRIO_IDLE, KTASK_SYSTEM, "idle");
-	
+
 	if (kIdleTaskHandle == NULL) {
 		debug_logMessage(PGM_PUTS, L_FATAL, PSTR("\r\ntaskmgr: Startup failed, could not create idle task.\r\n"));
 		while(1);
 	}
-		
+
 	taskmgr_initScheduler(kIdleTaskHandle);
 	taskmgr_setCurrentTask(kIdleTaskHandle);
 	taskmgr_setNextTask(kIdleTaskHandle);
-	
+
 	return 0;
 }
 
 void taskmgr_setTaskState(kTaskHandle_t task, kTaskState_t state)
 {
 	kStatusRegister_t sreg = threads_startAtomicOperation();
-	
+
 	kReturnValue_t sanityCheck = memmgr_pointerSanityCheck((void*)task);
-	
+
 	if (sanityCheck == 0) {
 		switch (state) {
 			case KSTATE_UNINIT:
-				taskmgr_listDeleteAny(task->taskList.list, task);
+				utils_listDeleteAny(task->itemPointer->list, task->itemPointer);
 				task->state = KSTATE_UNINIT;
 			break;
 			case KSTATE_SUSPENDED:
-				taskmgr_listDeleteAny(task->taskList.list, task);
-				taskmgr_listAddBack(&kSuspendedTaskList, task);
+				utils_listDeleteAny(task->itemPointer->list, task->itemPointer);
+				utils_listAddBack(&kSuspendedTaskList, task->itemPointer);
 				task->state = KSTATE_SUSPENDED;
 			break;
 			case KSTATE_SLEEPING:
-				taskmgr_listDeleteAny(task->taskList.list, task);
-				taskmgr_listAddBack(&kSleepingTaskList, task);
+				utils_listDeleteAny(task->itemPointer->list, task->itemPointer);
+				utils_listAddBack(&kSleepingTaskList, task->itemPointer);
 				task->state = KSTATE_SLEEPING;
 			break;
 			case KSTATE_BLOCKED:
-				#if CFG_LOGGING == 1
-				debug_logMessage(PGM_PUTS, L_WARN, PSTR("taskmgr: setTaskState does not support KSTATE_BLOCKED state. Task state has not been changed.\r\n"));
-				#endif
+				task->state = KSTATE_BLOCKED;
 			break;
 			case KSTATE_READY:
-				taskmgr_listDeleteAny(task->taskList.list, task);
-				taskmgr_listAddBack(&kReadyTaskList[task->priority], task);
+				utils_listDeleteAny(task->itemPointer->list, task->itemPointer);
+				utils_listAddBack(&kReadyTaskList[task->priority], task->itemPointer);
 				task->state = KSTATE_READY;
 			break;
 			case KSTATE_RUNNING:
@@ -98,7 +96,7 @@ void taskmgr_setTaskState(kTaskHandle_t task, kTaskState_t state)
 			break;
 		}
 	}
-	
+
 	threads_endAtomicOperation(sreg);
 }
 
@@ -106,9 +104,9 @@ kReturnValue_t taskmgr_setTaskPriority(kTaskHandle_t task, uint8_t priority)
 {
 	kReturnValue_t exitcode = ERR_GENERIC;
 	kStatusRegister_t sreg = threads_startAtomicOperation();
-	
+
 	kReturnValue_t sanityCheck = memmgr_pointerSanityCheck((void*)task);
-	
+
 	if (sanityCheck == 0) {
 		if (priority <= CFG_NUMBER_OF_PRIORITIES) {
 			task->priority = priority;
@@ -120,7 +118,7 @@ kReturnValue_t taskmgr_setTaskPriority(kTaskHandle_t task, uint8_t priority)
 			exitcode = CFG_NUMBER_OF_PRIORITIES;
 		}
 	}
-	
+
 	threads_endAtomicOperation(sreg);
 	return exitcode;
 }
@@ -147,39 +145,40 @@ static inline void taskmgr_setupTaskStructure(kTaskHandle_t task, \
 	task -> type = type;
 	task -> pid = kGlobalPid;
 	task -> name = name;
-	task -> taskList.next = NULL;
-	task -> taskList.prev = NULL;
 }
 
-kReturnValue_t taskmgr_createTaskStatic(kTaskHandle_t taskStruct, kStackPtr_t stack, kTask_t entry, void* args, kStackSize_t stackSize, uint8_t priority, kTaskType_t type, char* name)
+kReturnValue_t taskmgr_createTaskStatic(kStackPtr_t memory, kTaskHandle_t* handle, kTask_t entry, void* args, kStackSize_t stackSize, uint8_t priority, kTaskType_t type, char* name)
 {
 	kReturnValue_t exitcode = ERR_GENERIC;
 	kStatusRegister_t sreg = threads_startAtomicOperation();
 
 	if (entry != NULL) {
-		if (taskStruct != NULL) {
-			if (stack != NULL) {
-				kStackPtr_t stackPrepared = platform_prepareStackFrame(stack, stackSize, entry, args);
-				taskmgr_setupTaskStructure(taskStruct, entry, stackPrepared, stack, stackSize, args, priority, KSTATE_READY, type, name);
-				
-				#if CFG_MEMORY_PROTECTION_MODE == 2 || CFG_MEMORY_PROTECTION_MODE == 3
-					memmgr_prepareProtectionRegion((void*)(stack + stackSize), CFG_STACK_SAFETY_MARGIN);
-				#endif
-				
-				taskmgr_setTaskState(taskStruct, KSTATE_READY);
+		if (memory != NULL) {
+			((struct kListItemStruct_t*)memory)->data = (void*)((kStackPtr_t)memory + utils_LISTITEM_STRUCT_SIZE);
+			((kTaskHandle_t)(memory + utils_LISTITEM_STRUCT_SIZE))->itemPointer = (struct kListItemStruct_t*)memory;
 
-				kGlobalPid++;
-				exitcode = 0;
-			}
-			else {
-				exitcode = -2;
+			memory += utils_LISTITEM_STRUCT_SIZE;
+
+			kStackPtr_t stackPrepared = platform_prepareStackFrame(memory + kTaskStructSize, stackSize, entry, args);
+			taskmgr_setupTaskStructure((kTaskHandle_t)memory, entry, stackPrepared, memory + kTaskStructSize, stackSize, args, priority, KSTATE_READY, type, name);
+
+			#if CFG_MEMORY_PROTECTION_MODE == 2 || CFG_MEMORY_PROTECTION_MODE == 3
+				memmgr_prepareProtectionRegion((void*)(memory + kTaskStructSize + stackSize), CFG_STACK_SAFETY_MARGIN);
+			#endif
+
+			taskmgr_setTaskState((kTaskHandle_t)memory, KSTATE_READY);
+
+			kGlobalPid++;
+			exitcode = 0;
+			if (handle != NULL) {
+				*handle = (kTaskHandle_t)memory;
 			}
 		}
 		else {
 			exitcode = -3;
-		}	
+		}
 	}
-	
+
 	threads_endAtomicOperation(sreg);
 	return exitcode;
 }
@@ -188,26 +187,26 @@ kReturnValue_t taskmgr_createTaskDynamic(kTaskHandle_t* handle, kTask_t entry, v
 {
 	kReturnValue_t exitcode = ERR_GENERIC;
 	kStatusRegister_t sreg = threads_startAtomicOperation();
-	
+
 	if (stackSize < CFG_MIN_STACK_SIZE) {
 		stackSize = CFG_MIN_STACK_SIZE;
 	}
-	
+
 	#if CFG_MEMORY_PROTECTION_MODE == 2 || CFG_MEMORY_PROTECTION_MODE == 3
-		kStackPtr_t stackPointer = (kStackPtr_t)memmgr_heapAlloc(stackSize + kTaskStructSize + CFG_STACK_SAFETY_MARGIN);
+		kStackPtr_t stackPointer = (kStackPtr_t)memmgr_heapAlloc(stackSize + kTaskStructSize + CFG_STACK_SAFETY_MARGIN + utils_LISTITEM_STRUCT_SIZE);
 	#else
-		kStackPtr_t stackPointer = (kStackPtr_t)memmgr_heapAlloc(stackSize + kTaskStructSize);
+		kStackPtr_t stackPointer = (kStackPtr_t)memmgr_heapAlloc(stackSize + kTaskStructSize + utils_LISTITEM_STRUCT_SIZE);
 	#endif
-				
-	exitcode = taskmgr_createTaskStatic((kTaskHandle_t)stackPointer, stackPointer + kTaskStructSize, entry, args, stackSize, priority, type, name);
-	
+
+	exitcode = taskmgr_createTaskStatic(stackPointer, NULL, entry, args, stackSize, priority, type, name);
+
 	if (exitcode != 0) {
 		memmgr_heapFree((void*)stackPointer);
 	}
 	else {
-		*handle = (kTaskHandle_t)stackPointer;
+		*handle = (kTaskHandle_t)(stackPointer + utils_LISTITEM_STRUCT_SIZE);
 	}
-	
+
 	threads_endAtomicOperation(sreg);
 	return exitcode;
 }
@@ -241,14 +240,14 @@ kTaskHandle_t taskmgr_createTask(kTask_t entry, void* args, kStackSize_t stackSi
 kReturnValue_t taskmgr_removeTask(kTaskHandle_t task)
 {
 	kStatusRegister_t sreg = threads_startAtomicOperation();
-	
+
 	kReturnValue_t sanityCheck = memmgr_pointerSanityCheck((void*)task);
-	
+
 	if (sanityCheck == 0) {
 		taskmgr_setTaskState(task, KSTATE_UNINIT);
 		memmgr_heapFree((void*)task);
 	}
-	
+
 	threads_endAtomicOperation(sreg);
 	return 0;
 }

@@ -62,15 +62,16 @@ typedef struct kIPCStruct_t* kSystemIOHandle_t;
 
 struct kLinkedListStruct_t
 {
-	kTaskHandle_t head;
-	kTaskHandle_t tail;
+	volatile struct kListItemStruct_t* head;
+	volatile struct kListItemStruct_t* tail;
 };
 
 struct kListItemStruct_t
 {
 	volatile struct kLinkedListStruct_t* list;
-	kTaskHandle_t next;
-	kTaskHandle_t prev;
+	volatile struct kListItemStruct_t* next;
+	volatile struct kListItemStruct_t* prev;
+	volatile void* data;
 };
 
 struct kLockStruct_t
@@ -105,6 +106,7 @@ struct kTaskStruct_t
 	void* args;
 	kStackPtr_t stackBegin;
 	kStackSize_t stackSize;
+	volatile struct kListItemStruct_t* itemPointer;
 	volatile struct kLockStruct_t* lock;
 	volatile struct kEventStruct_t notification;
 	kTaskState_t state;
@@ -114,7 +116,6 @@ struct kTaskStruct_t
 	uint8_t flags;
 	kPid_t pid;
 	char* name;
-	struct kListItemStruct_t taskList;
 };
 
 struct kMemoryBlockStruct_t

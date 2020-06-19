@@ -6,11 +6,13 @@
  */
 
 #include <kernel/threads/threads.h>
+#include "../utils/linkedlists.h"
+
+volatile struct kListItemStruct_t* taskmgr_getTaskListItem(kTaskHandle_t task); //TODO: add to header
+void taskmgr_setTaskLock(kTaskHandle_t task, volatile struct kLockStruct_t* lock);
+uint8_t taskmgr_getTaskPriority(kTaskHandle_t task);
 
 kSpinlock_t semaphoreOpLock = 0;
-
-void taskmgr_listAddBack(volatile struct kLinkedListStruct_t* list, kTaskHandle_t task);
-void taskmgr_listDeleteAny(volatile struct kLinkedListStruct_t* list, kTaskHandle_t task);
 
 struct kLockStruct_t threads_semaphoreInit(uint8_t resourceAmount)
 {
@@ -23,11 +25,12 @@ struct kLockStruct_t threads_semaphoreInit(uint8_t resourceAmount)
 static inline void threads_blockTask(volatile struct kLockStruct_t* lock, kTaskHandle_t task)
 {
 	if (task != NULL && lock != NULL) {
-		if (task->taskList.list != &lock->blockedTasks) {
-			taskmgr_listDeleteAny(task->taskList.list, task);
-			taskmgr_listAddBack(&(lock->blockedTasks), task);
-			task->state = KSTATE_BLOCKED;
-			task->lock = lock;
+		volatile struct kListItemStruct_t* temp = taskmgr_getTaskListItem(task);
+		if (temp->list != &lock->blockedTasks) {
+			utils_listDeleteAny(temp->list, temp);
+			utils_listAddBack(&(lock->blockedTasks), temp);
+			taskmgr_setTaskState(task, KSTATE_BLOCKED);
+			taskmgr_setTaskLock(task, lock);
 		}
 	}
 	return;
@@ -37,7 +40,7 @@ static void threads_unblockTask(kTaskHandle_t task)
 {
 	if (task != NULL) {
 		taskmgr_setTaskState(task, KSTATE_READY);
-		task->lock = NULL;
+		taskmgr_setTaskLock(task, NULL);
 	}
 	return;
 }
@@ -51,10 +54,10 @@ kReturnValue_t threads_semaphoreWait(volatile struct kLockStruct_t* semaphore)
 
 			if (semaphore->lockCount != 0) {
 				semaphore->lockCount--;
-				
+
 				if (semaphore->type == KLOCK_MUTEX) {
 					semaphore->lockOwner = taskmgr_getCurrentTaskHandle();
-					semaphore->basePriority = semaphore->lockOwner->priority;
+					semaphore->basePriority = taskmgr_getTaskPriority(semaphore->lockOwner);
 				}
 
 				exitcode = 0;
@@ -63,13 +66,13 @@ kReturnValue_t threads_semaphoreWait(volatile struct kLockStruct_t* semaphore)
 			}
 			else {
 				kTaskHandle_t currentTask = taskmgr_getCurrentTaskHandle();
-				
+
 				if (semaphore->type == KLOCK_MUTEX) {
-					if (semaphore->lockOwner->priority < currentTask->priority) {
+					if (taskmgr_getTaskPriority(semaphore->lockOwner) < taskmgr_getTaskPriority(currentTask)) {
 						taskmgr_setTaskPriority(semaphore->lockOwner, currentTask->priority);
 					}
 				}
-				
+
 				threads_blockTask(semaphore, currentTask);
 				threads_spinlockRelease(&semaphoreOpLock);
 				taskmgr_sleep(0);
@@ -88,10 +91,10 @@ kReturnValue_t threads_semaphoreSignal(volatile struct kLockStruct_t* semaphore)
 	if (semaphore != NULL) {
 		threads_spinlockAcquire(&semaphoreOpLock);
 
-		kTaskHandle_t temp = semaphore->blockedTasks.head;
-		
+		volatile struct kListItemStruct_t* temp = semaphore->blockedTasks.head;
+
 		if (semaphore->type == KLOCK_MUTEX) {
-			if (semaphore->lockOwner->priority != semaphore->basePriority) {
+			if (taskmgr_getTaskPriority(semaphore->lockOwner) != semaphore->basePriority) {
 				taskmgr_setTaskPriority(semaphore->lockOwner, semaphore->basePriority);
 				semaphore->lockOwner = NULL;
 				semaphore->basePriority = 0;
@@ -99,8 +102,8 @@ kReturnValue_t threads_semaphoreSignal(volatile struct kLockStruct_t* semaphore)
 		}
 
 		while(temp != NULL) {
-			threads_unblockTask(temp);
-			temp = temp->taskList.next;
+			threads_unblockTask((kTaskHandle_t)temp->data);
+			temp = temp->next;
 		}
 
 		semaphore->lockCount++;

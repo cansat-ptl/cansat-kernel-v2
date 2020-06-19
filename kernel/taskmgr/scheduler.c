@@ -6,7 +6,7 @@
  */
 
 #include <kernel/kernel.h>
-#include "listutils.h"
+#include "../utils/linkedlists.h"
 
 static volatile uint8_t kTickRate = 0;
 static volatile kTaskTicks_t kTaskActiveTicks = 0;
@@ -23,13 +23,13 @@ void taskmgr_setActiveTicks(uint16_t activeTicks)
 void taskmgr_initScheduler(kTaskHandle_t idle)
 {
 	struct kLinkedListStruct_t* priorityQueues = taskmgr_getReadyTaskListArray();
-	priorityQueues[KPRIO_IDLE].head = idle;
-	priorityQueues[KPRIO_IDLE].tail = idle;
+	priorityQueues[KPRIO_IDLE].head = idle->itemPointer;
+	priorityQueues[KPRIO_IDLE].tail = idle->itemPointer;
 }
 
-static inline void taskmgr_assign(kTaskHandle_t task)
+static inline void taskmgr_assign(volatile struct kListItemStruct_t* listItem)
 {
-	taskmgr_setNextTask(task);
+	taskmgr_setNextTask((kTaskHandle_t)listItem->data);
 	kTaskActiveTicks = CFG_TICKS_PER_TASK;
 }
 
@@ -37,16 +37,16 @@ static inline void taskmgr_assign(kTaskHandle_t task)
 static inline void taskmgr_tickTasks()
 {
 	volatile struct kLinkedListStruct_t* sleepingList = taskmgr_getSleepingTaskListPtr();
-	kTaskHandle_t temp = sleepingList->head;
+	volatile struct kListItemStruct_t* temp = sleepingList->head;
 	
 	while (temp != NULL) {
-		if (temp->sleepTime) {
-			temp->sleepTime--;
+		if (((kTaskHandle_t)(temp->data))->sleepTime) {
+			((kTaskHandle_t)(temp->data))->sleepTime--;
 		}
 		else {
-			taskmgr_setTaskState(temp, KSTATE_READY);
+			taskmgr_setTaskState((kTaskHandle_t)temp->data, KSTATE_READY);
 		}
-		temp = temp->taskList.next;
+		temp = temp->next;
 	}
 }
 
@@ -63,9 +63,9 @@ static inline void taskmgr_search()
 			#endif
 			
 			taskmgr_assign(priorityQueues[i].head);
-			kTaskHandle_t temp = priorityQueues[i].head;
-			taskmgr_listDropFront(&priorityQueues[i]);
-			taskmgr_listAddBack(&priorityQueues[i], temp);
+			volatile struct kListItemStruct_t* temp = priorityQueues[i].head;
+			utils_listDropFront(&priorityQueues[i]);
+			utils_listAddBack(&priorityQueues[i], temp);
 			break;
 		}
 	}
