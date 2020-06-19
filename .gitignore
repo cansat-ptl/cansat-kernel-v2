@@ -12,6 +12,3 @@
 *.usersignatures
 *.hex.asm
 *.elf.asm
-*.atsln
-*.cproj
-*.componentinfo.xml

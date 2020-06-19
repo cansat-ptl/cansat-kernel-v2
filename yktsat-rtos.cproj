@@ -1,0 +1,365 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
+  <PropertyGroup>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectVersion>7.0</ProjectVersion>
+    <ToolchainName>com.Atmel.AVRGCC8.C</ToolchainName>
+    <ProjectGuid>dce6c7e3-ee26-4d79-826b-08594b9ad897</ProjectGuid>
+    <avrdevice>ATmega128</avrdevice>
+    <avrdeviceseries>none</avrdeviceseries>
+    <OutputType>Executable</OutputType>
+    <Language>C</Language>
+    <OutputFileName>$(MSBuildProjectName)</OutputFileName>
+    <OutputFileExtension>.elf</OutputFileExtension>
+    <OutputDirectory>$(MSBuildProjectDirectory)\$(Configuration)</OutputDirectory>
+    <AssemblyName>GccApplication1</AssemblyName>
+    <Name>yktsat-rtos</Name>
+    <RootNamespace>GccApplication1</RootNamespace>
+    <ToolchainFlavour>Native</ToolchainFlavour>
+    <KeepTimersRunning>true</KeepTimersRunning>
+    <OverrideVtor>false</OverrideVtor>
+    <CacheFlash>true</CacheFlash>
+    <ProgFlashFromRam>true</ProgFlashFromRam>
+    <RamSnippetAddress>0x20000000</RamSnippetAddress>
+    <UncachedRange />
+    <preserveEEPROM>true</preserveEEPROM>
+    <OverrideVtorValue>exception_table</OverrideVtorValue>
+    <BootSegment>2</BootSegment>
+    <ResetRule>0</ResetRule>
+    <eraseonlaunchrule>0</eraseonlaunchrule>
+    <EraseKey />
+    <AsfFrameworkConfig>
+      <framework-data xmlns="">
+        <options />
+        <configurations />
+        <files />
+        <documentation help="" />
+        <offline-documentation help="" />
+        <dependencies>
+          <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.40.0" />
+        </dependencies>
+      </framework-data>
+    </AsfFrameworkConfig>
+    <avrtool>com.atmel.avrdbg.tool.simulator</avrtool>
+    <avrtoolserialnumber />
+    <avrdeviceexpectedsignature>0x1E9702</avrdeviceexpectedsignature>
+    <com_atmel_avrdbg_tool_simulator>
+      <ToolOptions>
+        <InterfaceProperties>
+        </InterfaceProperties>
+        <InterfaceName>
+        </InterfaceName>
+      </ToolOptions>
+      <ToolType>com.atmel.avrdbg.tool.simulator</ToolType>
+      <ToolNumber>
+      </ToolNumber>
+      <ToolName>Simulator</ToolName>
+    </com_atmel_avrdbg_tool_simulator>
+    <avrtoolinterface />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <ToolchainSettings>
+      <AvrGcc>
+        <avrgcc.common.Device>-mmcu=atmega128</avrgcc.common.Device>
+        <avrgcc.common.optimization.RelaxBranches>True</avrgcc.common.optimization.RelaxBranches>
+        <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
+        <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
+        <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
+        <avrgcc.common.outputfiles.srec>True</avrgcc.common.outputfiles.srec>
+        <avrgcc.common.outputfiles.usersignatures>False</avrgcc.common.outputfiles.usersignatures>
+        <avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>
+        <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
+        <avrgcc.compiler.symbols.DefSymbols>
+          <ListValues>
+            <Value>NDEBUG</Value>
+          </ListValues>
+        </avrgcc.compiler.symbols.DefSymbols>
+        <avrgcc.compiler.directories.IncludePaths>
+          <ListValues>
+            <Value>%24(PackRepoDir)\Atmel\ATmega_DFP\1.4.346\include</Value>
+          </ListValues>
+        </avrgcc.compiler.directories.IncludePaths>
+        <avrgcc.compiler.optimization.level>Optimize for size (-Os)</avrgcc.compiler.optimization.level>
+        <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
+        <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
+        <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
+        <avrgcc.linker.libraries.Libraries>
+          <ListValues>
+            <Value>libm</Value>
+          </ListValues>
+        </avrgcc.linker.libraries.Libraries>
+        <avrgcc.linker.libraries.LibrarySearchPaths>
+          <ListValues>
+            <Value>C:\Users\Admin\Documents\Atmel Studio\yktcansat-staging\cansat-kernel-v2\Debug</Value>
+          </ListValues>
+        </avrgcc.linker.libraries.LibrarySearchPaths>
+        <avrgcc.assembler.general.IncludePaths>
+          <ListValues>
+            <Value>%24(PackRepoDir)\Atmel\ATmega_DFP\1.4.346\include</Value>
+          </ListValues>
+        </avrgcc.assembler.general.IncludePaths>
+      </AvrGcc>
+    </ToolchainSettings>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <ToolchainSettings>
+      <AvrGcc>
+        <avrgcc.common.Device>-mmcu=atmega128</avrgcc.common.Device>
+        <avrgcc.common.optimization.RelaxBranches>True</avrgcc.common.optimization.RelaxBranches>
+        <avrgcc.common.ExternalRamMemOvflw>True</avrgcc.common.ExternalRamMemOvflw>
+        <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
+        <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
+        <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
+        <avrgcc.common.outputfiles.srec>True</avrgcc.common.outputfiles.srec>
+        <avrgcc.common.outputfiles.usersignatures>False</avrgcc.common.outputfiles.usersignatures>
+        <avrgcc.compiler.symbols.DefSymbols>
+          <ListValues>
+            <Value>DEBUG</Value>
+          </ListValues>
+        </avrgcc.compiler.symbols.DefSymbols>
+        <avrgcc.compiler.directories.IncludePaths>
+          <ListValues>
+            <Value>%24(PackRepoDir)\Atmel\ATmega_DFP\1.4.346\include</Value>
+            <Value>../include</Value>
+          </ListValues>
+        </avrgcc.compiler.directories.IncludePaths>
+        <avrgcc.compiler.optimization.level>Optimize for size (-Os)</avrgcc.compiler.optimization.level>
+        <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
+        <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
+        <avrgcc.compiler.optimization.DebugLevel>Maximum (-g3)</avrgcc.compiler.optimization.DebugLevel>
+        <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
+        <avrgcc.compiler.warnings.ExtraWarnings>True</avrgcc.compiler.warnings.ExtraWarnings>
+        <avrgcc.compiler.warnings.Undefined>True</avrgcc.compiler.warnings.Undefined>
+        <avrgcc.compiler.warnings.Pedantic>True</avrgcc.compiler.warnings.Pedantic>
+        <avrgcc.compiler.miscellaneous.Verbose>True</avrgcc.compiler.miscellaneous.Verbose>
+        <avrgcc.linker.general.NoSharedLibraries>True</avrgcc.linker.general.NoSharedLibraries>
+        <avrgcc.linker.general.UseVprintfLibrary>True</avrgcc.linker.general.UseVprintfLibrary>
+        <avrgcc.linker.libraries.Libraries>
+          <ListValues>
+            <Value>libm</Value>
+          </ListValues>
+        </avrgcc.linker.libraries.Libraries>
+        <avrgcc.linker.libraries.LibrarySearchPaths>
+          <ListValues>
+            <Value>C:\Users\Admin\Documents\Atmel Studio\yktcansat-staging\cansat-kernel-v2\Debug</Value>
+          </ListValues>
+        </avrgcc.linker.libraries.LibrarySearchPaths>
+        <avrgcc.linker.memorysettings.Flash>
+          <ListValues>
+            <Value>.bootloader=0x1E000</Value>
+          </ListValues>
+        </avrgcc.linker.memorysettings.Flash>
+        <avrgcc.linker.miscellaneous.LinkerFlags>-Wl,-u,vfprintf -lprintf_flt -lm</avrgcc.linker.miscellaneous.LinkerFlags>
+        <avrgcc.assembler.general.IncludePaths>
+          <ListValues>
+            <Value>%24(PackRepoDir)\Atmel\ATmega_DFP\1.4.346\include</Value>
+          </ListValues>
+        </avrgcc.assembler.general.IncludePaths>
+        <avrgcc.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcc.assembler.debugging.DebugLevel>
+      </AvrGcc>
+    </ToolchainSettings>
+    <OutputFileName>yktsat-rtos</OutputFileName>
+    <OutputFileExtension>.elf</OutputFileExtension>
+    <OutputType>Executable</OutputType>
+    <UsesExternalMakeFile>False</UsesExternalMakeFile>
+    <OutputDirectory>$(MSBuildProjectDirectory)\$(Configuration)</OutputDirectory>
+    <BuildTarget>all</BuildTarget>
+    <CleanTarget>clean</CleanTarget>
+    <ExternalMakeFilePath>C:\Users\Admin\Documents\Atmel Studio\yktcansat-staging\cansat-kernel-v2\Make-rtos</ExternalMakeFilePath>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="config.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="dev\basic\gpio.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="dev\basic\uart.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="dev\basic\watchdog.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="dev\uart\uart.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="hal_pins.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\boot\boot.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\kernel\debug.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\kernel\hal\hal.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\kernel\kernel.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\kernel\memory.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\kernel\platform\avr\avr.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\kernel\platform\avr\timers.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\kernel\platform\platform.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\kernel\platform\types.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\kernel\softtimers.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\kernel\tasks.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\kernel\threads\ipc.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\kernel\threads\primitives.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\kernel\threads\threads.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\kernel\types.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\kernel\utils\time.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\kernel\utils\utils.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kdebug\debug.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kdebug\stdio.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\assert.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\flags.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\hooks.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\init.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\memmgr\heap.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\memmgr\protection.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\platform\avr\platform.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\platform\avr\stackframe.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\platform\avr\timers.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\softtimers.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\taskmgr\listutils.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\taskmgr\listutils.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\taskmgr\scheduler.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\taskmgr\taskmgr.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\taskmgr\tasks.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\threads\atomic.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\threads\fifo.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\threads\lifo.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\threads\mutex.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\threads\notifications.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\threads\semaphore.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\threads\spinlock.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\utils\time.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\utils\utils.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel_config.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="main.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="systemd\calls.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="systemd\init.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="systemd\services.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="systemd\systemd.c">
+      <SubType>compile</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="dev" />
+    <Folder Include="dev\basic" />
+    <Folder Include="dev\uart" />
+    <Folder Include="include" />
+    <Folder Include="include\boot" />
+    <Folder Include="include\kernel" />
+    <Folder Include="include\kernel\hal" />
+    <Folder Include="include\kernel\platform" />
+    <Folder Include="include\kernel\platform\avr" />
+    <Folder Include="include\kernel\threads" />
+    <Folder Include="include\kernel\utils" />
+    <Folder Include="include\systemd" />
+    <Folder Include="kernel" />
+    <Folder Include="kernel\memmgr" />
+    <Folder Include="kernel\platform" />
+    <Folder Include="kernel\platform\avr" />
+    <Folder Include="kernel\taskmgr" />
+    <Folder Include="kernel\threads" />
+    <Folder Include="kernel\utils" />
+    <Folder Include="kdebug" />
+    <Folder Include="systemd" />
+  </ItemGroup>
+  <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
+</Project>
