@@ -6,8 +6,8 @@
  */ 
 
 
-#ifndef PLATFORM-INTERNAL_H_
-#define PLATFORM-INTERNAL_H_
+#ifndef PLATFORM_H_
+#define PLATFORM_H_
 
 
 

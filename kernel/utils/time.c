@@ -18,14 +18,6 @@ struct kSystemTime_t {
 };
 */
 
-
-extern volatile uint64_t __e_time;
-
-uint64_t kernel_getUptime()
-{
-	return __e_time;
-}
-
 void time_updateSystemTime()
 {
 	kSystemTime.milliseconds = (uint16_t)(__e_time % 1000);

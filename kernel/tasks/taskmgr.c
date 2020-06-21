@@ -5,10 +5,13 @@
  *  Author: ThePetrovich
  */
 
-#include <kernel/platform/platform.h>
-#include <kernel/kernel.h>
-#include <kernel/hal/hal.h>
-#include "../kernel_config.h"
+#include "taskmgr.h"
+#include "scheduler.h"
+#include "tasks.h"
+#include "taskutils.h"
+#include <kernel/ktypes.h>
+#include <kernel_config.h>
+#include <stdint.h>
 
 kTaskHandle_t kCurrentTask;
 static kTaskHandle_t kNextTask;
@@ -19,8 +22,8 @@ static volatile uint8_t kInterruptDepth = 0;
 extern volatile byte kReservedMemory[CFG_KERNEL_RESERVED_MEMORY];
 extern kStackPtr_t kStackPointer;
 
-void taskmgr_schedule();
-void taskmgr_setActiveTicks(uint16_t activeTicks);
+void tasks_schedule();
+void tasks_setActiveTicks(uint16_t activeTicks);
 
 void kernel_stackCorruptionHook(kTaskHandle_t task);
 
@@ -29,20 +32,10 @@ uint64_t kernel_getUptime()
 	return __e_time;
 }
 
-uint8_t taskmgr_checkStackBounds(kTaskHandle_t task) {
-	uint8_t exitcode = 0;
-	if (task->type != KTASK_SYSTEM) {
-		if (task->stackPtr < task->stackBegin || task->stackBegin + task->stackSize < task->stackPtr) {
-			exitcode = 1;
-		}
-	}
-	return exitcode;
-}
-
-static void taskmgr_switchContext()
+static void tasks_switchContext()
 {
 	#if CFG_MEMORY_PROTECTION_MODE == 1
-		if (taskmgr_checkStackBounds(kCurrentTask)) {
+		if (tasks_checkStackBounds(kCurrentTask)) {
 			kernel_stackCorruptionHook(kCurrentTask);
 		}
 	#endif
@@ -54,7 +47,7 @@ static void taskmgr_switchContext()
 	#endif
 
 	#if CFG_MEMORY_PROTECTION_MODE == 3
-		if (taskmgr_checkStackBounds(kCurrentTask) || memmgr_checkProtectionRegion((void*)(kCurrentTask->stackBegin + kCurrentTask->stackSize), CFG_STACK_SAFETY_MARGIN)) {
+		if (tasks_checkStackBounds(kCurrentTask) || memmgr_checkProtectionRegion((void*)(kCurrentTask->stackBegin + kCurrentTask->stackSize), CFG_STACK_SAFETY_MARGIN)) {
 			kernel_stackCorruptionHook(kCurrentTask);
 		}
 	#endif
@@ -67,61 +60,61 @@ static void taskmgr_switchContext()
 	kCurrentTask = kNextTask;
 }
 
-kStackPtr_t taskmgr_getKernelStackPointer()
+kStackPtr_t tasks_getKernelStackPointer()
 {
 	return kStackPointer;
 }
 
-kStackPtr_t taskmgr_getReservedMemoryPointer()
+kStackPtr_t tasks_getReservedMemoryPointer()
 {
 	return kReservedMemory;
 }
 
-kTaskHandle_t taskmgr_getCurrentTaskHandle()
+kTaskHandle_t tasks_getCurrentTaskHandle()
 {
 	return kCurrentTask;
 }
 
-kTaskHandle_t taskmgr_getNextTaskHandle()
+kTaskHandle_t tasks_getNextTaskHandle()
 {
 	return kNextTask;
 }
 
-void taskmgr_setCurrentTask(kTaskHandle_t taskHandle)
+void tasks_setCurrentTask(kTaskHandle_t taskHandle)
 {
 	kCurrentTask = taskHandle;
 }
 
-void taskmgr_setNextTask(kTaskHandle_t taskHandle)
+void tasks_setNextTask(kTaskHandle_t taskHandle)
 {
 	kNextTask = taskHandle;
 }
 
-void taskmgr_setKernelStackPointer(kStackPtr_t pointer)
+void tasks_setKernelStackPointer(kStackPtr_t pointer)
 {
 	kStackPointer = pointer;
 }
 
-void taskmgr_switchTask()
+void tasks_switchTask()
 {
-	taskmgr_schedule();
-	if (kNextTask != kCurrentTask) taskmgr_switchContext();
+	tasks_schedule();
+	if (kNextTask != kCurrentTask) tasks_switchContext();
 }
 
-void taskmgr_sleep(kTaskTicks_t sleep)
+void tasks_sleep(kTaskTicks_t sleep)
 {
-	taskmgr_setActiveTicks(0);
+	tasks_setActiveTicks(0);
 
 	if (sleep != 0) {
-		taskmgr_setTaskState(kCurrentTask, KSTATE_SLEEPING);
+		tasks_setTaskState(kCurrentTask, KSTATE_SLEEPING);
 		kCurrentTask -> sleepTime = sleep;
 	}
 	platform_yield();
 }
 
-void taskmgr_tick()
+void tasks_tick()
 {
-	taskmgr_switchTask();
+	tasks_switchTask();
 
 	kernel_timerService();
 

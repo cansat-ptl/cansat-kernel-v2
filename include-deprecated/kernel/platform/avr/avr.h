@@ -312,6 +312,6 @@ kStackPtr_t platform_prepareStackFrame(kStackPtr_t regionPointer, kStackSize_t s
 void __attribute__ (( naked, noinline )) platform_tick();
 void __attribute__ (( naked, noinline )) platform_yield(void);
 
-uint8_t platform_checkStackBounds(kTaskHandle_t task);
+uint8_t tasks_checkStackBounds(kTaskHandle_t task);
 
 #endif /* AVR_H_ */

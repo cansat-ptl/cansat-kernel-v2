@@ -3,7 +3,7 @@
  *
  * Created: 18.02.2020 19:43:17
  *  Author: Admin
- */ 
+ */
 
 
 #ifndef PRIMITIVES_H_
@@ -20,8 +20,8 @@ void threads_endCriticalSection(uint16_t kflags);
 kStatusRegister_t threads_startAtomicOperation();
 void threads_endAtomicOperation(kStatusRegister_t sreg);
 
-uint16_t threads_notificationWait();
-kReturnValue_t threads_notificationSend(kTaskHandle_t taskToNotify, uint16_t flags);
+uint16_t tasks_notificationWait();
+kReturnValue_t tasks_notificationSend(kTaskHandle_t taskToNotify, uint16_t flags);
 
 struct kLockStruct_t threads_mutexInit();
 kReturnValue_t threads_mutexLock(volatile struct kLockStruct_t* mutex);

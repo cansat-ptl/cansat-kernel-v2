@@ -3,7 +3,7 @@
  *
  * Created: 07.06.2020 21:16:38
  *  Author: Admin
- */ 
+ */
 
 #include <kernel/platform/platform.h>
 #include <kernel/hal/hal.h>
@@ -12,13 +12,13 @@ extern kTaskHandle_t kCurrentTask;
 volatile byte kReservedMemory[CFG_KERNEL_RESERVED_MEMORY];
 kStackPtr_t kStackPointer = &kReservedMemory[CFG_KERNEL_RESERVED_MEMORY-1];
 
-void taskmgr_tick();
-void taskmgr_switchTask();
+void tasks_tick();
+void tasks_switchTask();
 
 void __attribute__ (( naked, noinline )) platform_yield(void)
 {
 	platform_SAVE_CONTEXT();
-	taskmgr_switchTask();
+	tasks_switchTask();
 	platform_RESTORE_CONTEXT();
 	platform_RET();
 }
@@ -26,14 +26,14 @@ void __attribute__ (( naked, noinline )) platform_yield(void)
 void __attribute__ (( naked, noinline )) platform_tick()
 {
 	platform_SAVE_CONTEXT();
-	
-	taskmgr_tick();
+
+	tasks_tick();
 
 	platform_RESTORE_CONTEXT();
 	platform_RET();
 }
 
-kStatusRegister_t platform_startAtomicOperation() 
+kStatusRegister_t platform_startAtomicOperation()
 {
 	#if CFG_ALLOW_INTERRUPTS_IN_ATOMIC_SECTIONS == 0
 		kStatusRegister_t sreg = platform_STATUS_REG;
@@ -44,7 +44,7 @@ kStatusRegister_t platform_startAtomicOperation()
 	#endif
 }
 
-void platform_endAtomicOperation(kStatusRegister_t sreg) 
+void platform_endAtomicOperation(kStatusRegister_t sreg)
 {
 	#if CFG_ALLOW_INTERRUPTS_IN_ATOMIC_SECTIONS == 0
 		platform_ENABLE_INTERRUPTS();

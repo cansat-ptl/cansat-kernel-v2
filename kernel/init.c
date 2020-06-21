@@ -34,7 +34,7 @@ void kernel_preinit()
 	#if CFG_LOGGING == 1
 		debug_puts(L_INFO, PSTR("kernel: Initializing task manager\r\n"));
 	#endif
-	taskmgr_init(kernel_idle1);
+	tasks_init(kernel_idle1);
 }
 
 kReturnValue_t kernel_startScheduler()

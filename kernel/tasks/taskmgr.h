@@ -3,14 +3,15 @@
  *
  * Created: 21.06.2020 19:55:18
  *  Author: Admin
- */ 
+ */
 
 
-#ifndef TASKMGR_H_
-#define TASKMGR_H_
+#ifndef tasks_H_
+#define tasks_H_
+
+#include <kernel/ktypes.h>
+#include <kernel/kdefs.h>
+#include <stdint.h>
 
 
-
-
-
-#endif /* TASKMGR_H_ */
+#endif /* tasks_H_ */

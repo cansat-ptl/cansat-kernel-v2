@@ -13,7 +13,7 @@ void kernel_panic(const char * message) {
 		debug_puts(L_FATAL, PSTR("kernel: PANIC - "));
 		debug_puts(L_NONE, message);
 		
-		kTaskHandle_t runningTask = taskmgr_getCurrentTaskHandle();
+		kTaskHandle_t runningTask = tasks_getCurrentTaskHandle();
 		
 		debug_puts(L_FATAL, PSTR("kernel: Last executed task info:\r\n"));
 		debug_logMessage(PGM_ON, L_FATAL, PSTR("    PID: %d; Name: %s; Entry: 0x%08X; Stack: 0x%08X; State: %d; Priority: %d;\r\n"), runningTask->pid, runningTask->name, runningTask->taskPtr, runningTask->stackPtr, runningTask->state, runningTask->priority);
@@ -42,14 +42,14 @@ void kernel_panic(const char * message) {
 
 void kernel_taskReturnHook()
 {	
-	kTaskHandle_t runningTask = taskmgr_getCurrentTaskHandle();
+	kTaskHandle_t runningTask = tasks_getCurrentTaskHandle();
 	#if CFG_LOGGING == 1
 		debug_puts(L_WARN, PSTR("kernel: Task return detected.\r\n"));
 		debug_puts(L_WARN, PSTR("kernel: Returning task will be terminated.\r\n"));
 		debug_logMessage(PGM_ON, L_WARN, PSTR("kernel: Task info:\r\n"));
 		debug_logMessage(PGM_ON, L_WARN, PSTR("PID: %d; Name: %s; Entry: 0x%08X; Stack: 0x%08X; State: %d; Priority: %d;\r\n"), runningTask->pid, runningTask->name, runningTask->taskPtr, runningTask->stackPtr, runningTask->state, runningTask->priority);
 	#endif
-	taskmgr_removeTask(runningTask);
+	tasks_removeTask(runningTask);
 	while (1) {
 		;//Do nothing
 	}
@@ -63,7 +63,7 @@ void kernel_stackCorruptionHook(kTaskHandle_t task)
 		debug_logMessage(PGM_ON, L_ERROR, PSTR("kernel: Task info:\r\n"));
 		debug_logMessage(PGM_ON, L_WARN, PSTR("PID: %d; Name: %s; Entry: 0x%08X; Stack: 0x%08X; State: %d; Priority: %d;\r\n"), task->pid, task->name, task->taskPtr, task->stackPtr, task->state, task->priority);
 	#endif
-	taskmgr_removeTask(task);
+	tasks_removeTask(task);
 	if (task->type == KTASK_SYSTEM) {
 		kernel_panic(PSTR("System-critical task stack corruption\r\n"));
 	}

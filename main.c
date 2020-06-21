@@ -18,24 +18,24 @@ kTaskHandle_t handles[4];
 
 kTask simpleTask1(void* args)
 {
-	kTaskHandle_t handle = taskmgr_getCurrentTaskHandle();
+	kTaskHandle_t handle = tasks_getCurrentTaskHandle();
 
 	while (1) {
 		debug_logMessage(PGM_PUTS, L_INFO, PSTR("task1: Waiting for notification\r\n"));
-		uint16_t flags = threads_notificationWait();
+		uint16_t flags = tasks_notificationWait();
 		debug_logMessage(PGM_ON, L_INFO, PSTR("task1: Notification received, flags = 0x%04X\r\n"), flags);
 	}
 }
 
 kTask simpleTask2(void* args)
 {
-	taskmgr_sleep(1000);
+	tasks_sleep(1000);
 	while (1) {
 		debug_logMessage(PGM_PUTS, L_INFO, PSTR("task2: Sending notification\r\n"));
-		threads_notificationSend(((kTaskHandle_t*)args)[0], 0x1234);
-		threads_notificationSend(((kTaskHandle_t*)args)[2], 0x4321);
-		threads_notificationSend(((kTaskHandle_t*)args)[3], 0x1111);
-		taskmgr_sleep(1000);
+		tasks_notificationSend(((kTaskHandle_t*)args)[0], 0x1234);
+		tasks_notificationSend(((kTaskHandle_t*)args)[2], 0x4321);
+		tasks_notificationSend(((kTaskHandle_t*)args)[3], 0x1111);
+		tasks_sleep(1000);
 	}
 }
 
@@ -43,9 +43,9 @@ kTask simpleTask3(void* args)
 {
 	while (1) {
 		debug_logMessage(PGM_PUTS, L_INFO, PSTR("task3: Waiting for notification\r\n"));
-		uint16_t flags = threads_notificationWait();
+		uint16_t flags = tasks_notificationWait();
 		debug_logMessage(PGM_ON, L_INFO, PSTR("task3: Notification received, flags = 0x%04X\r\n"), flags);
-		taskmgr_sleep(200);
+		tasks_sleep(200);
 	}
 }
 
@@ -53,7 +53,7 @@ kTask simpleTask4(void* args)
 {
 	while (1) {
 		debug_logMessage(PGM_PUTS, L_INFO, PSTR("task4: Waiting for notification\r\n"));
-		uint16_t flags = threads_notificationWait();
+		uint16_t flags = tasks_notificationWait();
 		debug_logMessage(PGM_ON, L_INFO, PSTR("task4: Notification received, flags = 0x%04X\r\n"), flags);
 	}
 }
@@ -67,10 +67,10 @@ void user_preinit()
 
 void user_init()
 {
-	handles[0] = taskmgr_createTask(simpleTask1, NULL, 250, 2, KTASK_USER, "task1");
-	handles[1] = taskmgr_createTask(simpleTask2, (void*)handles, 250, 2, KTASK_USER, "task2");
-	handles[2] = taskmgr_createTask(simpleTask3, NULL, 250, 2, KTASK_USER, "task3");
-	handles[3] = taskmgr_createTask(simpleTask4, NULL, 250, 2, KTASK_USER, "task4");
+	handles[0] = tasks_createTask(simpleTask1, NULL, 250, 2, KTASK_USER, "task1");
+	handles[1] = tasks_createTask(simpleTask2, (void*)handles, 250, 2, KTASK_USER, "task2");
+	handles[2] = tasks_createTask(simpleTask3, NULL, 250, 2, KTASK_USER, "task3");
+	handles[3] = tasks_createTask(simpleTask4, NULL, 250, 2, KTASK_USER, "task4");
 	return;
 }
 

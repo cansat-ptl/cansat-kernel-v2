@@ -12,6 +12,20 @@
 #include <kernel/kernel.h>
 #include <kernel/types.h>
 
+struct kLinkedListStruct_t
+{
+	volatile struct kListItemStruct_t* head;
+	volatile struct kListItemStruct_t* tail;
+};
+
+struct kListItemStruct_t
+{
+	volatile struct kLinkedListStruct_t* list;
+	volatile struct kListItemStruct_t* next;
+	volatile struct kListItemStruct_t* prev;
+	volatile void* data;
+};
+
 #define utils_LISTITEM_STRUCT_SIZE ((sizeof(struct kListItemStruct_t) + ((size_t)(CFG_PLATFORM_BYTE_ALIGNMENT - 1))) & ~((size_t)CFG_PLATFORM_BYTE_ALIGNMENT_MASK))
 
 void utils_listAddBack(volatile struct kLinkedListStruct_t* list, volatile struct kListItemStruct_t* item);

@@ -190,55 +190,88 @@
     <Compile Include="hal_pins.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="include\boot\boot.h">
+    <Compile Include="include-deprecated\boot\boot.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="include\kernel\debug.h">
+    <Compile Include="include-deprecated\kernel\hal\hal.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="include\kernel\hal\hal.h">
+    <Compile Include="include-deprecated\kernel\kernel.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include-deprecated\kernel\memory.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include-deprecated\kernel\platform\avr\avr.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include-deprecated\kernel\platform\avr\timers.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include-deprecated\kernel\platform\platform.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include-deprecated\kernel\platform\types.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include-deprecated\kernel\softtimers.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include-deprecated\kernel\threads\ipc.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include-deprecated\kernel\threads\primitives.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include-deprecated\kernel\threads\threads.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include-deprecated\kernel\types.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include-deprecated\kernel\utils\time.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include-deprecated\kernel\utils\utils.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\kdebug\debug.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\kernel\ipc\buffers.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\kernel\ipc\ipc.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\kernel\ipc\messages.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\kernel\kdefs.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="include\kernel\kernel.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="include\kernel\memory.h">
+    <Compile Include="include\kernel\ktypes.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="include\kernel\platform\avr\avr.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\kernel\platform\avr\timers.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\kernel\platform\platform.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\kernel\platform\types.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\kernel\softtimers.h">
+    <Compile Include="include\kernel\memory\heap.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="include\kernel\tasks.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="include\kernel\threads\ipc.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\kernel\threads\primitives.h">
+    <Compile Include="include\kernel\threads\sync.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="include\kernel\threads\threads.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="include\kernel\types.h">
+    <Compile Include="include\kernel\timers.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="include\kernel\utils\time.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\kernel\utils\utils.h">
+    <Compile Include="include\kernel\utils.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="kdebug\debug.c">
@@ -262,7 +295,16 @@
     <Compile Include="kernel\memory\heap.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="kernel\memory\heap.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\memory\memory.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="kernel\memory\protection.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\platform\avr\avr.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="kernel\platform\avr\platform.c">
@@ -274,22 +316,52 @@
     <Compile Include="kernel\platform\avr\timers.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="kernel\softtimers.c">
+    <Compile Include="kernel\platform\avr\types.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="kernel\taskmgr\scheduler.c">
+    <Compile Include="kernel\platform\platform.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="kernel\taskmgr\taskmgr.c">
+    <Compile Include="kernel\tasks\notifications.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="kernel\taskmgr\tasks.c">
+    <Compile Include="kernel\tasks\notifications.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="kernel\taskmgr\taskutils.c">
+    <Compile Include="kernel\timers.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\tasks\scheduler.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\tasks\scheduler.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\tasks\taskmgr.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\tasks\taskmgr.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\tasks\tasks.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\tasks\tasks.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\tasks\taskutils.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\tasks\taskutils.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="kernel\threads\atomic.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\threads\atomic.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\threads\buffers.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="kernel\threads\fifo.c">
@@ -301,13 +373,16 @@
     <Compile Include="kernel\threads\mutex.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="kernel\threads\notifications.c">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="kernel\threads\semaphore.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="kernel\threads\spinlock.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\threads\threadsync.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\timers.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="kernel\utils\linkedlists.c">
@@ -345,24 +420,31 @@
     <Folder Include="dev" />
     <Folder Include="dev\basic" />
     <Folder Include="dev\uart" />
-    <Folder Include="include" />
-    <Folder Include="include\boot" />
+    <Folder Include="include-deprecated" />
+    <Folder Include="include-deprecated\boot" />
+    <Folder Include="include-deprecated\kernel" />
+    <Folder Include="include-deprecated\kernel\hal" />
+    <Folder Include="include-deprecated\kernel\platform" />
+    <Folder Include="include-deprecated\kernel\platform\avr" />
+    <Folder Include="include-deprecated\kernel\threads" />
+    <Folder Include="include-deprecated\kernel\utils" />
+    <Folder Include="include-deprecated\systemd" />
     <Folder Include="include\kernel" />
-    <Folder Include="include\kernel\hal" />
-    <Folder Include="include\kernel\platform" />
-    <Folder Include="include\kernel\platform\avr" />
+    <Folder Include="include\kdebug" />
+    <Folder Include="include\dev" />
+    <Folder Include="include\kernel\ipc" />
+    <Folder Include="include\kernel\memory" />
     <Folder Include="include\kernel\threads" />
-    <Folder Include="include\kernel\utils" />
     <Folder Include="include\systemd" />
     <Folder Include="kernel" />
     <Folder Include="kernel\memory" />
-    <Folder Include="kernel\tasks" />
     <Folder Include="kernel\platform" />
     <Folder Include="kernel\platform\avr" />
-    <Folder Include="kernel\taskmgr" />
+    <Folder Include="kernel\tasks" />
     <Folder Include="kernel\threads" />
     <Folder Include="kernel\utils" />
     <Folder Include="kdebug" />
+    <Folder Include="include" />
     <Folder Include="systemd" />
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />

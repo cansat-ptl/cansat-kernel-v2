@@ -34,13 +34,3 @@ kStackPtr_t platform_prepareStackFrame(kStackPtr_t regionPointer, kStackSize_t s
 	
 	return regionPointer + (CFG_KERNEL_STACK_FRAME_REGISTER_OFFSET + CFG_KERNEL_STACK_FRAME_END_OFFSET);
 }
-
-uint8_t platform_checkStackBounds(kTaskHandle_t task) {
-	uint8_t exitcode = 0;
-	if (task->type != KTASK_SYSTEM) {
-		if (task->stackPtr < task->stackBegin || task->stackBegin + task->stackSize < task->stackPtr) {
-			exitcode = 1;
-		}	
-	}
-	return exitcode;
-}

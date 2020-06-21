@@ -5,8 +5,12 @@
  *  Author: ThePetrovich
  */
 
-#include <kernel/kernel.h>
+#include "tasks.h"
 #include "../utils/linkedlists.h"
+#include <kernel/ktypes.h>
+#include <kernel_config.h>
+#include <stdint.h>
+#include <memory.h>
 
 static volatile uint16_t kGlobalPid = 0;
 
@@ -18,45 +22,45 @@ static const size_t kTaskStructSize	= (sizeof(struct kTaskStruct_t) + ((size_t)(
 
 static volatile kTaskHandle_t kIdleTaskHandle;
 
-void taskmgr_initScheduler(kTaskHandle_t idle);
+void tasks_initScheduler(kTaskHandle_t idle);
 
-volatile struct kLinkedListStruct_t* taskmgr_getReadyTaskListArray()
+volatile struct kLinkedListStruct_t* tasks_getReadyTaskListArray()
 {
 	return kReadyTaskList;
 }
 
-volatile struct kLinkedListStruct_t* taskmgr_getReadyTaskListPtr(uint8_t priority)
+volatile struct kLinkedListStruct_t* tasks_getReadyTaskListPtr(uint8_t priority)
 {
 	return &kReadyTaskList[priority];
 }
 
-volatile struct kLinkedListStruct_t* taskmgr_getSleepingTaskListPtr()
+volatile struct kLinkedListStruct_t* tasks_getSleepingTaskListPtr()
 {
 	return &kSleepingTaskList;
 }
 
-kTaskHandle_t taskmgr_getIdleTaskHandle()
+kTaskHandle_t tasks_getIdleTaskHandle()
 {
 	return kIdleTaskHandle;
 }
 
-kReturnValue_t taskmgr_init(kTask_t idle)
+kReturnValue_t tasks_init(kTask_t idle)
 {
-	kIdleTaskHandle = taskmgr_createTask(idle, NULL, 100, KPRIO_IDLE, KTASK_SYSTEM, "idle");
+	kIdleTaskHandle = tasks_createTask(idle, NULL, 100, KPRIO_IDLE, KTASK_SYSTEM, "idle");
 
 	if (kIdleTaskHandle == NULL) {
 		debug_logMessage(PGM_PUTS, L_FATAL, PSTR("\r\ntaskmgr: Startup failed, could not create idle task.\r\n"));
 		while(1);
 	}
 
-	taskmgr_initScheduler(kIdleTaskHandle);
-	taskmgr_setCurrentTask(kIdleTaskHandle);
-	taskmgr_setNextTask(kIdleTaskHandle);
+	tasks_initScheduler(kIdleTaskHandle);
+	tasks_setCurrentTask(kIdleTaskHandle);
+	tasks_setNextTask(kIdleTaskHandle);
 
 	return 0;
 }
 
-void taskmgr_setTaskState(kTaskHandle_t task, kTaskState_t state)
+void tasks_setTaskState(kTaskHandle_t task, kTaskState_t state)
 {
 	kStatusRegister_t sreg = threads_startAtomicOperation();
 
@@ -100,7 +104,7 @@ void taskmgr_setTaskState(kTaskHandle_t task, kTaskState_t state)
 	threads_endAtomicOperation(sreg);
 }
 
-kReturnValue_t taskmgr_setTaskPriority(kTaskHandle_t task, uint8_t priority)
+kReturnValue_t tasks_setTaskPriority(kTaskHandle_t task, uint8_t priority)
 {
 	kReturnValue_t exitcode = ERR_GENERIC;
 	kStatusRegister_t sreg = threads_startAtomicOperation();
@@ -111,7 +115,7 @@ kReturnValue_t taskmgr_setTaskPriority(kTaskHandle_t task, uint8_t priority)
 		if (priority <= CFG_NUMBER_OF_PRIORITIES) {
 			task->priority = priority;
 			if (task->state == KSTATE_READY) {
-				taskmgr_setTaskState(task, KSTATE_READY);
+				tasks_setTaskState(task, KSTATE_READY);
 			}
 		}
 		else {
@@ -123,7 +127,7 @@ kReturnValue_t taskmgr_setTaskPriority(kTaskHandle_t task, uint8_t priority)
 	return exitcode;
 }
 
-static inline void taskmgr_setupTaskStructure(kTaskHandle_t task, \
+static inline void tasks_setupTaskStructure(kTaskHandle_t task, \
 												kTask_t startupPointer, \
 												kStackPtr_t stackPointer, \
 												kStackPtr_t stackBegin, \
@@ -147,7 +151,7 @@ static inline void taskmgr_setupTaskStructure(kTaskHandle_t task, \
 	task -> name = name;
 }
 
-kReturnValue_t taskmgr_createTaskStatic(kStackPtr_t memory, kTaskHandle_t* handle, kTask_t entry, void* args, kStackSize_t stackSize, uint8_t priority, kTaskType_t type, char* name)
+kReturnValue_t tasks_createTaskStatic(kStackPtr_t memory, kTaskHandle_t* handle, kTask_t entry, void* args, kStackSize_t stackSize, uint8_t priority, kTaskType_t type, char* name)
 {
 	kReturnValue_t exitcode = ERR_GENERIC;
 	kStatusRegister_t sreg = threads_startAtomicOperation();
@@ -160,13 +164,13 @@ kReturnValue_t taskmgr_createTaskStatic(kStackPtr_t memory, kTaskHandle_t* handl
 			memory += utils_LISTITEM_STRUCT_SIZE;
 
 			kStackPtr_t stackPrepared = platform_prepareStackFrame(memory + kTaskStructSize, stackSize, entry, args);
-			taskmgr_setupTaskStructure((kTaskHandle_t)memory, entry, stackPrepared, memory + kTaskStructSize, stackSize, args, priority, KSTATE_READY, type, name);
+			tasks_setupTaskStructure((kTaskHandle_t)memory, entry, stackPrepared, memory + kTaskStructSize, stackSize, args, priority, KSTATE_READY, type, name);
 
 			#if CFG_MEMORY_PROTECTION_MODE == 2 || CFG_MEMORY_PROTECTION_MODE == 3
 				memmgr_prepareProtectionRegion((void*)(memory + kTaskStructSize + stackSize), CFG_STACK_SAFETY_MARGIN);
 			#endif
 
-			taskmgr_setTaskState((kTaskHandle_t)memory, KSTATE_READY);
+			tasks_setTaskState((kTaskHandle_t)memory, KSTATE_READY);
 
 			kGlobalPid++;
 			exitcode = 0;
@@ -183,7 +187,7 @@ kReturnValue_t taskmgr_createTaskStatic(kStackPtr_t memory, kTaskHandle_t* handl
 	return exitcode;
 }
 
-kReturnValue_t taskmgr_createTaskDynamic(kTaskHandle_t* handle, kTask_t entry, void* args, kStackSize_t stackSize, uint8_t priority, kTaskType_t type, char* name)
+kReturnValue_t tasks_createTaskDynamic(kTaskHandle_t* handle, kTask_t entry, void* args, kStackSize_t stackSize, uint8_t priority, kTaskType_t type, char* name)
 {
 	kReturnValue_t exitcode = ERR_GENERIC;
 	kStatusRegister_t sreg = threads_startAtomicOperation();
@@ -198,7 +202,7 @@ kReturnValue_t taskmgr_createTaskDynamic(kTaskHandle_t* handle, kTask_t entry, v
 		kStackPtr_t stackPointer = (kStackPtr_t)memmgr_heapAlloc(stackSize + kTaskStructSize + utils_LISTITEM_STRUCT_SIZE);
 	#endif
 
-	exitcode = taskmgr_createTaskStatic(stackPointer, NULL, entry, args, stackSize, priority, type, name);
+	exitcode = tasks_createTaskStatic(stackPointer, NULL, entry, args, stackSize, priority, type, name);
 
 	if (exitcode != 0) {
 		memmgr_heapFree((void*)stackPointer);
@@ -211,10 +215,10 @@ kReturnValue_t taskmgr_createTaskDynamic(kTaskHandle_t* handle, kTask_t entry, v
 	return exitcode;
 }
 
-kTaskHandle_t taskmgr_createTask(kTask_t entry, void* args, kStackSize_t stackSize, uint8_t priority, kTaskType_t type, char* name)
+kTaskHandle_t tasks_createTask(kTask_t entry, void* args, kStackSize_t stackSize, uint8_t priority, kTaskType_t type, char* name)
 {
 	kTaskHandle_t returnValue = NULL;
-	kReturnValue_t result = taskmgr_createTaskDynamic(&returnValue, entry, args, stackSize, priority, type, name);
+	kReturnValue_t result = tasks_createTaskDynamic(&returnValue, entry, args, stackSize, priority, type, name);
 	#if CFG_LOGGING == 1
 	switch (result) {
 		case 0:
@@ -237,17 +241,77 @@ kTaskHandle_t taskmgr_createTask(kTask_t entry, void* args, kStackSize_t stackSi
 	return returnValue;
 }
 
-kReturnValue_t taskmgr_removeTask(kTaskHandle_t task)
+kReturnValue_t tasks_removeTask(kTaskHandle_t task)
 {
 	kStatusRegister_t sreg = threads_startAtomicOperation();
 
 	kReturnValue_t sanityCheck = memmgr_pointerSanityCheck((void*)task);
 
 	if (sanityCheck == 0) {
-		taskmgr_setTaskState(task, KSTATE_UNINIT);
+		tasks_setTaskState(task, KSTATE_UNINIT);
 		memmgr_heapFree((void*)task);
 	}
 
 	threads_endAtomicOperation(sreg);
 	return 0;
 }
+
+//TODO: Fix these
+/*
+void taskmgr_restartTask(kTaskHandle_t task)
+{
+	kStatusRegister_t sreg = threads_startAtomicOperation();
+
+	kReturnValue_t sanityCheck = memmgr_pointerSanityCheck((void*)task);
+
+	if (sanityCheck == 0) {
+		kStackPtr_t stackPrepared = platform_prepareStackFrame(task->stackBegin, task->stackSize, task->taskPtr, task->args);
+
+		task->stackPtr = stackPrepared;
+		task->lock = NULL;
+		task->taskList.next = NULL;
+		task->taskList.prev = NULL;
+		task->taskList.list = NULL;
+
+		#if CFG_MEMORY_PROTECTION_MODE == 2 || CFG_MEMORY_PROTECTION_MODE == 3
+		memmgr_prepareProtectionRegion((void*)(task->stackBegin + task->stackSize), CFG_STACK_SAFETY_MARGIN);
+		#endif
+
+		taskmgr_setTaskState(task, KSTATE_READY);
+	}
+
+	threads_endAtomicOperation(sreg);
+	return;
+}
+
+kTaskHandle_t taskmgr_forkTask(kTaskHandle_t task)
+{
+	kStatusRegister_t sreg = threads_startAtomicOperation();
+
+	kReturnValue_t sanityCheck = memmgr_pointerSanityCheck((void*)task);
+	kTaskHandle_t handle = NULL;
+
+	if (sanityCheck == 0) {
+		handle = taskmgr_createTask(task->taskPtr, task->args, task->stackSize, task->priority, task->type, task->name);
+	}
+
+	threads_endAtomicOperation(sreg);
+	return handle;
+}
+
+kReturnValue_t taskmgr_replaceTask(kTaskHandle_t taskToReplace, kTask_t entry, void* args)
+{
+	kStatusRegister_t sreg = threads_startAtomicOperation();
+
+	kReturnValue_t sanityCheck = memmgr_pointerSanityCheck((void*)taskToReplace);
+
+	if (sanityCheck == 0) {
+		taskToReplace->taskPtr = entry;
+		taskToReplace->args = args;
+		taskmgr_restartTask(taskToReplace);
+	}
+
+	threads_endAtomicOperation(sreg);
+	return 0;
+}
+*/
