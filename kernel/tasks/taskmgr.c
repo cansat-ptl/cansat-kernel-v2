@@ -3,7 +3,7 @@
  *
  * Created: 11.05.2019 21:12:52
  *  Author: ThePetrovich
- */ 
+ */
 
 #include <kernel/platform/platform.h>
 #include <kernel/kernel.h>
@@ -24,26 +24,41 @@ void taskmgr_setActiveTicks(uint16_t activeTicks);
 
 void kernel_stackCorruptionHook(kTaskHandle_t task);
 
+uint64_t kernel_getUptime()
+{
+	return __e_time;
+}
+
+uint8_t taskmgr_checkStackBounds(kTaskHandle_t task) {
+	uint8_t exitcode = 0;
+	if (task->type != KTASK_SYSTEM) {
+		if (task->stackPtr < task->stackBegin || task->stackBegin + task->stackSize < task->stackPtr) {
+			exitcode = 1;
+		}
+	}
+	return exitcode;
+}
+
 static void taskmgr_switchContext()
 {
 	#if CFG_MEMORY_PROTECTION_MODE == 1
-		if (platform_checkStackBounds(kCurrentTask)) {
+		if (taskmgr_checkStackBounds(kCurrentTask)) {
 			kernel_stackCorruptionHook(kCurrentTask);
 		}
 	#endif
-	
+
 	#if CFG_MEMORY_PROTECTION_MODE == 2
 		if (memmgr_checkProtectionRegion((void*)(kCurrentTask->stackBegin + kCurrentTask->stackSize), CFG_STACK_SAFETY_MARGIN)) {
 			kernel_stackCorruptionHook(kCurrentTask);
 		}
 	#endif
-	
+
 	#if CFG_MEMORY_PROTECTION_MODE == 3
-		if (platform_checkStackBounds(kCurrentTask) || memmgr_checkProtectionRegion((void*)(kCurrentTask->stackBegin + kCurrentTask->stackSize), CFG_STACK_SAFETY_MARGIN)) {
+		if (taskmgr_checkStackBounds(kCurrentTask) || memmgr_checkProtectionRegion((void*)(kCurrentTask->stackBegin + kCurrentTask->stackSize), CFG_STACK_SAFETY_MARGIN)) {
 			kernel_stackCorruptionHook(kCurrentTask);
 		}
 	#endif
-	
+
 	#if CFG_MEMORY_PROTECTION_MODE != 0
 		if (memmgr_pointerSanityCheck((void*)kNextTask) != 0) {
 			kernel_panic(PSTR("Memory access violation in task manager: kNextTask is out of bounds\r\n"));
@@ -72,7 +87,7 @@ kTaskHandle_t taskmgr_getNextTaskHandle()
 	return kNextTask;
 }
 
-void taskmgr_setCurrentTask(kTaskHandle_t taskHandle) 
+void taskmgr_setCurrentTask(kTaskHandle_t taskHandle)
 {
 	kCurrentTask = taskHandle;
 }
@@ -88,7 +103,7 @@ void taskmgr_setKernelStackPointer(kStackPtr_t pointer)
 }
 
 void taskmgr_switchTask()
-{	
+{
 	taskmgr_schedule();
 	if (kNextTask != kCurrentTask) taskmgr_switchContext();
 }
@@ -96,7 +111,7 @@ void taskmgr_switchTask()
 void taskmgr_sleep(kTaskTicks_t sleep)
 {
 	taskmgr_setActiveTicks(0);
-	
+
 	if (sleep != 0) {
 		taskmgr_setTaskState(kCurrentTask, KSTATE_SLEEPING);
 		kCurrentTask -> sleepTime = sleep;
@@ -107,8 +122,8 @@ void taskmgr_sleep(kTaskTicks_t sleep)
 void taskmgr_tick()
 {
 	taskmgr_switchTask();
-	
+
 	kernel_timerService();
-	
+
 	__e_time++;
 }
