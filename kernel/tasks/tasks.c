@@ -64,7 +64,7 @@ void tasks_setTaskState(kTaskHandle_t task, kTaskState_t state)
 {
 	kStatusRegister_t sreg = threads_startAtomicOperation();
 
-	kReturnValue_t sanityCheck = memmgr_pointerSanityCheck((void*)task);
+	kReturnValue_t sanityCheck = memory_pointerSanityCheck((void*)task);
 
 	if (sanityCheck == 0) {
 		switch (state) {
@@ -109,7 +109,7 @@ kReturnValue_t tasks_setTaskPriority(kTaskHandle_t task, uint8_t priority)
 	kReturnValue_t exitcode = ERR_GENERIC;
 	kStatusRegister_t sreg = threads_startAtomicOperation();
 
-	kReturnValue_t sanityCheck = memmgr_pointerSanityCheck((void*)task);
+	kReturnValue_t sanityCheck = memory_pointerSanityCheck((void*)task);
 
 	if (sanityCheck == 0) {
 		if (priority <= CFG_NUMBER_OF_PRIORITIES) {
@@ -167,7 +167,7 @@ kReturnValue_t tasks_createTaskStatic(kStackPtr_t memory, kTaskHandle_t* handle,
 			tasks_setupTaskStructure((kTaskHandle_t)memory, entry, stackPrepared, memory + kTaskStructSize, stackSize, args, priority, KSTATE_READY, type, name);
 
 			#if CFG_MEMORY_PROTECTION_MODE == 2 || CFG_MEMORY_PROTECTION_MODE == 3
-				memmgr_prepareProtectionRegion((void*)(memory + kTaskStructSize + stackSize), CFG_STACK_SAFETY_MARGIN);
+				memory_prepareProtectionRegion((void*)(memory + kTaskStructSize + stackSize), CFG_STACK_SAFETY_MARGIN);
 			#endif
 
 			tasks_setTaskState((kTaskHandle_t)memory, KSTATE_READY);
@@ -197,15 +197,15 @@ kReturnValue_t tasks_createTaskDynamic(kTaskHandle_t* handle, kTask_t entry, voi
 	}
 
 	#if CFG_MEMORY_PROTECTION_MODE == 2 || CFG_MEMORY_PROTECTION_MODE == 3
-		kStackPtr_t stackPointer = (kStackPtr_t)memmgr_heapAlloc(stackSize + kTaskStructSize + CFG_STACK_SAFETY_MARGIN + utils_LISTITEM_STRUCT_SIZE);
+		kStackPtr_t stackPointer = (kStackPtr_t)memory_heapAlloc(stackSize + kTaskStructSize + CFG_STACK_SAFETY_MARGIN + utils_LISTITEM_STRUCT_SIZE);
 	#else
-		kStackPtr_t stackPointer = (kStackPtr_t)memmgr_heapAlloc(stackSize + kTaskStructSize + utils_LISTITEM_STRUCT_SIZE);
+		kStackPtr_t stackPointer = (kStackPtr_t)memory_heapAlloc(stackSize + kTaskStructSize + utils_LISTITEM_STRUCT_SIZE);
 	#endif
 
 	exitcode = tasks_createTaskStatic(stackPointer, NULL, entry, args, stackSize, priority, type, name);
 
 	if (exitcode != 0) {
-		memmgr_heapFree((void*)stackPointer);
+		memory_heapFree((void*)stackPointer);
 	}
 	else {
 		*handle = (kTaskHandle_t)(stackPointer + utils_LISTITEM_STRUCT_SIZE);
@@ -245,11 +245,11 @@ kReturnValue_t tasks_removeTask(kTaskHandle_t task)
 {
 	kStatusRegister_t sreg = threads_startAtomicOperation();
 
-	kReturnValue_t sanityCheck = memmgr_pointerSanityCheck((void*)task);
+	kReturnValue_t sanityCheck = memory_pointerSanityCheck((void*)task);
 
 	if (sanityCheck == 0) {
 		tasks_setTaskState(task, KSTATE_UNINIT);
-		memmgr_heapFree((void*)task);
+		memory_heapFree((void*)task);
 	}
 
 	threads_endAtomicOperation(sreg);
@@ -262,7 +262,7 @@ void taskmgr_restartTask(kTaskHandle_t task)
 {
 	kStatusRegister_t sreg = threads_startAtomicOperation();
 
-	kReturnValue_t sanityCheck = memmgr_pointerSanityCheck((void*)task);
+	kReturnValue_t sanityCheck = memory_pointerSanityCheck((void*)task);
 
 	if (sanityCheck == 0) {
 		kStackPtr_t stackPrepared = platform_prepareStackFrame(task->stackBegin, task->stackSize, task->taskPtr, task->args);
@@ -274,7 +274,7 @@ void taskmgr_restartTask(kTaskHandle_t task)
 		task->taskList.list = NULL;
 
 		#if CFG_MEMORY_PROTECTION_MODE == 2 || CFG_MEMORY_PROTECTION_MODE == 3
-		memmgr_prepareProtectionRegion((void*)(task->stackBegin + task->stackSize), CFG_STACK_SAFETY_MARGIN);
+		memory_prepareProtectionRegion((void*)(task->stackBegin + task->stackSize), CFG_STACK_SAFETY_MARGIN);
 		#endif
 
 		taskmgr_setTaskState(task, KSTATE_READY);
@@ -288,7 +288,7 @@ kTaskHandle_t taskmgr_forkTask(kTaskHandle_t task)
 {
 	kStatusRegister_t sreg = threads_startAtomicOperation();
 
-	kReturnValue_t sanityCheck = memmgr_pointerSanityCheck((void*)task);
+	kReturnValue_t sanityCheck = memory_pointerSanityCheck((void*)task);
 	kTaskHandle_t handle = NULL;
 
 	if (sanityCheck == 0) {
@@ -303,7 +303,7 @@ kReturnValue_t taskmgr_replaceTask(kTaskHandle_t taskToReplace, kTask_t entry, v
 {
 	kStatusRegister_t sreg = threads_startAtomicOperation();
 
-	kReturnValue_t sanityCheck = memmgr_pointerSanityCheck((void*)taskToReplace);
+	kReturnValue_t sanityCheck = memory_pointerSanityCheck((void*)taskToReplace);
 
 	if (sanityCheck == 0) {
 		taskToReplace->taskPtr = entry;

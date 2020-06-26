@@ -190,49 +190,7 @@
     <Compile Include="hal_pins.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="include-deprecated\boot\boot.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include-deprecated\kernel\hal\hal.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include-deprecated\kernel\kernel.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include-deprecated\kernel\memory.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include-deprecated\kernel\platform\avr\avr.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include-deprecated\kernel\platform\avr\timers.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include-deprecated\kernel\platform\platform.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include-deprecated\kernel\platform\types.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include-deprecated\kernel\softtimers.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include-deprecated\kernel\threads\ipc.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include-deprecated\kernel\threads\primitives.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include-deprecated\kernel\threads\threads.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include-deprecated\kernel\types.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include-deprecated\kernel\utils\time.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include-deprecated\kernel\utils\utils.h">
+    <Compile Include="include\boot\boot.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="include\kdebug\debug.h">
@@ -241,10 +199,7 @@
     <Compile Include="include\kernel\ipc\buffers.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="include\kernel\ipc\ipc.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\kernel\ipc\messages.h">
+    <Compile Include="include\kernel\ipc\sync.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="include\kernel\kdefs.h">
@@ -260,12 +215,6 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="include\kernel\tasks.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\kernel\threads\sync.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\kernel\threads\threads.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="include\kernel\timers.h">
@@ -307,6 +256,9 @@
     <Compile Include="kernel\platform\avr\avr.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="kernel\platform\avr\hal.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="kernel\platform\avr\platform.c">
       <SubType>compile</SubType>
     </Compile>
@@ -314,6 +266,9 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="kernel\platform\avr\timers.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\platform\avr\timers.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="kernel\platform\avr\types.h">
@@ -397,6 +352,9 @@
     <Compile Include="kernel\utils\utils.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="kernel\utils\utils.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="kernel_config.h">
       <SubType>compile</SubType>
     </Compile>
@@ -420,21 +378,12 @@
     <Folder Include="dev" />
     <Folder Include="dev\basic" />
     <Folder Include="dev\uart" />
-    <Folder Include="include-deprecated" />
-    <Folder Include="include-deprecated\boot" />
-    <Folder Include="include-deprecated\kernel" />
-    <Folder Include="include-deprecated\kernel\hal" />
-    <Folder Include="include-deprecated\kernel\platform" />
-    <Folder Include="include-deprecated\kernel\platform\avr" />
-    <Folder Include="include-deprecated\kernel\threads" />
-    <Folder Include="include-deprecated\kernel\utils" />
-    <Folder Include="include-deprecated\systemd" />
     <Folder Include="include\kernel" />
     <Folder Include="include\kdebug" />
     <Folder Include="include\dev" />
     <Folder Include="include\kernel\ipc" />
     <Folder Include="include\kernel\memory" />
-    <Folder Include="include\kernel\threads" />
+    <Folder Include="include\boot" />
     <Folder Include="include\systemd" />
     <Folder Include="kernel" />
     <Folder Include="kernel\memory" />

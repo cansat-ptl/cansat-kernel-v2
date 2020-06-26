@@ -16,4 +16,10 @@ struct kMemoryBlockStruct_t
 	uint8_t state;
 };
 
+void memory_heapInit();
+kReturnValue_t memory_pointerSanityCheck(void* pointer);
+
+void memory_prepareProtectionRegion(void* pointer, int16_t size);
+uint8_t memory_checkProtectionRegion(void* pointer, int16_t size);
+
 #endif /* HEAP_H_ */

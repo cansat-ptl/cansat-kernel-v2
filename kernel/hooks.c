@@ -19,7 +19,7 @@ void kernel_panic(const char * message) {
 		debug_logMessage(PGM_ON, L_FATAL, PSTR("    PID: %d; Name: %s; Entry: 0x%08X; Stack: 0x%08X; State: %d; Priority: %d;\r\n"), runningTask->pid, runningTask->name, runningTask->taskPtr, runningTask->stackPtr, runningTask->state, runningTask->priority);
 		
 		debug_puts(L_FATAL, PSTR("kernel: Memory info:\r\n"));
-		debug_logMessage(PGM_ON, L_FATAL, PSTR("    HeapSize: %d; Free: %d; FreeWorst: %d; ProtectionMargin: %d; Reserved: %d;\r\n"), CFG_HEAP_SIZE, memmgr_getFreeHeap(), memmgr_getFreeHeapMin(), CFG_STACK_SAFETY_MARGIN, CFG_KERNEL_RESERVED_MEMORY);
+		debug_logMessage(PGM_ON, L_FATAL, PSTR("    HeapSize: %d; Free: %d; FreeWorst: %d; ProtectionMargin: %d; Reserved: %d;\r\n"), CFG_HEAP_SIZE, memory_getFreeHeap(), memory_getFreeHeapMin(), CFG_STACK_SAFETY_MARGIN, CFG_KERNEL_RESERVED_MEMORY);
 	#endif
 	
 	#if CFG_KERNEL_PANIC_ACTION == 0

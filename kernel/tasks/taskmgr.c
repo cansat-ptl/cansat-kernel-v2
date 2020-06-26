@@ -41,19 +41,19 @@ static void tasks_switchContext()
 	#endif
 
 	#if CFG_MEMORY_PROTECTION_MODE == 2
-		if (memmgr_checkProtectionRegion((void*)(kCurrentTask->stackBegin + kCurrentTask->stackSize), CFG_STACK_SAFETY_MARGIN)) {
+		if (memory_checkProtectionRegion((void*)(kCurrentTask->stackBegin + kCurrentTask->stackSize), CFG_STACK_SAFETY_MARGIN)) {
 			kernel_stackCorruptionHook(kCurrentTask);
 		}
 	#endif
 
 	#if CFG_MEMORY_PROTECTION_MODE == 3
-		if (tasks_checkStackBounds(kCurrentTask) || memmgr_checkProtectionRegion((void*)(kCurrentTask->stackBegin + kCurrentTask->stackSize), CFG_STACK_SAFETY_MARGIN)) {
+		if (tasks_checkStackBounds(kCurrentTask) || memory_checkProtectionRegion((void*)(kCurrentTask->stackBegin + kCurrentTask->stackSize), CFG_STACK_SAFETY_MARGIN)) {
 			kernel_stackCorruptionHook(kCurrentTask);
 		}
 	#endif
 
 	#if CFG_MEMORY_PROTECTION_MODE != 0
-		if (memmgr_pointerSanityCheck((void*)kNextTask) != 0) {
+		if (memory_pointerSanityCheck((void*)kNextTask) != 0) {
 			kernel_panic(PSTR("Memory access violation in task manager: kNextTask is out of bounds\r\n"));
 		}
 	#endif

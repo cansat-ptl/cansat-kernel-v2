@@ -4,7 +4,7 @@
  * Created: 06.05.2020 17:21:08
  *  Author: Admin
  *  Based on FreeRTOS heap_4 code
- */ 
+ */
 
 #include <kernel/kernel.h>
 #include <kernel/types.h>
@@ -19,33 +19,33 @@ static struct kMemoryBlockStruct_t* kHeapEnd;
 static size_t kFreeMemory = 0;
 static size_t kMinimumFreeMemory = 0;
 
-size_t memmgr_getFreeHeap()
+size_t memory_getFreeHeap()
 {
 	return kFreeMemory;
 }
 
-size_t memmgr_getFreeHeapMin()
+size_t memory_getFreeHeapMin()
 {
 	return kMinimumFreeMemory;
 }
 
-void memmgr_heapInit()
+void memory_heapInit()
 {
 	struct kMemoryBlockStruct_t* firstFreeBlock;
 	uint8_t* heapAligned;
 	size_t heapAddress;
 	size_t heapSize = CFG_HEAP_SIZE;
-	
+
 	heapAddress = (size_t)kHeapRegion;
-	
+
 	if ((heapAddress & CFG_PLATFORM_BYTE_ALIGNMENT_MASK) != 0) {
 		heapAddress += (CFG_PLATFORM_BYTE_ALIGNMENT - 1);
 		heapAddress &= ~((size_t)CFG_PLATFORM_BYTE_ALIGNMENT_MASK);
 		heapSize -= heapAddress - (size_t)kHeapRegion;
 	}
-	
+
 	heapAligned = (uint8_t*)heapAddress;
-	
+
 	kHeapStart.next = (void*)heapAligned;
 	kHeapStart.blockSize = (size_t)0;
 	kHeapStart.state = 0;
@@ -53,7 +53,7 @@ void memmgr_heapInit()
 	heapAddress = ((size_t)heapAligned) + heapSize;
 	heapAddress -= kHeapStructSize;
 	heapAddress &= ~((size_t)CFG_PLATFORM_BYTE_ALIGNMENT_MASK);
-	
+
 	kHeapEnd = (void*)heapAddress;
 	kHeapEnd -> blockSize = 0;
 	kHeapEnd -> next = NULL;
@@ -68,22 +68,22 @@ void memmgr_heapInit()
 	kFreeMemory = firstFreeBlock -> blockSize;
 }
 
-static void memmgr_insertFreeBlock(struct kMemoryBlockStruct_t* blockToInsert)
+static void memory_insertFreeBlock(struct kMemoryBlockStruct_t* blockToInsert)
 {
 	struct kMemoryBlockStruct_t* blockIterator;
 	uint8_t* pointer_casted;
-	
+
 	for (blockIterator = &kHeapStart; blockIterator -> next < blockToInsert; blockIterator = blockIterator -> next) {;} //What
-	
+
 	pointer_casted = (uint8_t*)blockIterator;
-	
+
 	if ((pointer_casted + blockIterator -> blockSize) == (uint8_t*)blockToInsert) {
 		blockIterator -> blockSize += blockToInsert -> blockSize;
 		blockToInsert = blockIterator;
 	}
-	
+
 	pointer_casted = (uint8_t*)blockToInsert;
-	
+
 	if ((pointer_casted + blockToInsert -> blockSize) == (uint8_t*)blockIterator -> next) {
 		if (blockIterator -> next != kHeapEnd) {
 			blockToInsert -> blockSize += blockIterator -> next -> blockSize;
@@ -100,35 +100,35 @@ static void memmgr_insertFreeBlock(struct kMemoryBlockStruct_t* blockToInsert)
 	if(blockIterator != blockToInsert) {
 		blockIterator -> next = blockToInsert;
 	}
-	
+
 	return;
 }
 
-void* memmgr_heapAlloc(size_t size)
+void* memory_heapAlloc(size_t size)
 {
 	void* returnAddress = NULL;
 	struct kMemoryBlockStruct_t *block, *newBlock, *previousBlock;
-	
+
 	kStatusRegister_t sreg = threads_startAtomicOperation();
-	
+
 	if (size > 0 && (size & CFG_PLATFORM_BYTE_ALIGNMENT_MASK) != 0x00) {
 		size += (CFG_PLATFORM_BYTE_ALIGNMENT - (size & CFG_PLATFORM_BYTE_ALIGNMENT_MASK));
 	}
-	
+
 	if (size > 0) size += kHeapStructSize;
-	
+
 	if (size > 0 && size <= kFreeMemory) {
 		previousBlock = &kHeapStart;
 		block = kHeapStart.next;
-		
+
 		while ((block -> blockSize < size) && (block -> next != NULL)) {
 			previousBlock = block;
 			block = block -> next;
 		}
-		
+
 		if (block != kHeapEnd) {
 			returnAddress = (void*)(((uint8_t*)previousBlock -> next) + kHeapStructSize); //Parenthesis hell
-			
+
 			previousBlock -> next = block -> next;
 
 			if ((block -> blockSize - size) > CFG_MIN_BLOCK_SIZE) {
@@ -137,7 +137,7 @@ void* memmgr_heapAlloc(size_t size)
 				newBlock -> blockSize = block -> blockSize - size;
 				block -> blockSize = size;
 
-				memmgr_insertFreeBlock(newBlock);
+				memory_insertFreeBlock(newBlock);
 			}
 
 			kFreeMemory -= block -> blockSize;
@@ -145,32 +145,32 @@ void* memmgr_heapAlloc(size_t size)
 			if(kFreeMemory < kMinimumFreeMemory) {
 				kMinimumFreeMemory = kFreeMemory;
 			}
-			
+
 			block -> state = 1;
 			block -> next = NULL;
 		}
 	}
-	
+
 	threads_endAtomicOperation(sreg);
 	return returnAddress;
 }
 
-void memmgr_heapFree(void* pointer)
+void memory_heapFree(void* pointer)
 {
 	uint8_t* pointer_casted = (uint8_t*)pointer;
 	struct kMemoryBlockStruct_t* block;
-	
+
 	kStatusRegister_t sreg = threads_startAtomicOperation();
-	
+
 	if (pointer != NULL) {
 		pointer_casted -= kHeapStructSize;
-		
+
 		block = (void*)pointer_casted;
 		if (block -> state != 0) {
 			if (block -> next == NULL) {
 				block -> state = 0;
 				kFreeMemory += block -> blockSize;
-				memmgr_insertFreeBlock((struct kMemoryBlockStruct_t*)block);
+				memory_insertFreeBlock((struct kMemoryBlockStruct_t*)block);
 			}
 		}
 	}
@@ -178,7 +178,7 @@ void memmgr_heapFree(void* pointer)
 	return;
 }
 
-kReturnValue_t memmgr_pointerSanityCheck(void* pointer)
+kReturnValue_t memory_pointerSanityCheck(void* pointer)
 {
 	kReturnValue_t exitcode = ERR_MEMORY_VIOLATION;
 	if (pointer != NULL) {

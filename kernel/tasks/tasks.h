@@ -30,16 +30,16 @@ struct kTaskStruct_t
 	void* args;
 	kStackPtr_t stackBegin;
 	kStackSize_t stackSize;
-	volatile struct kListItemStruct_t* itemPointer;
-	volatile struct kLockStruct_t* lock;
-	volatile struct kNotificationStruct_t notification;
 	kTaskState_t state;
 	kTaskTicks_t sleepTime;
-	kTaskType_t type;
 	uint8_t priority;
 	uint8_t flags;
+	kTaskType_t type;
 	kPid_t pid;
 	char* name;
+	volatile struct kLockStruct_t* lock;
+	volatile struct kNotificationStruct_t notification;
+	volatile struct kListItemStruct_t taskListItem;
 };
 
 kReturnValue_t tasks_createTaskStatic(kStackPtr_t memory, kTaskHandle_t* handle, kTask_t entry, void* args, kStackSize_t stackSize, uint8_t priority, kTaskType_t type, char* name);

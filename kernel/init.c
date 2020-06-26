@@ -29,7 +29,7 @@ void kernel_preinit()
 		debug_puts(L_INFO, PSTR("kernel: Firing up RTOS\r\n"));
 		debug_puts(L_INFO, PSTR("kernel: Initializing memory manager\r\n"));
 	#endif
-	memmgr_heapInit();
+	memory_heapInit();
 
 	#if CFG_LOGGING == 1
 		debug_puts(L_INFO, PSTR("kernel: Initializing task manager\r\n"));
