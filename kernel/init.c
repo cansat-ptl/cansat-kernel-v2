@@ -10,11 +10,13 @@
 #include <kernel/kdefs.h>
 #include <kdebug/debug.h>
 #include <kernel/threads.h>
+#include <kernel/tasks.h>
 #include "platform/platform.h"
 #include "memory/memory.h"
 #include "memory/heap.h"
 
 void kernel_setSystemStatus(uint8_t status);
+kReturnValue_t tasks_init(kTask_t idle);
 
 void user_preinit();
 void user_init();

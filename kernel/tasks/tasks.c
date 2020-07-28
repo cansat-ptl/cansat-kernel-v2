@@ -52,7 +52,7 @@ kTaskHandle_t tasks_getIdleTaskHandle()
 
 kReturnValue_t tasks_init(kTask_t idle)
 {
-	//kIdleTaskHandle = tasks_createTask(idle, NULL, 100, KPRIO_IDLE, KTASK_SYSTEM, "idle");
+	kIdleTaskHandle = tasks_createTask(idle, NULL, 100, KPRIO_IDLE, KTASK_SYSTEM, "idle");
 
 	if (kIdleTaskHandle == NULL) {
 		debug_logMessage(PGM_PUTS, L_FATAL, PSTR("\r\ntaskmgr: Startup failed, could not create idle task.\r\n"));

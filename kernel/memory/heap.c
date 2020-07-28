@@ -10,6 +10,7 @@
 #include <kernel/kernel_config.h>
 #include <kernel/ktypes.h>
 #include <kernel/kdefs.h>
+#include <kernel/threads.h>
 #include <kernel/memory.h>
 
 static byte kHeapRegion[CFG_HEAP_SIZE];
