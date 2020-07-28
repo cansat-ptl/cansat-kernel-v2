@@ -44,23 +44,8 @@ typedef enum {KLOCK_UNINIT, KLOCK_SEMAPHORE, KLOCK_MUTEX, KLOCK_SEMAPHORE_RECURS
 
 struct kTaskStruct_t;
 struct kTimerStruct_t;
-struct kLockStruct_t;
-struct kIPCStruct_t;
 
 typedef volatile struct kTaskStruct_t* kTaskHandle_t;
 typedef volatile struct kTimerStruct_t* kTimerHandle_t;
-
-typedef volatile uint8_t kSpinlock_t;
-
-typedef volatile kLockStruct_t* kMutexHandle_t;
-typedef volatile kLockStruct_t* kSemaphoreHandle_t;
-typedef volatile kSpinlock_t* kSpinlockHandle_t;
-
-typedef struct kIPCStruct_t kLifo_t;
-typedef struct kIPCStruct_t kFifo_t;
-
-typedef struct kIPCStruct_t* kLifoHandle_t;
-typedef struct kIPCStruct_t* kFifoHandle_t;
-typedef struct kIPCStruct_t* kSystemIOHandle_t;
 
 #endif /* KTYPES_H_ */

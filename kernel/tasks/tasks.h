@@ -16,6 +16,7 @@
 #include <kernel/ktypes.h>
 #include <kernel/kdefs.h>
 #include <stdint.h>
+#include "../utils/linkedlists.h"
 
 struct kNotificationStruct_t
 {
@@ -26,20 +27,27 @@ struct kNotificationStruct_t
 struct kTaskStruct_t
 {
 	kStackPtr_t stackPtr;
-	kTask_t taskPtr;
-	void* args;
 	kStackPtr_t stackBegin;
 	kStackSize_t stackSize;
+	
+	kTask_t taskPtr;
+	void* taskArgs;
+	
 	kTaskState_t state;
 	kTaskTicks_t sleepTime;
+	kTaskType_t type;
 	uint8_t priority;
 	uint8_t flags;
-	kTaskType_t type;
 	kPid_t pid;
 	char* name;
-	volatile struct kLockStruct_t* lock;
+	
+	volatile void* activeLock;
 	volatile struct kNotificationStruct_t notification;
-	volatile struct kListItemStruct_t taskListItem;
+	
+	volatile struct kListItemStruct_t activeTaskListItem;
+	volatile struct kListItemStruct_t globalTaskListItem;
+	
+	uint8_t savedContext[CFG_REGISTER_RESERVED_SPACE];
 };
 
 kReturnValue_t tasks_createTaskStatic(kStackPtr_t memory, kTaskHandle_t* handle, kTask_t entry, void* args, kStackSize_t stackSize, uint8_t priority, kTaskType_t type, char* name);

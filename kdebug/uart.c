@@ -5,10 +5,12 @@
  *  Author: ThePetrovich
  */
 
-#include <kernel/platform/platform.h>
-#include <dev/basic/uart.h>
+#include "uart.h"
+#include <avr/io.h>
+#include <avr/iom128.h>
+#include <stdint.h>
 
-void basicUart_init (uint16_t ubrr)
+void basicUart_init(uint16_t ubrr)
 {
 	UBRR0H = (ubrr >> 8);
 	UBRR0L = (ubrr & 0xFF);

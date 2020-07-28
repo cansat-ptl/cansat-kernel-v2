@@ -4,6 +4,11 @@
  * Created: 13.02.2020 22:38:32
  *  Author: Admin
  */
+
+#include <kernel/kernel_config.h>
+#include <kernel/ktypes.h>
+#include <kernel/kdefs.h>
+#include <kdebug/debug.h>
 #include <kernel/kernel.h>
 
 void user_preinit();

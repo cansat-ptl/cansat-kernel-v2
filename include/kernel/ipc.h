@@ -9,6 +9,19 @@
 #ifndef BUFFERS_H_
 #define BUFFERS_H_
 
+#include <stdint.h>
+#include <stddef.h>
+#include <kernel/ktypes.h>
+
+struct kIPCStruct_t;
+
+typedef struct kIPCStruct_t kLifo_t;
+typedef struct kIPCStruct_t kFifo_t;
+
+typedef struct kIPCStruct_t* kLifoHandle_t;
+typedef struct kIPCStruct_t* kFifoHandle_t;
+typedef struct kIPCStruct_t* kSystemIOHandle_t;
+
 kReturnValue_t threads_lifoCreateStatic(kLifoHandle_t lifo, void* pointer, size_t itemSize, size_t totalSize);
 kLifoHandle_t threads_lifoCreate(size_t itemSize, size_t itemsTotal);
 kReturnValue_t threads_lifoWrite(kFifoHandle_t lifo, void* item);

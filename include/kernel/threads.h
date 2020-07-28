@@ -9,7 +9,16 @@
 #ifndef SYNC_H_
 #define SYNC_H_
 
+#include <stdint.h>
 #include <ktypes.h>
+
+struct kLockStruct_t;
+
+typedef volatile uint8_t kSpinlock_t;
+
+typedef volatile kLockStruct_t* kMutexHandle_t;
+typedef volatile kLockStruct_t* kSemaphoreHandle_t;
+typedef volatile kSpinlock_t* kSpinlockHandle_t;
 
 struct kLockStruct_t threads_mutexInit();
 kReturnValue_t threads_mutexLock(volatile struct kLockStruct_t* mutex);

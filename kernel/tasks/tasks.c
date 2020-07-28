@@ -158,9 +158,6 @@ kReturnValue_t tasks_createTaskStatic(kStackPtr_t memory, kTaskHandle_t* handle,
 
 	if (entry != NULL) {
 		if (memory != NULL) {
-			((struct kListItemStruct_t*)memory)->data = (void*)((kStackPtr_t)memory + utils_LISTITEM_STRUCT_SIZE);
-			((kTaskHandle_t)(memory + utils_LISTITEM_STRUCT_SIZE))->itemPointer = (struct kListItemStruct_t*)memory;
-
 			memory += utils_LISTITEM_STRUCT_SIZE;
 
 			kStackPtr_t stackPrepared = platform_prepareStackFrame(memory + kTaskStructSize, stackSize, entry, args);
@@ -192,9 +189,9 @@ kReturnValue_t tasks_createTaskDynamic(kTaskHandle_t* handle, kTask_t entry, voi
 	kReturnValue_t exitcode = ERR_GENERIC;
 	kStatusRegister_t sreg = threads_startAtomicOperation();
 
-	if (stackSize < CFG_MIN_STACK_SIZE) {
-		stackSize = CFG_MIN_STACK_SIZE;
-	}
+	//if (stackSize < CFG_MIN_STACK_SIZE) {
+	//	stackSize = CFG_MIN_STACK_SIZE;
+	//}
 
 	#if CFG_MEMORY_PROTECTION_MODE == 2 || CFG_MEMORY_PROTECTION_MODE == 3
 		kStackPtr_t stackPointer = (kStackPtr_t)memory_heapAlloc(stackSize + kTaskStructSize + CFG_STACK_SAFETY_MARGIN + utils_LISTITEM_STRUCT_SIZE);

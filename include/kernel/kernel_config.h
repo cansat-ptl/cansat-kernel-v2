@@ -8,6 +8,8 @@
 #ifndef KERNEL_CONFIG_H_
 #define KERNEL_CONFIG_H_
 
+#include <stddef.h>
+
 #ifndef KERNELconfig
 #define KERNELconfig
 
@@ -22,7 +24,7 @@
 	#define CFG_ALLOW_STATIC_TASK_ALLOCATION 0
 	#define CFG_STACK_SAFETY_MARGIN 16
 	#define CFG_KERNEL_RESERVED_MEMORY 300
-	#define CFG_MIN_STACK_SIZE 40
+	#define CFG_REGISTER_RESERVED_SPACE 50
 
 	#define CFG_KERNEL_PANIC_ACTION 1
 

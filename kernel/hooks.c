@@ -5,7 +5,12 @@
  *  Author: Admin
  */ 
 
+#include <kernel/kernel_config.h>
+#include <kernel/ktypes.h>
+#include <kernel/kdefs.h>
+#include <kdebug/debug.h>
 #include <kernel/kernel.h>
+#include "tasks/tasks.h"
 
 void kernel_panic(const char * message) {
 	kernel_setSystemStatus(KOSSTATUS_ERRORED);

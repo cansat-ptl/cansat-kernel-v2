@@ -29,7 +29,7 @@ void kernel_stackCorruptionHook(kTaskHandle_t task);
 
 uint64_t kernel_getUptime()
 {
-	return __e_time;
+	return __e_time; //TODO: move this somewhere else 
 }
 
 static void tasks_switchContext()

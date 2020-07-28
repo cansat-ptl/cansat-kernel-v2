@@ -9,6 +9,8 @@
 #ifndef HEAP_H_
 #define HEAP_H_
 
+#include <stddef.h>
+
 void* memory_heapAlloc(size_t size);
 void memory_heapFree(void* pointer);
 

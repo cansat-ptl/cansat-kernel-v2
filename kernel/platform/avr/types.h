@@ -11,6 +11,4 @@
 
 
 
-
-
 #endif /* TYPES_H_ */

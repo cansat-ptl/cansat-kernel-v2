@@ -5,9 +5,10 @@
  *  Author: Admin
  */
 
-#include <kernel/kernel.h>
-#include <kernel/hal/hal.h>
+#include "hal.h"
 #include <stdio.h>
+
+//TODO: remove stdio
 
 static int _uart_putc(char c, FILE *stream);
 static int _uart_getc(FILE *stream);
@@ -63,6 +64,7 @@ FILE* debug_getGlobalStderr()
 
 void debug_init()
 {
+	basicUart_init(24);
 	debug_setStdin(&_dbgstdin);
 	debug_setStdout(&_dbgstdout);
 	debug_setStderr(&_dbgstderr);

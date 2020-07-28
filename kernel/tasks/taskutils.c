@@ -40,14 +40,14 @@ uint8_t tasks_getTaskPriority(kTaskHandle_t task)
 	return task->priority;
 }
 
-void tasks_setTaskPriority(kTaskHandle_t task, uint8_t priority); //Declared in tasks.c
+//void tasks_setTaskPriority(kTaskHandle_t task, uint8_t priority); //Declared in tasks.c
 
 kTaskState_t tasks_getTaskState(kTaskHandle_t task)
 {
 	return task->state;
 }
 
-void tasks_setTaskState(kTaskHandle_t task, kTaskState_t state); //Declared in tasks.c
+//void tasks_setTaskState(kTaskHandle_t task, kTaskState_t state); //Declared in tasks.c
 
 kTaskType_t tasks_getTaskType(kTaskHandle_t task)
 {

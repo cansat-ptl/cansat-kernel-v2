@@ -9,8 +9,6 @@
 #include <avr/io.h>
 #include <avr/boot.h>
 #include <util/crc16.h>
-#include <dev/basic/uart.h>
-#include <dev/basic/gpio.h>
 
 volatile uint8_t bPageBuffer[SPM_PAGESIZE];
 volatile uint16_t bPageBufferIndex = 0;

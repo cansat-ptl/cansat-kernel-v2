@@ -11,8 +11,6 @@
 #include <avr/signature.h>
 #include <avr/io.h>
 #include <avr/boot.h>
-#include <dev/basic/uart.h>
-#include <dev/basic/gpio.h>
 
 const char boot_msg_test[] PROGMEM = "boot: Test string %d %d\r\n";
 const char boot_msg_start[] PROGMEM = "boot: Starting up yktsat-boot version %s built %s\r\n\r\n";

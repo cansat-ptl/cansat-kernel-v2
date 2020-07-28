@@ -7,7 +7,7 @@
  */
 
 #include <kernel/kernel.h>
-#include <kernel/types.h>
+#include <kernel/ktypes.h>
 
 static byte kHeapRegion[CFG_HEAP_SIZE];
 

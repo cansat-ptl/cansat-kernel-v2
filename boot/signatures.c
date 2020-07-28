@@ -8,8 +8,6 @@
 #include <boot/boot.h>
 #include <avr/io.h>
 #include <avr/boot.h>
-#include <dev/basic/uart.h>
-#include <dev/basic/gpio.h>
 
 const char boot_msg_mcu[] PROGMEM = "boot: MCU vendor: %s\r\n";
 const char boot_msg_mcumem[] PROGMEM = "boot: MCU flash memory: %d KB\r\n";

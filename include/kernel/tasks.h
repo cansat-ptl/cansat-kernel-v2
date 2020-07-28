@@ -9,9 +9,9 @@
 #ifndef TASKS_H_
 #define TASKS_H_
 
+#include <stdint.h>
 #include <ktypes.h>
 #include <kdefs.h>
-#include <stdint.h>
 
 kTaskHandle_t tasks_getCurrentTaskHandle();
 

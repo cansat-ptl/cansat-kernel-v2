@@ -175,18 +175,6 @@
     <Compile Include="config.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="dev\basic\gpio.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="dev\basic\uart.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="dev\basic\watchdog.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="dev\uart\uart.c">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="hal_pins.h">
       <SubType>compile</SubType>
     </Compile>
@@ -196,10 +184,13 @@
     <Compile Include="include\kdebug\debug.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="include\kernel\ipc\buffers.h">
+    <Compile Include="include\kernel\ipc.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="include\kernel\ipc\sync.h">
+    <Compile Include="include\kernel\kernel_config.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\kernel\memory.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="include\kernel\kdefs.h">
@@ -211,7 +202,7 @@
     <Compile Include="include\kernel\ktypes.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="include\kernel\memory\heap.h">
+    <Compile Include="include\kernel\threads.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="include\kernel\tasks.h">
@@ -226,7 +217,16 @@
     <Compile Include="kdebug\debug.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="kdebug\hal.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="kdebug\stdio.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kdebug\uart.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kdebug\uart.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="kernel\assert.c">
@@ -239,6 +239,15 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="kernel\init.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\ipc\buffers.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\ipc\fifo.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\ipc\lifo.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="kernel\memory\heap.c">
@@ -277,13 +286,19 @@
     <Compile Include="kernel\platform\platform.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="kernel\timers\calls.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\timers\init.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\timers\services.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\timers\timers.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="kernel\tasks\notifications.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="kernel\tasks\notifications.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="kernel\timers.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="kernel\tasks\scheduler.c">
@@ -316,15 +331,6 @@
     <Compile Include="kernel\threads\atomic.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="kernel\threads\buffers.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="kernel\threads\fifo.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="kernel\threads\lifo.c">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="kernel\threads\mutex.c">
       <SubType>compile</SubType>
     </Compile>
@@ -335,9 +341,6 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="kernel\threads\threadsync.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="kernel\timers.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="kernel\utils\linkedlists.c">
@@ -355,38 +358,18 @@
     <Compile Include="kernel\utils\utils.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="kernel_config.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="main.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="systemd\calls.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="systemd\init.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="systemd\services.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="systemd\systemd.c">
       <SubType>compile</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="dev" />
-    <Folder Include="dev\basic" />
-    <Folder Include="dev\uart" />
     <Folder Include="include\kernel" />
     <Folder Include="include\kdebug" />
-    <Folder Include="include\dev" />
-    <Folder Include="include\kernel\ipc" />
-    <Folder Include="include\kernel\memory" />
     <Folder Include="include\boot" />
-    <Folder Include="include\systemd" />
     <Folder Include="kernel" />
     <Folder Include="kernel\memory" />
+    <Folder Include="kernel\ipc" />
+    <Folder Include="kernel\timers" />
     <Folder Include="kernel\platform" />
     <Folder Include="kernel\platform\avr" />
     <Folder Include="kernel\tasks" />
@@ -394,7 +377,6 @@
     <Folder Include="kernel\utils" />
     <Folder Include="kdebug" />
     <Folder Include="include" />
-    <Folder Include="systemd" />
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>

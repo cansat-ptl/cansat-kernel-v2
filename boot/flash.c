@@ -7,8 +7,6 @@
 #include <boot/boot.h>
 #include <avr/io.h>
 #include <avr/boot.h>
-#include <dev/basic/uart.h>
-#include <dev/basic/gpio.h>
 
 void boot_programPage(uint32_t page, uint8_t *buf)
 {

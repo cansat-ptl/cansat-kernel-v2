@@ -14,9 +14,7 @@
 
 #include <stdint.h>
 #include <string.h>
-#include <stdio.h>
-#include <kernel/types.h>
-#include <kernel/hal/hal.h>
+#include <avr/pgmspace.h>
 
 #define PGM_ON 1
 #define PGM_OFF 0
@@ -30,14 +28,5 @@
 void debug_puts(uint8_t level, const char * message); //Only for PROGMEM strings
 void debug_logMessage(uint8_t pgm, uint8_t level, const char * format, ...);
 void debug_init();
-
-FILE* debug_getGlobalStdout();
-FILE* debug_getGlobalStdin();
-FILE* debug_getGlobalStderr();
-
-void debug_setStdout(FILE* desc);
-void debug_setStdin(FILE* desc);
-void debug_setStderr(FILE* desc);
-
 
 #endif /* DEBUG_H_ */

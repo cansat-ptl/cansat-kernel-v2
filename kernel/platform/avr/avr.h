@@ -109,7 +109,7 @@
 	"cli						\n\t" \
 	"push r0					\n\t" \
 	"push r1					\n\t" \
-	"clr r1						\n\t" \
+	"clr r1						\n\t" \ //Do I really need to do this?
 	"push r2					\n\t" \
 	"push r3					\n\t" \
 	"push r4					\n\t" \

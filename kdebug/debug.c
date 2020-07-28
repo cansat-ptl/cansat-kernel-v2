@@ -5,10 +5,14 @@
  *  Author: ThePetrovich
  */
 
-#include <kernel/kernel.h>
-#include <kernel/hal/hal.h>
-#include <kernel/utils/time.h>
+#include "hal.h"
 #include <stdio.h>
+#include <kernel/kernel.h>
+#include <kernel/ktypes.h>
+#include <kernel/utils.h>
+#include <kernel/kernel_config.h>
+
+//TODO: remove stdio
 
 #define debug_GET_STATUS() kernel_getSystemStatus()
 

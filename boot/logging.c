@@ -6,7 +6,6 @@
  */ 
 
 #include <boot/boot.h>
-#include <dev/basic/uart.h>
 
 static char buffer[128];
 

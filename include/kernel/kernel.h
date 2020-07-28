@@ -8,6 +8,8 @@
 
 #ifndef KERNEL_H_
 #define KERNEL_H_
+
+#include <stdint.h>
 //TODO: full include
 
 void kernel_setFlag(uint8_t flag, uint8_t value);

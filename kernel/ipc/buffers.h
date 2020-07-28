@@ -9,6 +9,9 @@
 #ifndef BUFFERS_H_
 #define BUFFERS_H_
 
+#include <kernel/ipc.h>
+#include <stddef.h>
+
 struct kIPCStruct_t
 {
 	char* pointer;

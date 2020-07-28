@@ -9,8 +9,8 @@
 #ifndef LISTUTILS_H_
 #define LISTUTILS_H_
 
-#include <kernel/kernel.h>
-#include <kernel/types.h>
+#include <stddef.h>
+#include <kernel/ktypes.h>
 
 struct kLinkedListStruct_t
 {
