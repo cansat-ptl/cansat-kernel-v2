@@ -11,15 +11,6 @@
 
 #include <stdint.h>
 
-struct kSystemTimeStruct_t
-{
-	uint16_t days;
-	uint8_t hours;
-	uint8_t minutes;
-	uint8_t seconds;
-	uint16_t milliseconds;
-};
-
 void time_updateSystemTime();
 uint16_t time_getMilliseconds();
 uint8_t time_getSeconds();

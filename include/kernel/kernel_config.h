@@ -8,8 +8,6 @@
 #ifndef KERNEL_CONFIG_H_
 #define KERNEL_CONFIG_H_
 
-#include <stddef.h>
-
 #ifndef KERNELconfig
 #define KERNELconfig
 

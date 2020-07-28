@@ -17,22 +17,22 @@ struct kListItemStruct_t;
 
 volatile struct kLockStruct_t* tasks_getTaskLock(kTaskHandle_t task)
 {
-	return task->lock;
+	return task->activeLock;
 }
 
 void tasks_setTaskLock(kTaskHandle_t task, volatile struct kLockStruct_t* lock)
 {
-	task->lock = lock;
+	task->activeLock = lock;
 }
 
 volatile struct kListItemStruct_t* tasks_getTaskListItem(kTaskHandle_t task)
 {
-	return task->itemPointer;
+	return &(task->activeTaskListItem);
 }
 
 void tasks_setTaskListItem(kTaskHandle_t task, volatile struct kListItemStruct_t* itemPointer)
 {
-	task->itemPointer = itemPointer;
+	task->activeTaskListItem = *itemPointer;
 }
 
 uint8_t tasks_getTaskPriority(kTaskHandle_t task)

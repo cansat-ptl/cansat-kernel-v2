@@ -5,7 +5,21 @@
  *  Author: Admin
  */ 
 
+#include "utils.h"
+#include <kernel/utils.h>
+#include <kernel/ktypes.h>
 #include <kernel/kernel.h>
+
+extern uint64_t __e_time;
+
+struct kSystemTimeStruct_t
+{
+	uint16_t days;
+	uint8_t hours;
+	uint8_t minutes;
+	uint8_t seconds;
+	uint16_t milliseconds;
+};
 
 static struct kSystemTimeStruct_t kSystemTime;
 /*

@@ -4,7 +4,7 @@
  * Created: 23.06.2019 10:27:23
  *  Author: ThePetrovich
  */ 
-#include <kernel/kernel.h>
+#include <kernel/ktypes.h>
 
 uint8_t util_strCompare(char * a, char * b, uint8_t len)
 {

@@ -5,12 +5,10 @@
  *  Author: Admin
  */ 
 
-#include <kernel/kernel.h>
-#include <kernel/hal/hal.h>
-#include <kernel/debug.h>
-#include <kernel/platform/platform.h>
-#include <kernel/types.h>
-#include "../kernel_config.h"
+#include "avr.h"
+#include <kernel/kernel_config.h>
+#include <kernel/ktypes.h>
+#include <kernel/kdefs.h>
 
 void kernel_taskReturnHook();
 void kernel_stackCorruptionHook();

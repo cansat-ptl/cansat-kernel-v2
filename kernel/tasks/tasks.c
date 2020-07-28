@@ -7,10 +7,16 @@
 
 #include "tasks.h"
 #include "../utils/linkedlists.h"
+#include "../platform/platform.h"
+#include <kernel/tasks.h>
+#include <kernel/kernel_config.h>
 #include <kernel/ktypes.h>
-#include <kernel_config.h>
+#include <kernel/kdefs.h>
+#include <kdebug/debug.h>
+#include <kernel/memory.h>
+#include "../memory/memory.h"
+#include "../memory/heap.h"
 #include <stdint.h>
-#include <memory.h>
 
 static volatile uint16_t kGlobalPid = 0;
 
@@ -46,7 +52,7 @@ kTaskHandle_t tasks_getIdleTaskHandle()
 
 kReturnValue_t tasks_init(kTask_t idle)
 {
-	kIdleTaskHandle = tasks_createTask(idle, NULL, 100, KPRIO_IDLE, KTASK_SYSTEM, "idle");
+	//kIdleTaskHandle = tasks_createTask(idle, NULL, 100, KPRIO_IDLE, KTASK_SYSTEM, "idle");
 
 	if (kIdleTaskHandle == NULL) {
 		debug_logMessage(PGM_PUTS, L_FATAL, PSTR("\r\ntaskmgr: Startup failed, could not create idle task.\r\n"));
@@ -69,25 +75,25 @@ void tasks_setTaskState(kTaskHandle_t task, kTaskState_t state)
 	if (sanityCheck == 0) {
 		switch (state) {
 			case KSTATE_UNINIT:
-				utils_listDeleteAny(task->itemPointer->list, task->itemPointer);
+				utils_listDeleteAny(task->activeTaskListItem.list, &(task->activeTaskListItem));
 				task->state = KSTATE_UNINIT;
 			break;
 			case KSTATE_SUSPENDED:
-				utils_listDeleteAny(task->itemPointer->list, task->itemPointer);
-				utils_listAddBack(&kSuspendedTaskList, task->itemPointer);
+				utils_listDeleteAny(task->activeTaskListItem.list, &(task->activeTaskListItem));
+				utils_listAddBack(&kSuspendedTaskList, &(task->activeTaskListItem));
 				task->state = KSTATE_SUSPENDED;
 			break;
 			case KSTATE_SLEEPING:
-				utils_listDeleteAny(task->itemPointer->list, task->itemPointer);
-				utils_listAddBack(&kSleepingTaskList, task->itemPointer);
+				utils_listDeleteAny(task->activeTaskListItem.list, &(task->activeTaskListItem));
+				utils_listAddBack(&kSleepingTaskList, &(task->activeTaskListItem));
 				task->state = KSTATE_SLEEPING;
 			break;
 			case KSTATE_BLOCKED:
 				task->state = KSTATE_BLOCKED;
 			break;
 			case KSTATE_READY:
-				utils_listDeleteAny(task->itemPointer->list, task->itemPointer);
-				utils_listAddBack(&kReadyTaskList[task->priority], task->itemPointer);
+				utils_listDeleteAny(task->activeTaskListItem.list, &(task->activeTaskListItem));
+				utils_listAddBack(&kReadyTaskList[task->priority], &(task->activeTaskListItem));
 				task->state = KSTATE_READY;
 			break;
 			case KSTATE_RUNNING:
@@ -142,9 +148,9 @@ static inline void tasks_setupTaskStructure(kTaskHandle_t task, \
 	task -> stackBegin = stackBegin;
 	task -> stackSize = stackSize;
 	task -> taskPtr = startupPointer;
-	task -> args = args;
+	task -> taskArgs = args;
 	task -> priority = priority;
-	task -> lock = NULL;
+	task -> activeLock = NULL;
 	task -> state = state;
 	task -> type = type;
 	task -> pid = kGlobalPid;

@@ -6,8 +6,8 @@
  */
 
 
-#ifndef BUFFERS_H_
-#define BUFFERS_H_
+#ifndef IPC_H_
+#define IPC_H_
 
 #include <stdint.h>
 #include <stddef.h>

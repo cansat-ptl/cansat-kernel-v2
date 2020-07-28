@@ -6,8 +6,8 @@
  */ 
 
 
-#ifndef HAL_H_
-#define HAL_H_
+#ifndef HAL_INTERNAL_H_
+#define HAL_INTERNAL_H_
 
 #include "uart.h"
 #include <avr/pgmspace.h>

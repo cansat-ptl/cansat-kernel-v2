@@ -5,16 +5,18 @@
  *  Author: Admin
  */ 
 
-#include <kernel/threads/threads.h>
+#include "threadsync.h"
+#include <kernel/kernel_config.h>
+#include <kernel/ktypes.h>
+#include <kernel/kdefs.h>
+#include <kdebug/debug.h>
+#include <kernel/threads.h>
 
-struct kLockStruct_t threads_mutexInit()
+kMutexHandle_t threads_mutexCreate()
 {
-	struct kLockStruct_t mutex;
-	mutex.type = KLOCK_MUTEX;
-	mutex.lockCount = 1;
-	mutex.blockedTasks.head = NULL;
-	mutex.blockedTasks.tail = NULL;
-	return mutex;
+	volatile struct kLockStruct_t* returnValue = threads_semaphoreCreate(1);
+	returnValue->type = KLOCK_MUTEX;
+	return returnValue;
 }
 
 

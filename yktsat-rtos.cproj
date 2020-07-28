@@ -265,9 +265,6 @@
     <Compile Include="kernel\platform\avr\avr.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="kernel\platform\avr\hal.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="kernel\platform\avr\platform.c">
       <SubType>compile</SubType>
     </Compile>
@@ -286,18 +283,18 @@
     <Compile Include="kernel\platform\platform.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="kernel\timers\calls.c">
+    <None Include="kernel\timers\calls.c">
       <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="kernel\timers\init.c">
+    </None>
+    <None Include="kernel\timers\init.c">
       <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="kernel\timers\services.c">
+    </None>
+    <None Include="kernel\timers\services.c">
       <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="kernel\timers\timers.c">
+    </None>
+    <None Include="kernel\timers\timers.c">
       <SubType>compile</SubType>
-    </Compile>
+    </None>
     <Compile Include="kernel\tasks\notifications.c">
       <SubType>compile</SubType>
     </Compile>
@@ -308,9 +305,6 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="kernel\tasks\taskmgr.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="kernel\tasks\taskmgr.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="kernel\tasks\tasks.c">
@@ -326,9 +320,6 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="kernel\threads\atomic.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="kernel\threads\atomic.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="kernel\threads\mutex.c">

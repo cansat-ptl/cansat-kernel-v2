@@ -5,7 +5,14 @@
  *  Author: Admin
  */
 
-#include <kernel/threads/threads.h>
+#include "threadsync.h"
+#include <kernel/kernel_config.h>
+#include <kernel/ktypes.h>
+#include <kernel/kdefs.h>
+#include <kdebug/debug.h>
+#include <kernel/threads.h>
+#include <kernel/tasks.h>
+#include <kernel/memory.h>
 #include "../utils/linkedlists.h"
 
 volatile struct kListItemStruct_t* tasks_getTaskListItem(kTaskHandle_t task); //TODO: add to header
@@ -14,12 +21,21 @@ uint8_t tasks_getTaskPriority(kTaskHandle_t task);
 
 kSpinlock_t semaphoreOpLock = 0;
 
-struct kLockStruct_t threads_semaphoreInit(uint8_t resourceAmount)
+kSemaphoreHandle_t threads_semaphoreCreate(uint8_t resourceAmount)
 {
-	kSemaphore_t semaphore;
-	semaphore.type = KLOCK_SEMAPHORE;
-	semaphore.lockCount = resourceAmount;
-	return semaphore;
+	kSemaphoreHandle_t returnValue = NULL;
+	returnValue = (kSemaphoreHandle_t)memory_heapAlloc(THREADS_LOCK_STRUCT_SIZE);
+	
+	if (returnValue != NULL) {
+		returnValue->type = KLOCK_SEMAPHORE;
+		returnValue->lockCount = resourceAmount;
+		returnValue->basePriority = 0;
+		returnValue->blockedTasks.head = NULL;
+		returnValue->blockedTasks.tail = NULL;
+		returnValue->lockOwner = NULL;
+	}
+	
+	return returnValue;
 }
 
 static inline void threads_blockTask(volatile struct kLockStruct_t* lock, kTaskHandle_t task)
@@ -69,7 +85,7 @@ kReturnValue_t threads_semaphoreWait(volatile struct kLockStruct_t* semaphore)
 
 				if (semaphore->type == KLOCK_MUTEX) {
 					if (tasks_getTaskPriority(semaphore->lockOwner) < tasks_getTaskPriority(currentTask)) {
-						tasks_setTaskPriority(semaphore->lockOwner, currentTask->priority);
+						tasks_setTaskPriority(semaphore->lockOwner, tasks_getTaskPriority(currentTask));
 					}
 				}
 

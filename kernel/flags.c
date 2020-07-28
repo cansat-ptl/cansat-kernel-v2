@@ -9,8 +9,7 @@
 #include <kernel/ktypes.h>
 #include <kernel/kdefs.h>
 #include <kdebug/debug.h>
-#include <kernel/kernel.h>
-#include 
+#include "utils/utils.h"
 
 #define kernel_DISABLE_CONTEXT_SWITCH() utils_CLEAR_BIT(_kflags, KFLAG_CSW_ALLOWED)
 #define kernel_ENABLE_CONTEXT_SWITCH() utils_SET_BIT(_kflags, KFLAG_CSW_ALLOWED)
@@ -29,17 +28,14 @@ void threads_exitCriticalSection() //Deprecated
 	kernel_ENABLE_CONTEXT_SWITCH();
 }
 
-uint16_t threads_startCriticalSection()
+void threads_startCriticalSection()
 {
-	uint16_t tempKflags = _kflags;
 	kernel_DISABLE_CONTEXT_SWITCH();
-	return tempKflags;
 }
 
 void threads_endCriticalSection(uint16_t kflags)
 {
 	kernel_ENABLE_CONTEXT_SWITCH();
-	_kflags = kflags;
 }
 
 void kernel_setFlag(uint8_t flag, uint8_t value)

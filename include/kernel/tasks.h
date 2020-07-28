@@ -10,8 +10,8 @@
 #define TASKS_H_
 
 #include <stdint.h>
-#include <ktypes.h>
-#include <kdefs.h>
+#include <kernel/ktypes.h>
+#include <kernel/kdefs.h>
 
 kTaskHandle_t tasks_getCurrentTaskHandle();
 
@@ -28,12 +28,15 @@ void tasks_sleep(kTaskTicks_t sleep);
 kReturnValue_t tasks_setTaskPriority(kTaskHandle_t task, uint8_t priority);
 uint8_t tasks_getTaskPriority(kTaskHandle_t task);
 
-kReturnValue_t tasks_setTaskState(kTaskHandle_t handle, kTaskState_t newState);
+void tasks_setTaskState(kTaskHandle_t task, kTaskState_t state);
 kTaskState_t tasks_getTaskState(kTaskHandle_t task);
 
-kReturnValue_t tasks_setTaskType(kTaskHandle_t task, kTaskType_t newType);
+void tasks_setTaskType(kTaskHandle_t task, kTaskType_t newType);
 kTaskType_t tasks_getTaskType(kTaskHandle_t task);
 
 kStackSize_t tasks_getTaskStackSize(kTaskHandle_t task);
+
+uint16_t tasks_notificationWait();
+kReturnValue_t tasks_notificationSend(kTaskHandle_t taskToNotify, uint16_t flags);
 
 #endif /* TASKS_H_ */

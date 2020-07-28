@@ -5,8 +5,13 @@
  *  Author: Admin
  */ 
 
-#include <kernel/threads/threads.h>
-#include <kernel/platform/platform.h>
+#include "threadsync.h"
+#include "../platform/platform.h"
+#include <kernel/kernel_config.h>
+#include <kernel/ktypes.h>
+#include <kernel/kdefs.h>
+#include <kdebug/debug.h>
+#include <kernel/threads.h>
 
 kStatusRegister_t threads_startAtomicOperation()
 {

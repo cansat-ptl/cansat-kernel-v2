@@ -10,8 +10,8 @@
 #include <kernel/ktypes.h>
 #include <kernel/kdefs.h>
 #include <kdebug/debug.h>
-#include <kernel/ipc.h>
 #include <kernel/memory.h>
+#include <kernel/ipc.h>
 #include <stdlib.h>
 
 static const size_t kLifoStructSize	= (sizeof(struct kIPCStruct_t) + ((size_t)(CFG_PLATFORM_BYTE_ALIGNMENT - 1))) & ~((size_t)CFG_PLATFORM_BYTE_ALIGNMENT_MASK);

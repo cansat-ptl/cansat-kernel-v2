@@ -5,9 +5,14 @@
  *  Author: Admin
  */
 
+#ifndef SYNCHRONISATION_INTERNAL_H_
+#define SYNCHRONISATION_INTERNAL_H_
 
-#ifndef SYNCHRONISATION_H_
-#define SYNCHRONISATION_H_
+#include <stdint.h>
+#include <kernel/kernel_config.h>
+#include <kernel/ktypes.h>
+#include <kernel/threads.h>
+#include "../utils/linkedlists.h"
 
 struct kLockStruct_t
 {
@@ -17,5 +22,7 @@ struct kLockStruct_t
 	kTaskHandle_t lockOwner;
 	struct kLinkedListStruct_t blockedTasks;
 };
+
+#define THREADS_LOCK_STRUCT_SIZE (sizeof(struct kLockStruct_t) + ((size_t)(CFG_PLATFORM_BYTE_ALIGNMENT - 1))) & ~((size_t)CFG_PLATFORM_BYTE_ALIGNMENT_MASK)
 
 #endif /* SYNCHRONISATION_H_ */

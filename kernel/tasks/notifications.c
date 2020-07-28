@@ -5,9 +5,10 @@
  *  Author: Admin
  */
 
-#include "notifications.h"
 #include "tasks.h"
+#include <kernel/threads.h>
 #include <kernel/ktypes.h>
+#include <kernel/tasks.h>
 #include <stdint.h>
 
 kSpinlock_t notificationOpLock;

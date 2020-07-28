@@ -6,8 +6,8 @@
  */
 
 
-#ifndef TASKUTILS_H_
-#define TASKUTILS_H_
+#ifndef TASKUTILS_INTERNAL_H_
+#define TASKUTILS_INTERNAL_H_
 
 #include <kernel/ktypes.h>
 #include <kernel/kdefs.h>

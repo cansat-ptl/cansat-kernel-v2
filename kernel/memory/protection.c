@@ -5,8 +5,8 @@
  *  Author: Admin
  */
 
-#include <kernel/kernel.h>
-#include <kernel/types.h>
+#include "memory.h"
+#include <kernel/ktypes.h>
 
 void memory_prepareProtectionRegion(void* pointer, int16_t size)
 {

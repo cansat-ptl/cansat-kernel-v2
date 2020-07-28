@@ -5,9 +5,15 @@
  *  Author: Admin
  */
 
+#include <kernel/kernel_config.h>
+#include <kernel/kdefs.h>
+#include <kdebug/debug.h>
 #include "scheduler.h"
 #include "tasks.h"
+#include "../memory/memory.h"
+#include "../memory/heap.h"
 #include "../utils/linkedlists.h"
+#include "../utils/utils.h"
 
 static volatile uint8_t kTickRate = 0;
 static volatile kTaskTicks_t kTaskActiveTicks = 0;
@@ -15,6 +21,8 @@ static volatile kTaskTicks_t kTaskActiveTicks = 0;
 extern volatile uint16_t _kflags;
 
 struct kLinkedListStruct_t* tasks_getReadyTaskListArray();
+
+void kernel_panic(const char * message);
 
 void tasks_setActiveTicks(uint16_t activeTicks)
 {
@@ -24,8 +32,8 @@ void tasks_setActiveTicks(uint16_t activeTicks)
 void tasks_initScheduler(kTaskHandle_t idle)
 {
 	struct kLinkedListStruct_t* priorityQueues = tasks_getReadyTaskListArray();
-	priorityQueues[KPRIO_IDLE].head = idle->itemPointer;
-	priorityQueues[KPRIO_IDLE].tail = idle->itemPointer;
+	priorityQueues[KPRIO_IDLE].head = &(idle->activeTaskListItem);
+	priorityQueues[KPRIO_IDLE].tail = &(idle->activeTaskListItem);
 }
 
 static inline void tasks_assign(volatile struct kListItemStruct_t* listItem)

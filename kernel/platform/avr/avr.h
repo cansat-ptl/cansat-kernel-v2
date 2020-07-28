@@ -6,8 +6,8 @@
  */
 
 
-#ifndef AVR_H_
-#define AVR_H_
+#ifndef AVR_INTERNAL_H_
+#define AVR_INTERNAL_H_
 
 #ifndef F_CPU
 #define F_CPU 16000000L						//CPU frequency
@@ -16,7 +16,9 @@
 #define AVRDEF_VER "0.1.0-bleeding"
 #define AVRDEF_TIMESTAMP __TIMESTAMP__
 
-#include <kernel/types.h>
+#include "timers.h"
+#include <kernel/ktypes.h>
+#include <kernel/threads.h>
 #include <avr/io.h>
 #include <avr/iom128.h>
 #include <util/delay.h>
@@ -26,9 +28,6 @@
 #include <avr/common.h>
 #include <avr/interrupt.h>
 #include <avr/wdt.h>
-
-#include <kernel/kernel.h>
-#include <kernel/platform/avr/timers.h>
 
 #define lo8(x) ((x)&0xff)
 #define hi8(x) ((x)>>8)
@@ -109,7 +108,7 @@
 	"cli						\n\t" \
 	"push r0					\n\t" \
 	"push r1					\n\t" \
-	"clr r1						\n\t" \ //Do I really need to do this?
+	"clr r1						\n\t" \
 	"push r2					\n\t" \
 	"push r3					\n\t" \
 	"push r4					\n\t" \

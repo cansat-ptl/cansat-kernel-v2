@@ -6,8 +6,8 @@
  */
 
 
-#ifndef LISTUTILS_H_
-#define LISTUTILS_H_
+#ifndef LISTUTILS_INTERNAL_H_
+#define LISTUTILS_INTERNAL_H_
 
 #include <stddef.h>
 #include <kernel/ktypes.h>
@@ -23,6 +23,7 @@ struct kListItemStruct_t
 	volatile struct kLinkedListStruct_t* list;
 	volatile struct kListItemStruct_t* next;
 	volatile struct kListItemStruct_t* prev;
+	volatile void* data;
 };
 
 #define utils_LISTITEM_STRUCT_SIZE ((sizeof(struct kListItemStruct_t) + ((size_t)(CFG_PLATFORM_BYTE_ALIGNMENT - 1))) & ~((size_t)CFG_PLATFORM_BYTE_ALIGNMENT_MASK))

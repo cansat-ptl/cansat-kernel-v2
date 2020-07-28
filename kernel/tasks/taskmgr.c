@@ -5,12 +5,15 @@
  *  Author: ThePetrovich
  */
 
-#include "taskmgr.h"
 #include "scheduler.h"
 #include "tasks.h"
 #include "taskutils.h"
+#include "../platform/platform.h"
 #include <kernel/ktypes.h>
-#include <kernel_config.h>
+#include <kdebug/debug.h>
+#include <kernel/kernel_config.h>
+#include "../memory/memory.h"
+#include "../memory/heap.h"
 #include <stdint.h>
 
 kTaskHandle_t kCurrentTask;
@@ -24,6 +27,8 @@ extern kStackPtr_t kStackPointer;
 
 void tasks_schedule();
 void tasks_setActiveTicks(uint16_t activeTicks);
+
+void kernel_panic(const char * message);
 
 void kernel_stackCorruptionHook(kTaskHandle_t task);
 
@@ -116,7 +121,7 @@ void tasks_tick()
 {
 	tasks_switchTask();
 
-	kernel_timerService();
+	//kernel_timerService();
 
 	__e_time++;
 }

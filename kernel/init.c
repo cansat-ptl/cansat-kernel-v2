@@ -9,7 +9,12 @@
 #include <kernel/ktypes.h>
 #include <kernel/kdefs.h>
 #include <kdebug/debug.h>
-#include <kernel/kernel.h>
+#include <kernel/threads.h>
+#include "platform/platform.h"
+#include "memory/memory.h"
+#include "memory/heap.h"
+
+void kernel_setSystemStatus(uint8_t status);
 
 void user_preinit();
 void user_init();
@@ -18,7 +23,7 @@ void user_postinit();
 kTask kernel_idle1(void* args)
 {
 	platform_ENABLE_INTERRUPTS();
-	threads_exitCriticalSection();
+	threads_endCriticalSection();
 	while(1) {
 		platform_NOP();
 		//debug_logMessage(PGM_PUTS, L_INFO, PSTR("idle: idle task debug output\r\n"));
@@ -27,7 +32,6 @@ kTask kernel_idle1(void* args)
 
 void kernel_preinit()
 {
-	hal_UART_INIT(24);
 	debug_init();
 	#if CFG_LOGGING == 1
 		debug_puts(L_INFO, PSTR("kernel: Initializing debug uart interface, baud=38400\r\n"));

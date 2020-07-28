@@ -6,8 +6,11 @@
  *  Based on FreeRTOS heap_4 code
  */
 
-#include <kernel/kernel.h>
+#include "heap.h"
+#include <kernel/kernel_config.h>
 #include <kernel/ktypes.h>
+#include <kernel/kdefs.h>
+#include <kernel/memory.h>
 
 static byte kHeapRegion[CFG_HEAP_SIZE];
 

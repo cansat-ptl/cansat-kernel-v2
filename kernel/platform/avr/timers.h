@@ -6,11 +6,10 @@
  */ 
 
 
-#ifndef TIMERS_H_
-#define TIMERS_H_
+#ifndef TIMERS_INTERNAL_H_
+#define TIMERS_INTERNAL_H_
 
-#include <kernel/types.h>
-#include <kernel/platform/avr/avr.h>
+#include <stdint.h>
 
 void platform_stopTimer1A();
 void platform_startTimer1A();

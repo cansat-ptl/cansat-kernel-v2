@@ -6,8 +6,8 @@
  */
 
 
-#ifndef BUFFERS_H_
-#define BUFFERS_H_
+#ifndef BUFFERS_INTERNAL_H_
+#define BUFFERS_INTERNAL_H_
 
 #include <kernel/ipc.h>
 #include <stddef.h>

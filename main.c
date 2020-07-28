@@ -6,14 +6,18 @@
  */
 #include <math.h>
 #include <avr/io.h>
-#include <systemd/systemd.h>
 #include <kernel/kernel.h>
-#include <kernel/types.h>
+#include <kernel/ktypes.h>
+#include <kernel/tasks.h>
+#include <kernel/ipc.h>
+#include <kernel/threads.h>
+#include <kernel/tasks.h>
+#include <kdebug/debug.h>
 
 char exampleBuffer[32];
 static char exampleParameter[] = "Spaghetti and meatballs\0";
 kFifoHandle_t exampleFifo;
-kMutex_t exampleMutex;
+kMutexHandle_t exampleMutex;
 kTaskHandle_t handles[4];
 
 kTask simpleTask1(void* args)
@@ -61,7 +65,7 @@ kTask simpleTask4(void* args)
 void user_preinit()
 {
 	exampleFifo = threads_fifoCreate(1, 32);
-	exampleMutex = threads_mutexInit(); //Initializes mutex
+	exampleMutex = threads_mutexCreate(); //Initializes mutex
 	return;
 }
 

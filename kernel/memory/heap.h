@@ -6,8 +6,11 @@
  */
 
 
-#ifndef HEAP_H_
-#define HEAP_H_
+#ifndef HEAP_INTERNAL_H_
+#define HEAP_INTERNAL_H_
+
+#include <kernel/ktypes.h>
+#include <stdint.h>
 
 struct kMemoryBlockStruct_t
 {

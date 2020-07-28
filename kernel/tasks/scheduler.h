@@ -6,8 +6,8 @@
  */
 
 
-#ifndef SCHEDULER_H_
-#define SCHEDULER_H_
+#ifndef SCHEDULER_INTERNAL_H_
+#define SCHEDULER_INTERNAL_H_
 
 #include <kernel/ktypes.h>
 #include <kernel/kdefs.h>

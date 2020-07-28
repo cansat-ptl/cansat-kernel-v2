@@ -6,11 +6,9 @@
  */ 
 
 
-#ifndef PLATFORM_H_
-#define PLATFORM_H_
+#ifndef PLATFORM_INTERNAL_H_
+#define PLATFORM_INTERNAL_H_
 
-
-
-
+#include "avr/avr.h"
 
 #endif /* PLATFORM-INTERNAL_H_ */

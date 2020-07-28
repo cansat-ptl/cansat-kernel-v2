@@ -5,8 +5,9 @@
  *  Author: Admin
  */
 
-#include <kernel/platform/platform.h>
-#include <kernel/hal/hal.h>
+#include "../platform.h"
+#include "avr.h"
+#include <kernel/kernel_config.h>
 
 extern kTaskHandle_t kCurrentTask;
 volatile byte kReservedMemory[CFG_KERNEL_RESERVED_MEMORY];
