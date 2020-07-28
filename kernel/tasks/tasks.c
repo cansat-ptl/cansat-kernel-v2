@@ -164,7 +164,7 @@ kReturnValue_t tasks_createTaskStatic(kStackPtr_t memory, kTaskHandle_t* handle,
 
 	if (entry != NULL) {
 		if (memory != NULL) {
-			memory += utils_LISTITEM_STRUCT_SIZE;
+			((kTaskHandle_t)memory)->activeTaskListItem.data = memory;
 
 			kStackPtr_t stackPrepared = platform_prepareStackFrame(memory + kTaskStructSize, stackSize, entry, args);
 			tasks_setupTaskStructure((kTaskHandle_t)memory, entry, stackPrepared, memory + kTaskStructSize, stackSize, args, priority, KSTATE_READY, type, name);
@@ -200,9 +200,9 @@ kReturnValue_t tasks_createTaskDynamic(kTaskHandle_t* handle, kTask_t entry, voi
 	//}
 
 	#if CFG_MEMORY_PROTECTION_MODE == 2 || CFG_MEMORY_PROTECTION_MODE == 3
-		kStackPtr_t stackPointer = (kStackPtr_t)memory_heapAlloc(stackSize + kTaskStructSize + CFG_STACK_SAFETY_MARGIN + utils_LISTITEM_STRUCT_SIZE);
+		kStackPtr_t stackPointer = (kStackPtr_t)memory_heapAlloc(stackSize + kTaskStructSize + CFG_STACK_SAFETY_MARGIN);
 	#else
-		kStackPtr_t stackPointer = (kStackPtr_t)memory_heapAlloc(stackSize + kTaskStructSize + utils_LISTITEM_STRUCT_SIZE);
+		kStackPtr_t stackPointer = (kStackPtr_t)memory_heapAlloc(stackSize + kTaskStructSize);
 	#endif
 
 	exitcode = tasks_createTaskStatic(stackPointer, NULL, entry, args, stackSize, priority, type, name);
@@ -211,7 +211,7 @@ kReturnValue_t tasks_createTaskDynamic(kTaskHandle_t* handle, kTask_t entry, voi
 		memory_heapFree((void*)stackPointer);
 	}
 	else {
-		*handle = (kTaskHandle_t)(stackPointer + utils_LISTITEM_STRUCT_SIZE);
+		*handle = (kTaskHandle_t)(stackPointer);
 	}
 
 	threads_endAtomicOperation(sreg);
