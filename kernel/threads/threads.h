@@ -1,18 +1,19 @@
 /*
- * synchronisation.h
+ * threads.h
  *
- * Created: 21.06.2020 19:56:03
+ * Created: 29.07.2020 13:33:07
  *  Author: Admin
- */
+ */ 
 
-#ifndef SYNCHRONISATION_INTERNAL_H_
-#define SYNCHRONISATION_INTERNAL_H_
 
+#ifndef THREADS_INTERNAL_H_
+#define THREADS_INTERNAL_H_
+
+#include "../utils/linkedlists.h"
+#include <kernel/threads.h>
 #include <stdint.h>
 #include <kernel/kernel_config.h>
 #include <kernel/ktypes.h>
-#include <kernel/threads.h>
-#include "../utils/linkedlists.h"
 
 struct kLockStruct_t
 {
@@ -25,4 +26,4 @@ struct kLockStruct_t
 
 #define THREADS_LOCK_STRUCT_SIZE (sizeof(struct kLockStruct_t) + ((size_t)(CFG_PLATFORM_BYTE_ALIGNMENT - 1))) & ~((size_t)CFG_PLATFORM_BYTE_ALIGNMENT_MASK)
 
-#endif /* SYNCHRONISATION_H_ */
+#endif /* THREADS_H_ */

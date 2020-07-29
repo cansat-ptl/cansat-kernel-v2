@@ -5,7 +5,7 @@
  *  Author: Admin
  */
 #include "avr.h"
-#include <kernel/kernel.h>
+#include "../../kernel.h"
 #include <kernel/kernel_config.h>
 
 void platform_setupTimer1A(uint8_t prescaler)

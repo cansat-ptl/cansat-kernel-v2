@@ -10,6 +10,15 @@
 #define KERNEL_H_
 
 #include <stdint.h>
+#include <kernel/kernel_config.h>
+#include <kernel/ktypes.h>
+#include <kernel/kdefs.h>
+#include <kernel/tasks.h>
+#include <kernel/ipc.h>
+#include <kernel/threads.h>
+#include <kernel/tasks.h>
+#include <kernel/timers.h>
+#include <kernel/memory.h>
 
 void kernel_setFlag(uint8_t flag, uint8_t value);
 uint8_t kernel_checkFlag(uint8_t flag);

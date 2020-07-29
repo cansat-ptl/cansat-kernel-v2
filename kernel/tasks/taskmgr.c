@@ -9,11 +9,11 @@
 #include "tasks.h"
 #include "taskutils.h"
 #include "../platform/platform.h"
+#include "../memory/memory.h"
+#include "../memory/heap.h"
 #include <kernel/ktypes.h>
 #include <kdebug/debug.h>
 #include <kernel/kernel_config.h>
-#include "../memory/memory.h"
-#include "../memory/heap.h"
 #include <stdint.h>
 
 kTaskHandle_t kCurrentTask;

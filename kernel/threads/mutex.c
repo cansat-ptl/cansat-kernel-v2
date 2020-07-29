@@ -5,7 +5,7 @@
  *  Author: Admin
  */ 
 
-#include "threadsync.h"
+#include "threads.h"
 #include <kernel/kernel_config.h>
 #include <kernel/ktypes.h>
 #include <kernel/kdefs.h>

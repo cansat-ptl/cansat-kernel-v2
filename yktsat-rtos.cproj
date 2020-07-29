@@ -229,7 +229,7 @@
     <Compile Include="kdebug\uart.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="kernel\assert.c">
+    <Compile Include="kernel\debug\kprintf.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="kernel\flags.c">
@@ -241,13 +241,16 @@
     <Compile Include="kernel\init.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="kernel\ipc\buffers.h">
+    <Compile Include="kernel\ipc\ipc.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="kernel\ipc\fifo.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="kernel\ipc\lifo.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="kernel\kernel.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="kernel\memory\heap.c">
@@ -331,7 +334,7 @@
     <Compile Include="kernel\threads\spinlock.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="kernel\threads\threadsync.h">
+    <Compile Include="kernel\threads\threads.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="kernel\utils\linkedlists.c">
@@ -360,6 +363,7 @@
     <Folder Include="kernel" />
     <Folder Include="kernel\memory" />
     <Folder Include="kernel\ipc" />
+    <Folder Include="kernel\debug" />
     <Folder Include="kernel\timers" />
     <Folder Include="kernel\platform" />
     <Folder Include="kernel\platform\avr" />

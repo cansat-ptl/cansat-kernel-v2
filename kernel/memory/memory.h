@@ -9,6 +9,7 @@
 #ifndef MEMORY_INTERNAL_H_
 #define MEMORY_INTERNAL_H_
 
+#include <kernel/memory.h>
 #include <stdint.h>
 
 void memory_prepareProtectionRegion(void* pointer, int16_t size);

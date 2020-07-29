@@ -5,7 +5,8 @@
  *  Author: Admin
  */
 
-#include "threadsync.h"
+#include "threads.h"
+#include "../utils/linkedlists.h"
 #include <kernel/kernel_config.h>
 #include <kernel/ktypes.h>
 #include <kernel/kdefs.h>
@@ -13,7 +14,6 @@
 #include <kernel/threads.h>
 #include <kernel/tasks.h>
 #include <kernel/memory.h>
-#include "../utils/linkedlists.h"
 
 volatile struct kListItemStruct_t* tasks_getTaskListItem(kTaskHandle_t task); //TODO: add to header
 void tasks_setTaskLock(kTaskHandle_t task, volatile struct kLockStruct_t* lock);

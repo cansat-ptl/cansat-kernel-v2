@@ -12,12 +12,12 @@
 #define KPRIO_IDLE 0
 #define KPRIO_REALTIME 255
 
+#include "../utils/linkedlists.h"
+#include <kernel/tasks.h>
 #include <kernel/kernel_config.h>
 #include <kernel/ktypes.h>
 #include <kernel/kdefs.h>
-#include <kernel/tasks.h>
 #include <stdint.h>
-#include "../utils/linkedlists.h"
 
 struct kNotificationStruct_t
 {
@@ -50,6 +50,8 @@ struct kTaskStruct_t
 	
 //	uint8_t savedContext[CFG_REGISTER_RESERVED_SPACE];
 };
+
+kReturnValue_t tasks_init(kTask_t idle);
 
 kReturnValue_t tasks_createTaskStatic(kStackPtr_t memory, kTaskHandle_t* handle, kTask_t entry, void* args, kStackSize_t stackSize, uint8_t priority, kTaskType_t type, char* name);
 kReturnValue_t tasks_createTaskDynamic(kTaskHandle_t* handle, kTask_t entry, void* args, kStackSize_t stackSize, uint8_t priority, kTaskType_t type, char* name);

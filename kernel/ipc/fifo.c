@@ -5,7 +5,7 @@
  *  Author: Admin
  */
 
-#include "buffers.h"
+#include "ipc.h"
 #include <kernel/kernel_config.h>
 #include <kernel/ktypes.h>
 #include <kernel/kdefs.h>

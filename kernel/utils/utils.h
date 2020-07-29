@@ -9,6 +9,9 @@
 #ifndef UTILS_INTERNAL_H_
 #define UTILS_INTERNAL_H_
 
+#include <kernel/utils.h>
+#include <stdint.h>
+
 #define UTIL_VER "0.0.1-bleeding"
 #define UTIL_TIMESTAMP __TIMESTAMP__
 

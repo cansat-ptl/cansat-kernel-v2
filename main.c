@@ -7,11 +7,6 @@
 #include <math.h>
 #include <avr/io.h>
 #include <kernel/kernel.h>
-#include <kernel/ktypes.h>
-#include <kernel/tasks.h>
-#include <kernel/ipc.h>
-#include <kernel/threads.h>
-#include <kernel/tasks.h>
 #include <kdebug/debug.h>
 
 char exampleBuffer[32];

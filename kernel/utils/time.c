@@ -6,9 +6,9 @@
  */ 
 
 #include "utils.h"
+#include "../kernel.h"
 #include <kernel/utils.h>
 #include <kernel/ktypes.h>
-#include <kernel/kernel.h>
 
 extern uint64_t __e_time;
 

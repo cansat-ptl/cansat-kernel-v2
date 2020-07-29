@@ -5,11 +5,11 @@
  *  Author: Admin
  */
 
+#include "utils/utils.h"
 #include <kernel/kernel_config.h>
 #include <kernel/ktypes.h>
 #include <kernel/kdefs.h>
 #include <kdebug/debug.h>
-#include "utils/utils.h"
 
 #define kernel_DISABLE_CONTEXT_SWITCH() utils_CLEAR_BIT(_kflags, KFLAG_CSW_ALLOWED)
 #define kernel_ENABLE_CONTEXT_SWITCH() utils_SET_BIT(_kflags, KFLAG_CSW_ALLOWED)

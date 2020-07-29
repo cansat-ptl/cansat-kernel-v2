@@ -8,15 +8,14 @@
 #include "tasks.h"
 #include "../utils/linkedlists.h"
 #include "../platform/platform.h"
+#include "../memory/memory.h"
+#include "../memory/heap.h"
 #include <kernel/tasks.h>
 #include <kernel/kernel_config.h>
 #include <kernel/ktypes.h>
 #include <kernel/kdefs.h>
 #include <kdebug/debug.h>
 #include <kernel/memory.h>
-#include "../memory/memory.h"
-#include "../memory/heap.h"
-#include <stdint.h>
 
 static volatile uint16_t kGlobalPid = 0;
 
