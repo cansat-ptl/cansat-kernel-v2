@@ -14,7 +14,7 @@ ATMEL_DFP = "D:\Program Files (x86)\Atmel\Studio\7.0\Packs\Atmel\ATmega_DFP\1.4.
 AVR_SIZE_CMD = "D:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-size.exe" "$(TARG).elf"
  
 INC = -I"include"
-SRCDIR = cubesat-boot
+SRCDIR = boot
 SRCS = $(call rwildcard, $(SRCDIR)/,*.c)
  
 OBJS = $(SRCS:.c=.o)

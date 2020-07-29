@@ -1,30 +1,20 @@
 /*
- * memory.h
+ * heap.h
  *
- * Created: 14.02.2020 20:59:16
+ * Created: 21.06.2020 21:06:46
  *  Author: Admin
  */
 
 
-#ifndef MEMORY_H_
-#define MEMORY_H_
+#ifndef HEAP_H_
+#define HEAP_H_
 
-#include <stdint.h>
-#include <string.h>
-#include <stdio.h>
-#include <kernel/types.h>
-#include <kernel/hal/hal.h>
+#include <stddef.h>
 
-void memmgr_heapInit();
-void* memmgr_heapAlloc(size_t size);
-void memmgr_heapFree(void* pointer);
+void* memory_heapAlloc(size_t size);
+void memory_heapFree(void* pointer);
 
-size_t memmgr_getFreeHeap();
-size_t memmgr_getFreeHeapMin();
+size_t memory_getFreeHeap();
+size_t memory_getFreeHeapMin();
 
-kReturnValue_t memmgr_pointerSanityCheck(void* pointer);
-
-void memmgr_prepareProtectionRegion(void* pointer, int16_t size);
-uint8_t memmgr_checkProtectionRegion(void* pointer, int16_t size);
-
-#endif /* MEMORY_H_ */
+#endif /* HEAP_H_ */

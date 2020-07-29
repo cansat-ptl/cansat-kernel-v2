@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Atmel Studio Solution File, Format Version 11.00
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "basic", "basic.cproj", "{DCE6C7E3-EE26-4D79-826B-08594B9AD897}"
+EndProject
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "ipc", "ipc.cproj", "{2CF4BB3D-F6F5-4F68-8390-1D884804B9DB}"
+EndProject
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "mutex", "mutex.cproj", "{5137C514-2476-4A88-9B44-5C4DA441BB07}"
+EndProject
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "systemd", "systemd.cproj", "{37BBD219-A708-4E83-8CB4-820DAF139AD5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|AVR = Debug|AVR
+		Release|AVR = Release|AVR
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Debug|AVR.ActiveCfg = Debug|AVR
+		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Debug|AVR.Build.0 = Debug|AVR
+		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Release|AVR.ActiveCfg = Release|AVR
+		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Release|AVR.Build.0 = Release|AVR
+		{2CF4BB3D-F6F5-4F68-8390-1D884804B9DB}.Debug|AVR.ActiveCfg = Debug|AVR
+		{2CF4BB3D-F6F5-4F68-8390-1D884804B9DB}.Debug|AVR.Build.0 = Debug|AVR
+		{2CF4BB3D-F6F5-4F68-8390-1D884804B9DB}.Release|AVR.ActiveCfg = Release|AVR
+		{2CF4BB3D-F6F5-4F68-8390-1D884804B9DB}.Release|AVR.Build.0 = Release|AVR
+		{5137C514-2476-4A88-9B44-5C4DA441BB07}.Debug|AVR.ActiveCfg = Debug|AVR
+		{5137C514-2476-4A88-9B44-5C4DA441BB07}.Debug|AVR.Build.0 = Debug|AVR
+		{5137C514-2476-4A88-9B44-5C4DA441BB07}.Release|AVR.ActiveCfg = Release|AVR
+		{5137C514-2476-4A88-9B44-5C4DA441BB07}.Release|AVR.Build.0 = Release|AVR
+		{37BBD219-A708-4E83-8CB4-820DAF139AD5}.Debug|AVR.ActiveCfg = Debug|AVR
+		{37BBD219-A708-4E83-8CB4-820DAF139AD5}.Debug|AVR.Build.0 = Debug|AVR
+		{37BBD219-A708-4E83-8CB4-820DAF139AD5}.Release|AVR.ActiveCfg = Release|AVR
+		{37BBD219-A708-4E83-8CB4-820DAF139AD5}.Release|AVR.Build.0 = Release|AVR
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

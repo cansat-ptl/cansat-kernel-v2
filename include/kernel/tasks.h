@@ -1,50 +1,38 @@
 /*
- * taskmgr.h
+ * tasks.h
  *
- * Created: 14.02.2020 20:50:36
+ * Created: 21.06.2020 20:13:55
  *  Author: Admin
  */
 
 
-#ifndef TASKMGR_H_
-#define TASKMGR_H_
+#ifndef TASKS_H_
+#define TASKS_H_
 
 #include <stdint.h>
-#include <string.h>
-#include <stdio.h>
-#include <kernel/types.h>
-#include <kernel/hal/hal.h>
+#include <kernel/ktypes.h>
+#include <kernel/kdefs.h>
 
-#define KPRIO_IDLE 0
-#define KPRIO_REALTIME 255
+kTaskHandle_t tasks_getCurrentTaskHandle();
 
-kReturnValue_t taskmgr_init(kTask_t idle);
+/* Tasks operations */
+kTaskHandle_t tasks_createTask(kTask_t entry, void* args, kStackSize_t stackSize, uint8_t priority, kTaskType_t type, char* name);
+kReturnValue_t tasks_removeTask(kTaskHandle_t task);
+void tasks_restartTask(kTaskHandle_t task);
+kTaskHandle_t tasks_forkTask(kTaskHandle_t task);
+kReturnValue_t tasks_replaceTask(kTaskHandle_t taskToReplace, kTask_t entry, void* args);
 
-kReturnValue_t taskmgr_createTaskStatic(kTaskHandle_t taskStruct, kStackPtr_t stack, kTask_t entry, void* args, kStackSize_t stackSize, uint8_t priority, kTaskType_t type, char* name);
-kReturnValue_t taskmgr_createTaskDynamic(kTaskHandle_t* handle, kTask_t entry, void* args, kStackSize_t stackSize, uint8_t priority, kTaskType_t type, char* name);
-kTaskHandle_t taskmgr_createTask(kTask_t entry, void* args, kStackSize_t stackSize, uint8_t priority, kTaskType_t type, char* name);
+void tasks_sleep(kTaskTicks_t sleep);
 
-kReturnValue_t taskmgr_removeTask(kTaskHandle_t task);
-kTaskHandle_t taskmgr_forkTask(kTaskHandle_t task);
-kReturnValue_t taskmgr_replaceTask(kTaskHandle_t taskToReplace, kTask_t entry, void* args);
-void taskmgr_restartTask(kTaskHandle_t task);
+void tasks_setTaskState(kTaskHandle_t task, kTaskState_t state);
+kTaskState_t tasks_getTaskState(kTaskHandle_t task);
 
-kReturnValue_t taskmgr_setTaskPriority(kTaskHandle_t task, uint8_t priority);
-void taskmgr_setTaskState(kTaskHandle_t handle, kTaskState_t newState);
+void tasks_setTaskType(kTaskHandle_t task, kTaskType_t newType);
+kTaskType_t tasks_getTaskType(kTaskHandle_t task);
 
-kTaskHandle_t taskmgr_getCurrentTaskHandle();
-kTaskHandle_t taskmgr_getNextTaskHandle();
+kStackSize_t tasks_getTaskStackSize(kTaskHandle_t task);
 
-volatile struct kLinkedListStruct_t* taskmgr_getReadyTaskListPtr(uint8_t priority);
-volatile struct kLinkedListStruct_t* taskmgr_getSleepingTaskListPtr();
+uint16_t tasks_notificationWait();
+kReturnValue_t tasks_notificationSend(kTaskHandle_t taskToNotify, uint16_t flags);
 
-kTaskHandle_t taskmgr_getIdleTaskHandle();
-kStackPtr_t taskmgr_getReservedMemoryPointer();
-void taskmgr_setCurrentTask(kTaskHandle_t taskHandle);
-void taskmgr_setNextTask(kTaskHandle_t taskHandle);
-
-void taskmgr_sleep(kTaskTicks_t sleep);
-
-void taskmgr_stopTask(kTaskState_t exitState);
-
-#endif /* TASKMGR_H_ */
+#endif /* TASKS_H_ */
