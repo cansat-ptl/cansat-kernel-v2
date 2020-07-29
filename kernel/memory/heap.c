@@ -42,7 +42,7 @@ void memory_heapInit()
 
 	heapAddress = (size_t)kHeapRegion;
 
-	if ((heapAddress & CFG_PLATFORM_BYTE_ALIGNMENT_MASK) != 0) {
+	if ((heapAddress & CFG_PLATFORM_BYTE_ALIGNMENT_MASK) != 0) { //-V547
 		heapAddress += (CFG_PLATFORM_BYTE_ALIGNMENT - 1);
 		heapAddress &= ~((size_t)CFG_PLATFORM_BYTE_ALIGNMENT_MASK);
 		heapSize -= heapAddress - (size_t)kHeapRegion;
@@ -115,7 +115,7 @@ void* memory_heapAlloc(size_t size)
 
 	kStatusRegister_t sreg = threads_startAtomicOperation();
 
-	if (size > 0 && (size & CFG_PLATFORM_BYTE_ALIGNMENT_MASK) != 0x00) {
+	if (size > 0 && (size & CFG_PLATFORM_BYTE_ALIGNMENT_MASK) != 0x00) { //-V560
 		size += (CFG_PLATFORM_BYTE_ALIGNMENT - (size & CFG_PLATFORM_BYTE_ALIGNMENT_MASK));
 	}
 

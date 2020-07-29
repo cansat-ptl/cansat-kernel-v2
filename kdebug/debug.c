@@ -50,7 +50,7 @@ const char * const stages[] PROGMEM = {
 #if CFG_DEBUG_PRINT_LEVELS == 1
 void debug_printLevel(uint8_t level)
 {
-	char * levelptr = (char*)hal_READ_WORD_FROM_FLASH(&(levels[level])); //-V2573
+	char * levelptr = (char*)hal_READ_WORD_FROM_FLASH(&(levels[level])); //-V2573 //-V542
 
 	while(hal_READ_BYTE_FROM_FLASH(levelptr) != 0x00) {//-V2573
 		hal_UART_PUTC(hal_READ_BYTE_FROM_FLASH(levelptr++)); //-V2573
@@ -62,7 +62,7 @@ void debug_printLevel(uint8_t level)
 void debug_printStage()
 {
 	uint8_t stage = debug_GET_STATUS();
-	char * stageptr = (char*)hal_READ_WORD_FROM_FLASH(&(stages[stage])); //-V2573 //-V2571
+	char * stageptr = (char*)hal_READ_WORD_FROM_FLASH(&(stages[stage])); //-V2573 //-V2571 //-V542
 
 	while(hal_READ_BYTE_FROM_FLASH(stageptr) != 0x00) { //-V2573 //-V2571
 		hal_UART_PUTC(hal_READ_BYTE_FROM_FLASH(stageptr++)); //-V2573 //-V2571
