@@ -32,6 +32,9 @@ kTaskType_t tasks_getTaskType(kTaskHandle_t task);
 
 kStackSize_t tasks_getTaskStackSize(kTaskHandle_t task);
 
+uint8_t tasks_getTaskPriority(kTaskHandle_t task);
+kReturnValue_t tasks_setTaskPriority(kTaskHandle_t task, uint8_t priority);
+
 uint16_t tasks_notificationWait();
 kReturnValue_t tasks_notificationSend(kTaskHandle_t taskToNotify, uint16_t flags);
 
