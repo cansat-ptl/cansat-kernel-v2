@@ -40,15 +40,27 @@ static void tasks_switchContext()
 	#endif
 
 	#if CFG_MEMORY_PROTECTION_MODE == 2
-		if (memory_checkProtectionRegion((void*)(kCurrentTask->stackBegin + kCurrentTask->stackSize), CFG_STACK_SAFETY_MARGIN)) {
-			kernel_stackCorruptionHook(kCurrentTask);
-		}
+		#if CFG_STACK_GROWTH_DIRECTION == 0
+			if (memory_checkProtectionRegion((void*)(kCurrentTask->stackBegin), CFG_STACK_SAFETY_MARGIN)) {
+				kernel_stackCorruptionHook(kCurrentTask);
+			}
+		#else
+			if (memory_checkProtectionRegion((void*)(kCurrentTask->stackBegin + kCurrentTask->stackSize), CFG_STACK_SAFETY_MARGIN)) {
+				kernel_stackCorruptionHook(kCurrentTask);
+			}
+		#endif
 	#endif
 
 	#if CFG_MEMORY_PROTECTION_MODE == 3
-		if (tasks_checkStackBounds(kCurrentTask) || memory_checkProtectionRegion((void*)(kCurrentTask->stackBegin + kCurrentTask->stackSize), CFG_STACK_SAFETY_MARGIN)) {
-			kernel_stackCorruptionHook(kCurrentTask);
-		}
+		#if CFG_STACK_GROWTH_DIRECTION == 0
+			if (tasks_checkStackBounds(kCurrentTask) || memory_checkProtectionRegion((void*)(kCurrentTask->stackBegin), CFG_STACK_SAFETY_MARGIN)) {
+				kernel_stackCorruptionHook(kCurrentTask);
+			}
+		#else
+			if (tasks_checkStackBounds(kCurrentTask) || memory_checkProtectionRegion((void*)(kCurrentTask->stackBegin + kCurrentTask->stackSize), CFG_STACK_SAFETY_MARGIN)) {
+				kernel_stackCorruptionHook(kCurrentTask);
+			}
+		#endif
 	#endif
 
 	#if CFG_MEMORY_PROTECTION_MODE != 0

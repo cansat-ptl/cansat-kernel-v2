@@ -7,6 +7,7 @@
 
 #include "tasks.h"
 #include "scheduler.h"
+#include "../kernel.h"
 #include "../utils/linkedlists.h"
 #include "../platform/platform.h"
 #include "../memory/memory.h"
@@ -163,13 +164,27 @@ kReturnValue_t tasks_createTaskStatic(kStackPtr_t memory, kTaskHandle_t* handle,
 	if (entry != NULL) {
 		if (memory != NULL) {
 			((kTaskHandle_t)memory)->activeTaskListItem.data = memory;
-
-			kStackPtr_t stackPrepared = platform_prepareStackFrame(memory + kTaskStructSize, stackSize, entry, args);
-			tasks_setupTaskStructure((kTaskHandle_t)memory, entry, stackPrepared, memory + kTaskStructSize, stackSize, args, priority, KSTATE_READY, type, name);
-
+			
+			kStackPtr_t stackPrepared = NULL;
+			
 			#if CFG_MEMORY_PROTECTION_MODE == 2 || CFG_MEMORY_PROTECTION_MODE == 3
-				memory_prepareProtectionRegion((void*)(memory + kTaskStructSize + stackSize), CFG_STACK_SAFETY_MARGIN);
+				#if CFG_STACK_GROWTH_DIRECTION == 0
+					stackPrepared = platform_prepareStackFrame(memory + kTaskStructSize + CFG_STACK_SAFETY_MARGIN, stackSize, entry, args);
+					memory_prepareProtectionRegion((void*)(memory + kTaskStructSize), CFG_STACK_SAFETY_MARGIN);
+				#else
+					stackPrepared = platform_prepareStackFrame(memory + kTaskStructSize, stackSize, entry, args);
+					memory_prepareProtectionRegion((void*)(memory + kTaskStructSize + stackSize), CFG_STACK_SAFETY_MARGIN);
+				#endif
+			#else
+				stackPrepared = platform_prepareStackFrame(memory + kTaskStructSize, stackSize, entry, args);
 			#endif
+			
+			//TODO: assert
+			if (stackPrepared == NULL) {
+				kernel_panic(PSTR("Runtime assert: tasks_createTaskStatic: stackPrepared = NULL\r\n"));
+			}
+			
+			tasks_setupTaskStructure((kTaskHandle_t)memory, entry, stackPrepared, memory + kTaskStructSize, stackSize, args, priority, KSTATE_READY, type, name);
 
 			tasks_setTaskState((kTaskHandle_t)memory, KSTATE_READY);
 
