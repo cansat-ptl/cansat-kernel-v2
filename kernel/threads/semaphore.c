@@ -6,6 +6,7 @@
  */
 
 #include "threads.h"
+#include "../tasks/tasks.h"
 #include "../utils/linkedlists.h"
 #include <kernel/kernel_config.h>
 #include <kernel/ktypes.h>
@@ -14,10 +15,6 @@
 #include <kernel/threads.h>
 #include <kernel/tasks.h>
 #include <kernel/memory.h>
-
-volatile struct kListItemStruct_t* tasks_getTaskListItem(kTaskHandle_t task); //TODO: add to header
-void tasks_setTaskLock(kTaskHandle_t task, volatile struct kLockStruct_t* lock);
-uint8_t tasks_getTaskPriority(kTaskHandle_t task);
 
 kSpinlock_t semaphoreOpLock = 0;
 

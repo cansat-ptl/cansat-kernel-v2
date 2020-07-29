@@ -31,7 +31,6 @@ size_t threads_lifoAvailable(kFifoHandle_t lifo);
 
 kReturnValue_t threads_fifoCreateStatic(kFifoHandle_t fifo, char* pointer, size_t itemSize, size_t totalSize);
 kFifoHandle_t threads_fifoCreate(size_t itemSize, size_t itemsTotal);
-
 kReturnValue_t threads_fifoWrite(kFifoHandle_t fifo, void* item);
 kReturnValue_t threads_fifoRead(kFifoHandle_t fifo, void* item);
 kReturnValue_t threads_fifoPeek(kFifoHandle_t fifo, void* item);

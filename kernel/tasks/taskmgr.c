@@ -8,6 +8,7 @@
 #include "scheduler.h"
 #include "tasks.h"
 #include "taskutils.h"
+#include "../kernel.h"
 #include "../platform/platform.h"
 #include "../memory/memory.h"
 #include "../memory/heap.h"
@@ -24,13 +25,6 @@ static volatile uint8_t kInterruptDepth = 0;
 
 extern volatile byte kReservedMemory[CFG_KERNEL_RESERVED_MEMORY];
 extern kStackPtr_t kStackPointer;
-
-void tasks_schedule();
-void tasks_setActiveTicks(uint16_t activeTicks);
-
-void kernel_panic(const char * message);
-
-void kernel_stackCorruptionHook(kTaskHandle_t task);
 
 uint64_t kernel_getUptime()
 {

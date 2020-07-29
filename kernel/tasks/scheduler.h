@@ -13,8 +13,8 @@
 #include <kernel/kdefs.h>
 #include <stdint.h>
 
-void tasks_setActiveTicks(uint16_t activeTicks);
 void tasks_initScheduler(kTaskHandle_t idle);
+void tasks_setActiveTicks(uint16_t activeTicks);
 void tasks_schedule();
 
 #endif /* SCHEDULER_H_ */

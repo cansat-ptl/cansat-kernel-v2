@@ -6,6 +6,7 @@
  */
 
 #include "tasks.h"
+#include "scheduler.h"
 #include "../utils/linkedlists.h"
 #include "../platform/platform.h"
 #include "../memory/memory.h"
@@ -26,8 +27,6 @@ static volatile struct kLinkedListStruct_t kSuspendedTaskList;
 static const size_t kTaskStructSize	= (sizeof(struct kTaskStruct_t) + ((size_t)(CFG_PLATFORM_BYTE_ALIGNMENT - 1))) & ~((size_t)CFG_PLATFORM_BYTE_ALIGNMENT_MASK);
 
 static volatile kTaskHandle_t kIdleTaskHandle;
-
-void tasks_initScheduler(kTaskHandle_t idle);
 
 volatile struct kLinkedListStruct_t* tasks_getReadyTaskListArray()
 {

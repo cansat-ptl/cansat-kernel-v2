@@ -7,6 +7,7 @@
 
 #include "scheduler.h"
 #include "tasks.h"
+#include "../kernel.h"
 #include "../memory/memory.h"
 #include "../memory/heap.h"
 #include "../utils/linkedlists.h"
@@ -20,10 +21,6 @@ static volatile kTaskTicks_t kTaskActiveTicks = 0;
 
 extern volatile uint16_t _kflags;
 
-struct kLinkedListStruct_t* tasks_getReadyTaskListArray();
-
-void kernel_panic(const char * message);
-
 void tasks_setActiveTicks(uint16_t activeTicks)
 {
 	kTaskActiveTicks = activeTicks;
@@ -31,7 +28,7 @@ void tasks_setActiveTicks(uint16_t activeTicks)
 
 void tasks_initScheduler(kTaskHandle_t idle)
 {
-	struct kLinkedListStruct_t* priorityQueues = tasks_getReadyTaskListArray();
+	volatile struct kLinkedListStruct_t* priorityQueues = tasks_getReadyTaskListArray();
 	priorityQueues[KPRIO_IDLE].head = &(idle->activeTaskListItem);
 	priorityQueues[KPRIO_IDLE].tail = &(idle->activeTaskListItem);
 }
@@ -61,7 +58,7 @@ static inline void tasks_tickTasks()
 
 static inline void tasks_search()
 {
-	struct kLinkedListStruct_t* priorityQueues = tasks_getReadyTaskListArray();
+	volatile struct kLinkedListStruct_t* priorityQueues = tasks_getReadyTaskListArray();
 	for (kIterator_t i = CFG_NUMBER_OF_PRIORITIES-1; i >= 0; i--) {
 		if (priorityQueues[i].head != NULL) {
 

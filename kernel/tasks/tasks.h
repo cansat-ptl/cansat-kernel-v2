@@ -19,6 +19,8 @@
 #include <kernel/kdefs.h>
 #include <stdint.h>
 
+struct kLockStruct_t;
+
 struct kNotificationStruct_t
 {
 	kEventState_t state;
@@ -58,12 +60,16 @@ kReturnValue_t tasks_createTaskDynamic(kTaskHandle_t* handle, kTask_t entry, voi
 
 kTaskHandle_t tasks_getNextTaskHandle();
 
+volatile struct kLinkedListStruct_t* tasks_getReadyTaskListArray();
 volatile struct kLinkedListStruct_t* tasks_getReadyTaskListPtr(uint8_t priority);
 volatile struct kLinkedListStruct_t* tasks_getSleepingTaskListPtr();
+
+volatile struct kListItemStruct_t* tasks_getTaskListItem(kTaskHandle_t task);
 
 kTaskHandle_t tasks_getIdleTaskHandle();
 kStackPtr_t tasks_getReservedMemoryPointer();
 void tasks_setCurrentTask(kTaskHandle_t taskHandle);
 void tasks_setNextTask(kTaskHandle_t taskHandle);
+void tasks_setTaskLock(kTaskHandle_t task, volatile struct kLockStruct_t* lock);
 
 #endif /* TASKS_H_ */
