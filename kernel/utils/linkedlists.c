@@ -30,10 +30,10 @@ void utils_listAddBack(volatile struct kLinkedListStruct_t* list, volatile struc
 
 void utils_listDropBack(volatile struct kLinkedListStruct_t* list)
 {
-	volatile struct kListItemStruct_t* next;
-
 	if (list != NULL) {
 		if (list->tail != NULL) {
+			volatile struct kListItemStruct_t* next;
+			
 			next = list->tail;
 			list->tail = list->tail->prev;
 
@@ -74,10 +74,10 @@ void utils_listAddFront(volatile struct kLinkedListStruct_t* list, volatile stru
 
 void utils_listDropFront(volatile struct kLinkedListStruct_t* list)
 {
-	volatile struct kListItemStruct_t* prev;
-
 	if (list != NULL) {
 		if (list->head != NULL) {
+			volatile struct kListItemStruct_t* prev;
+			
 			prev = list->head;
 			list->head = list->head->next;
 

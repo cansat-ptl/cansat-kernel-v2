@@ -234,26 +234,30 @@ kReturnValue_t tasks_createTaskDynamic(kTaskHandle_t* handle, kTask_t entry, voi
 kTaskHandle_t tasks_createTask(kTask_t entry, void* args, kStackSize_t stackSize, uint8_t priority, kTaskType_t type, char* name)
 {
 	kTaskHandle_t returnValue = NULL;
-	kReturnValue_t result = tasks_createTaskDynamic(&returnValue, entry, args, stackSize, priority, type, name);
+	
 	#if CFG_LOGGING == 1
-	switch (result) {
-		case 0:
-			debug_logMessage(PGM_PUTS, L_INFO, PSTR("taskmgr: Successfully created a new task\r\n"));
+		kReturnValue_t result = tasks_createTaskDynamic(&returnValue, entry, args, stackSize, priority, type, name);
+		switch (result) {
+			case 0:
+				debug_logMessage(PGM_PUTS, L_INFO, PSTR("taskmgr: Successfully created a new task\r\n"));
 			break;
-		case -1:
-			debug_logMessage(PGM_PUTS, L_INFO, PSTR("taskmgr: Task creation error[-1]: entryPoint is NULL\r\n"));
+			case -1:
+				debug_logMessage(PGM_PUTS, L_INFO, PSTR("taskmgr: Task creation error[-1]: entryPoint is NULL\r\n"));
 			break;
-		case -2:
-			debug_logMessage(PGM_PUTS, L_INFO, PSTR("taskmgr: Task creation error[-2]: failed to allocate task heap\r\n"));
+			case -2:
+				debug_logMessage(PGM_PUTS, L_INFO, PSTR("taskmgr: Task creation error[-2]: failed to allocate task heap\r\n"));
 			break;
-		case -3:
-			debug_logMessage(PGM_PUTS, L_INFO, PSTR("taskmgr: Task creation error[-3]: failed to allocate task structure\r\n"));
+			case -3:
+				debug_logMessage(PGM_PUTS, L_INFO, PSTR("taskmgr: Task creation error[-3]: failed to allocate task structure\r\n"));
 			break;
-		default:
-			debug_logMessage(PGM_PUTS, L_INFO, PSTR("taskmgr: Task creation error[]: unknown error\r\n"));
+			default:
+				debug_logMessage(PGM_PUTS, L_INFO, PSTR("taskmgr: Task creation error[]: unknown error\r\n"));
 			break;
-	}
+		}
+	#else
+		tasks_createTaskDynamic(&returnValue, entry, args, stackSize, priority, type, name);
 	#endif
+	
 	return returnValue;
 }
 

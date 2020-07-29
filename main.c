@@ -17,7 +17,7 @@ kTaskHandle_t handles[4];
 
 kTask simpleTask1(void* args)
 {
-	kTaskHandle_t handle = tasks_getCurrentTaskHandle();
+	//kTaskHandle_t handle = tasks_getCurrentTaskHandle();
 
 	while (1) {
 		debug_logMessage(PGM_PUTS, L_INFO, PSTR("task1: Waiting for notification\r\n"));
