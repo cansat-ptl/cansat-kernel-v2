@@ -23,9 +23,6 @@ volatile uint64_t __e_time = 0;
 extern volatile uint16_t _kflags;
 static volatile uint8_t kInterruptDepth = 0;
 
-extern volatile byte kReservedMemory[CFG_KERNEL_RESERVED_MEMORY];
-extern kStackPtr_t kStackPointer;
-
 uint64_t kernel_getUptime()
 {
 	return __e_time; //TODO: move this somewhere else 
@@ -71,16 +68,6 @@ static void tasks_switchContext()
 	kCurrentTask = kNextTask;
 }
 
-kStackPtr_t tasks_getKernelStackPointer()
-{
-	return kStackPointer;
-}
-
-kStackPtr_t tasks_getReservedMemoryPointer()
-{
-	return kReservedMemory;
-}
-
 kTaskHandle_t tasks_getCurrentTaskHandle()
 {
 	return kCurrentTask;
@@ -99,11 +86,6 @@ void tasks_setCurrentTask(kTaskHandle_t taskHandle)
 void tasks_setNextTask(kTaskHandle_t taskHandle)
 {
 	kNextTask = taskHandle;
-}
-
-void tasks_setKernelStackPointer(kStackPtr_t pointer)
-{
-	kStackPointer = pointer;
 }
 
 void tasks_switchTask()
